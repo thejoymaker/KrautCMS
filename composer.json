@@ -1,0 +1,28 @@
+{
+    "name": "krautcms/krautcms",
+    "type": "project",
+    "license": "HIPPOCRATIC LICENSE",
+    "autoload": {
+        "psr-4": {
+            "Kraut\\": "System/",
+            "User\\Plugin\\": "User/Plugin/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Krautmo"
+        }
+    ],
+    "require": {
+        "nikic/fast-route": "^1.3",
+        "php-di/php-di": "^7.0",
+        "nyholm/psr7": "^1.8",
+        "relay/relay": "^3.0",
+        "twig/twig": "^3.15",
+        "monolog/monolog": "^3.8",
+        "symfony/event-dispatcher": "^7.1",
+        "ezyang/htmlpurifier": "^4.18",
+        "vlucas/phpdotenv": "^5.6",
+        "firebase/php-jwt": "^6.10"
+    }
+}

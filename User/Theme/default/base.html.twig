@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}KrautCMS{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <h1>KrautCMS</h1>
+        {% block header %}{% endblock %}
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        {% block footer %}
+        <p>&copy; {{ "now"|date("Y") }} KrautCMS</p>
+        {% endblock %}
+    </footer>
+</body>
+</html>
