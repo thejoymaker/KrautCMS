@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}UserPlugin{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <h1>UserPlugin</h1>
+        {% block header %}
+        {% if current_user %}
+            <p>Welcome, {{ current_user.username }}! <a href="/logout">Logout</a></p>
+        {% else %}
+            <p><a href="/login">Login</a> | <a href="/register">Register</a></p>
+        {% endif %}
+        {% endblock %}
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

@@ -19,6 +19,8 @@ class RouteLoader
     private ContainerInterface $container;
     private string $controllerNamespace = 'Kraut\\Controller\\';
     private string $controllerDir;
+    private string $pluginControllerDir = __DIR__ . '/../../User/Plugin';
+
 
     public function __construct(ContainerInterface $container)
     {
@@ -28,13 +30,30 @@ class RouteLoader
 
     public function loadRoutes(RouteCollector $routeCollector): void
     {
+        $this->loadRoutesFromDirectory($routeCollector, $this->controllerDir, $this->controllerNamespace);
+
+        $pluginDirs = new RecursiveDirectoryIterator($this->pluginControllerDir);
+        foreach ($pluginDirs as $pluginDir) {
+            if ($pluginDir->isDir() && !in_array($pluginDir->getFilename(), ['.', '..'])) {
+                $pluginControllerDir = $pluginDir->getPathname() . '/Controller';
+                $pluginNamespace = 'User\\Plugin\\' . $pluginDir->getBasename() . '\\Controller\\';
+                $this->loadRoutesFromDirectory($routeCollector, $pluginControllerDir, $pluginNamespace);
+            }
+        }
+    }
+
+    private function loadRoutesFromDirectory(RouteCollector $routeCollector, string $directory, string $namespace): void
+    {
+        if (!is_dir($directory)) {
+            return;
+        }
         $files = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($this->controllerDir)
+            new RecursiveDirectoryIterator($directory)
         );
 
         foreach ($files as $file) {
             if ($file->isFile() && $file->getExtension() === 'php') {
-                $className = $this->controllerNamespace . $file->getBasename('.php');
+                $className = $namespace . $file->getBasename('.php');
                 if (class_exists($className)) {
                     $this->registerRoutesFromClass($className, $routeCollector);
                 }

@@ -89,17 +89,27 @@ class Kernel
         $pluginLoader = $this->container->get(PluginLoader::class);
         $pluginLoader->loadPlugins();
 
-        // Create the middleware queue
+        // Create the default middleware queue
         $middlewareQueue = [
             \Kraut\Middleware\LoggingMiddleware::class,
+            \Kraut\Middleware\RequestBodyParserMiddleware::class,
             \Kraut\Middleware\RoutingMiddleware::class,
             \Kraut\Middleware\DispatchMiddleware::class,
         ];
-       
-        // Define a resolver that uses the container to instantiate middleware
-        $relay = new Relay($middlewareQueue, [$this->container, 'get']);
 
-        // Dispatch the response through the middleware queue
+        // Dispatch the middleware event
+        /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $eventDispatcher */
+        $eventDispatcher = $this->container->get(\Symfony\Component\EventDispatcher\EventDispatcherInterface::class);
+        $middlewareEvent = new \Kraut\Event\MiddlewareEvent($middlewareQueue);
+        $eventDispatcher->dispatch($middlewareEvent, 'kernel.middleware');
+
+        // Get the possibly modified middleware queue
+        $middlewareQueue = $middlewareEvent->getMiddlewareQueue();
+
+        // Create the Relay dispatcher with the container resolver
+        $relay = new \Relay\Relay($middlewareQueue, [$this->container, 'get']);
+
+        // Dispatch the request through the middleware queue
         $response = $relay->handle($request);
 
         // Dispatch an event after the response is generated
