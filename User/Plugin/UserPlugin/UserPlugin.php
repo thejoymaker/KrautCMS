@@ -43,15 +43,6 @@ class UserPlugin implements PluginInterface, EventSubscriberInterface
     
         // Add current_user as a global variable in Twig
         $twig->addGlobal('current_user', $this->container->get(\User\Plugin\UserPlugin\Service\AuthenticationService::class)->getCurrentUser());
-        
-        // Configure Twig to load plugin templates
-        // $loader = $this->container->get(\Twig\Loader\FilesystemLoader::class);
-        // $loader->addPath(__DIR__ . '/views', 'UserPlugin');
-
-        // Add current_user as a global variable in Twig
-        // $twig = $this->container->get(\Twig\Environment::class);
-        // $twig->setLoader($loader);
-        // $twig->addGlobal('current_user', $this->container->get(\User\Plugin\UserPlugin\Service\AuthenticationService::class)->getCurrentUser());
     }
 
     public function deactivate(): void
