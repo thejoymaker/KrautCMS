@@ -41,21 +41,28 @@ class PagesController
 
     private function getPageContent(string $slug): ?array
     {
-        // Placeholder for your content fetching logic
-        // Replace with actual data retrieval (e.g., from a database or file)
-    
-        $pages = [
-            'about-us' => [
-                'title' => 'About Us',
-                'content' => '<p>This is the About Us page content.</p>',
-            ],
-            'contact' => [
-                'title' => 'Contact',
-                'content' => '<p>This is the Contact page content.</p>',
-            ],
-            // Add more pages as needed
+        // Define the path to your content files
+        $contentDir = __DIR__ . '/../../../Content/PagesPlugin/pages';
+
+        // Sanitize the slug to prevent directory traversal
+        $safeSlug = basename($slug);
+
+        // Construct the file path
+        $filePath = $contentDir . '/' . $safeSlug . '/content.txt';
+
+        if (!file_exists($filePath)) {
+                return null;
+        }
+
+        // Read the content from the file
+        $content = file_get_contents($filePath);
+
+        // Generate a title from the slug or include a title in the content file
+        $title = ucwords(str_replace('-', ' ', $safeSlug));
+
+        return [
+            'title' => $title,
+            'content' => $content,
         ];
-    
-        return $pages[$slug] ?? null;
     }
 }
