@@ -47,7 +47,7 @@ class UserController
         $password = $data['password'] ?? '';
 
         if ($this->authService->login($username, $password)) {
-            return new Response(302, ['Location' => '/']);
+            return new Response(302, ['Location' => '/admin']);
         }
 
         $content = $this->twig->render('@UserPlugin/login.html.twig', ['error' => 'Invalid credentials']);
@@ -102,34 +102,71 @@ class UserController
         $this->userRepository->addUser($user);
         $this->authService->login($username, $password);
     
-        return new Response(302, ['Location' => '/']);
+        return new Response(302, ['Location' => '/admin']);
     }
 
-    // public function register(ServerRequestInterface $request): ResponseInterface
-    // {
-    //     $data = $request->getParsedBody();
-    //     $username = $data['username'] ?? '';
-    //     $password = $data['password'] ?? '';
-    //     $confirmPassword = $data['confirm_password'] ?? '';
-
-    //     if ($password !== $confirmPassword) {
-    //         $content = $this->twig->render('@UserPlugin/register.html.twig', ['error' => 'Passwords do not match']);
-    //         return new Response(200, [], $content);
-    //     }
-
-    //     if ($this->userRepository->getUserByUsername($username)) {
-    //         $content = $this->twig->render('@UserPlugin/register.html.twig', ['error' => 'Username already exists']);
-    //         return new Response(200, [], $content);
-    //     }
-
-    //     $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-    //     $userId = bin2hex(random_bytes(16)); // Generate a random string ID
-
-    //     $user = new User($userId, $username, $passwordHash);
-    //     $this->userRepository->addUser($user);
-    //     $this->authService->login($username, $password);
-
-    //     return new Response(302, ['Location' => '/']);
-    // }
+    #[Route(path: '/admin', methods: ['GET'], roles: ['user'])]
+    public function admin(ServerRequestInterface $request): ResponseInterface
+    {
+        $content = $this->twig->render('@UserPlugin/admin.html.twig');
+        return new Response(200, [], $content);
+    }
+    
+    #[Route(path: '/change-password', methods: ['POST'])]
+    public function changePassword(ServerRequestInterface $request): ResponseInterface
+    {
+        $data = $request->getParsedBody();
+        $currentPassword = $data['current_password'] ?? '';
+        $newPassword = $data['new_password'] ?? '';
+        $confirmNewPassword = $data['confirm_new_password'] ?? '';
+    
+        // Validate that the new passwords match
+        if ($newPassword !== $confirmNewPassword) {
+            $content = $this->twig->render('@UserPlugin/admin.html.twig', ['error' => 'New passwords do not match']);
+            return new Response(200, [], $content);
+        }
+    
+        // Get the current user
+        $user = $this->authService->getCurrentUser();
+        if (!$user) {
+            return new Response(302, ['Location' => '/login']);
+        }
+    
+        // Verify current password
+        if (!password_verify($currentPassword, $user->getPasswordHash())) {
+            $content = $this->twig->render('@UserPlugin/admin.html.twig', ['error' => 'Current password is incorrect']);
+            return new Response(200, [], $content);
+        }
+    
+        // Update password
+        $newPasswordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+        $user->setPasswordHash($newPasswordHash);
+        $this->userRepository->updateUser($user);
+    
+        // $content = $this->twig->render('@UserPlugin/admin.html.twig', ['success' => 'Password changed successfully']);
+        // return new Response(200, [], $content);
+        return new Response(302, ['Location' => '/admin']);
+    }
+    
+    #[Route(path: '/change-theme', methods: ['POST'])]
+    public function changeTheme(ServerRequestInterface $request): ResponseInterface
+    {
+        $data = $request->getParsedBody();
+        $theme = $data['theme'] ?? 'default';
+    
+        // Get the current user
+        $user = $this->authService->getCurrentUser();
+        if (!$user) {
+            return new Response(302, ['Location' => '/login']);
+        }
+    
+        // Update theme preference
+        // $user->setTheme($theme);
+        // $this->userRepository->updateUser($user);
+    
+        // $content = $this->twig->render('@UserPlugin/admin.html.twig', ['success' => 'Theme changed successfully']);
+        // return new Response(200, [], $content);
+        return new Response(302, ['Location' => '/admin']);
+    }
 }
 ?>

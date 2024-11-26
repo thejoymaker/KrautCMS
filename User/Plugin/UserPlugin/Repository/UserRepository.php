@@ -74,7 +74,22 @@ class UserRepository
     
         file_put_contents($userFile, Yaml::dump($data));
     }
+    
+    public function updateUser(User $user): void
+    {
+        $safeUsername = $this->sanitizeUsername($user->getUsername());
+        $userDir = $this->usersDir . '/' . $safeUsername;
 
+        if (!is_dir($userDir)) {
+            throw new \Exception("User directory does not exist.");
+        }
+
+        $userFile = $userDir . '/' . $safeUsername . '.yaml';
+        $data = $user->toArray();
+
+        file_put_contents($userFile, Yaml::dump($data));
+    }
+    
     private function sanitizeUsername(string $username): string
     {
         // Remove any characters that are not alphanumeric, underscores, or dashes

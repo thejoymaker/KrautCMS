@@ -1,0 +1,33 @@
+{% extends '@Theme/base.html.twig' %}
+
+{% block title %}Admin Panel{% endblock %}
+
+{% block content %}
+<h2>Admin Panel</h2>
+
+<h3>Change Theme</h3>
+<form action="/change-theme" method="post" enctype="application/x-www-form-urlencoded">
+    <label for="theme">Select Theme:</label>
+    <select name="theme" id="theme">
+        <option value="default">Default</option>
+        <option value="dark">Dark Mode</option>
+        <option value="light">Light Mode</option>
+        <!-- Add more themes as needed -->
+    </select>
+    <button type="submit">Change Theme</button>
+</form>
+
+<h3>Change Password</h3>
+<form action="/change-password" method="post" enctype="application/x-www-form-urlencoded">
+    <label for="current_password">Current Password:</label>
+    <input type="password" name="current_password" id="current_password" required>
+
+    <label for="new_password">New Password:</label>
+    <input type="password" name="new_password" id="new_password" required>
+
+    <label for="confirm_new_password">Confirm New Password:</label>
+    <input type="password" name="confirm_new_password" id="confirm_new_password" required>
+
+    <button type="submit">Change Password</button>
+</form>
+{% endblock %}

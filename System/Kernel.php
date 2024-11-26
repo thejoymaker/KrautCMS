@@ -18,7 +18,7 @@ use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Kraut\Plugin\PluginLoader;
+use Kraut\Service\PluginService;
 use Psr\Container\ContainerInterface;
 
 class Kernel
@@ -56,8 +56,8 @@ class Kernel
                 return $twig;
             },
             EventDispatcherInterface::class => \DI\create(EventDispatcher::class),
-            PluginLoader::class => function (ContainerInterface $c) {
-                return new PluginLoader(
+            PluginService::class => function (ContainerInterface $c) {
+                return new PluginService(
                     __DIR__ . '/../User/Plugin',
                     $c,
                     $c->get(EventDispatcherInterface::class)
@@ -85,8 +85,22 @@ class Kernel
         // Create the ServerRequest
         $request = $psr17Factory->createServerRequest($method, $uri);
 
+        // Retrieve the Twig environment
+        /** @var \Twig\Environment $twig */
+        $twig = $this->container->get(\Twig\Environment::class);
+    
+        // Retrieve the existing loader
+        /** @var \Twig\Loader\FilesystemLoader $loader */
+        $loader = $twig->getLoader();
+    
+        // TODO - make this dynamic to support multiple themes
+        if ($loader instanceof \Twig\Loader\FilesystemLoader) {
+            // Add your plugin's template path without overwriting the loader
+            $loader->addPath(__DIR__ . '/../User/Theme/default', 'Theme');
+        }
+
         // Load plugins
-        $pluginLoader = $this->container->get(PluginLoader::class);
+        $pluginLoader = $this->container->get(PluginService::class);
         $pluginLoader->loadPlugins();
 
         // Create the default middleware queue

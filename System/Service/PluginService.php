@@ -1,14 +1,15 @@
 <?php
-// System/Plugin/PluginLoader.php
+// System/Service/PluginService.php
 
 declare(strict_types=1);
 
-namespace Kraut\Plugin;
+namespace Kraut\Service;
 
 use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Kraut\Plugin\PluginInterface;
 
-class PluginLoader
+class PluginService
 {
     private string $pluginDir;
     private ContainerInterface $container;
