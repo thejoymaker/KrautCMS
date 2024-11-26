@@ -9,6 +9,8 @@ use DI\ContainerBuilder;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
 use Kraut\Routing\RouteLoader;
+use Kraut\Service\ConfigService;
+use Kraut\Service\ConfigurationService;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -35,6 +37,7 @@ class Kernel
 
         // Add definitions for services
         $containerBuilder->addDefinitions([
+            ConfigurationService::class => \DI\create(ConfigurationService::class),
             Psr17Factory::class => \DI\create(Psr17Factory::class),
             \Psr\Http\Message\ResponseFactoryInterface::class => \DI\get(Psr17Factory::class),
             \Psr\Http\Message\ServerRequestFactoryInterface::class => \DI\get(Psr17Factory::class),
@@ -67,6 +70,19 @@ class Kernel
 
         // Build the container
         $this->container = $containerBuilder->build();
+
+        $this->setTheme();
+    }
+    
+    private function setTheme(): void
+    {
+        $configService = $this->container->get(ConfigurationService::class);
+        $theme = $configService->get('theme', 'default');
+
+        $loader = $this->container->get(Environment::class)->getLoader();
+        if ($loader instanceof FilesystemLoader) {
+            $loader->addPath(__DIR__ . "/../User/Theme/{$theme}", 'Theme');
+        }
     }
 
     public function handle(string $method, string $uri): ResponseInterface
@@ -84,20 +100,6 @@ class Kernel
 
         // Create the ServerRequest
         $request = $psr17Factory->createServerRequest($method, $uri);
-
-        // Retrieve the Twig environment
-        /** @var \Twig\Environment $twig */
-        $twig = $this->container->get(\Twig\Environment::class);
-    
-        // Retrieve the existing loader
-        /** @var \Twig\Loader\FilesystemLoader $loader */
-        $loader = $twig->getLoader();
-    
-        // TODO - make this dynamic to support multiple themes
-        if ($loader instanceof \Twig\Loader\FilesystemLoader) {
-            // Add your plugin's template path without overwriting the loader
-            $loader->addPath(__DIR__ . '/../User/Theme/default', 'Theme');
-        }
 
         // Load plugins
         $pluginLoader = $this->container->get(PluginService::class);

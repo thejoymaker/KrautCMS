@@ -12,19 +12,22 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use Kraut\Kernel;
 
-$kernel = new Kernel();
-$response = $kernel->handle(
-    $_SERVER['REQUEST_METHOD'],
-    $_SERVER['REQUEST_URI']
-);
+function main()
+{
+    $kernel = new Kernel();
+    $response = $kernel->handle(
+        $_SERVER['REQUEST_METHOD'],
+        $_SERVER['REQUEST_URI']
+    );
 
-// Send HTTP headers and response
-http_response_code($response->getStatusCode());
-foreach ($response->getHeaders() as $name => $values) {
-    foreach ($values as $value) {
-        header(sprintf('%s: %s', $name, $value), false);
+    // Send HTTP headers and response
+    http_response_code($response->getStatusCode());
+    foreach ($response->getHeaders() as $name => $values) {
+        foreach ($values as $value) {
+            header(sprintf('%s: %s', $name, $value), false);
+        }
     }
+    echo $response->getBody();
 }
-echo $response->getBody();
-
+main();
 ?>

@@ -9,6 +9,7 @@ use Kraut\Plugin\PluginInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Kraut\Event\MiddlewareEvent;
 use Psr\Container\ContainerInterface;
+use User\Plugin\UserPlugin\Service\AuthenticationService;
 
 class UserPlugin implements PluginInterface, EventSubscriberInterface
 {
@@ -32,17 +33,8 @@ class UserPlugin implements PluginInterface, EventSubscriberInterface
         /** @var \Twig\Environment $twig */
         $twig = $this->container->get(\Twig\Environment::class);
     
-        // Retrieve the existing loader
-        /** @var \Twig\Loader\FilesystemLoader $loader */
-        $loader = $twig->getLoader();
-    
-        if ($loader instanceof \Twig\Loader\FilesystemLoader) {
-            // Add your plugin's template path without overwriting the loader
-            $loader->addPath(__DIR__ . '/View', 'UserPlugin');
-        }
-    
         // Add current_user as a global variable in Twig
-        $twig->addGlobal('current_user', $this->container->get(\User\Plugin\UserPlugin\Service\AuthenticationService::class)->getCurrentUser());
+        $twig->addGlobal('current_user', $this->container->get(AuthenticationService::class)->getCurrentUser());
     }
 
     public function deactivate(): void

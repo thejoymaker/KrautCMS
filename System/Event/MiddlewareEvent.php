@@ -6,7 +6,7 @@ declare(strict_types=1);
 namespace Kraut\Event;
 
 use Symfony\Contracts\EventDispatcher\Event;
-
+// TODO remove middleware copy queue and state it is a current snapshot of the middleware queue
 class MiddlewareEvent extends Event
 {
     private array $middlewareQueue;
