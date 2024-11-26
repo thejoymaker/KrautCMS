@@ -1,0 +1,12 @@
+{# User/Plugin/PagesPlugin/Templates/page.html.twig #}
+
+{% extends '@Theme/base.html.twig' %}
+
+{% block title %}{{ page.title }}{% endblock %}
+
+{% block content %}
+    <h1>{{ page.title }}</h1>
+    <div>
+        {{ page.content|raw }}
+    </div>
+{% endblock %}
