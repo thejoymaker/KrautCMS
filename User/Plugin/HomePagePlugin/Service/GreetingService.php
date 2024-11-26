@@ -3,7 +3,7 @@
 
 declare(strict_types=1);
 
-namespace Kraut\Service;
+namespace User\Plugin\HomePagePlugin\Service;
 
 use Kraut\Attribute\Service;
 

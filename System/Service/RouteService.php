@@ -20,7 +20,7 @@ class RouteService
 {
     private ContainerInterface $container;
     private string $controllerNamespace = 'Kraut\\Controller\\';
-    private string $controllerDir;
+    
     private string $pluginControllerDir;
     private Dispatcher $dispatcher;
     private array $routeMap = [];
@@ -29,7 +29,6 @@ class RouteService
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->controllerDir = __DIR__ . '/../Controller';
         $this->pluginControllerDir = __DIR__ . '/../../User/Plugin';
         $this->cacheFile = __DIR__ . '/../../Cache/role_attribute_cache.php';
 
@@ -40,16 +39,16 @@ class RouteService
 
     public function loadRoutes(RouteCollector $routeCollector): void
     {
-        if (!empty($this->routeMap)) {
+        // if (!empty($this->routeMap)) {
             // Load routes from cached routeMap
-            foreach ($this->routeMap as $httpMethod => $routes) {
-                foreach ($routes as $path => $info) {
-                    $routeCollector->addRoute($httpMethod, $path, $info['handler']);
-                }
-            }
-        } else {
+            // foreach ($this->routeMap as $httpMethod => $routes) {
+            //     foreach ($routes as $path => $info) {
+            //         $routeCollector->addRoute($httpMethod, $path, $info['handler']);
+            //     }
+            // }
+        // } else {
             // Load routes from controllers
-            $this->loadRoutesFromDirectory($routeCollector, $this->controllerDir, $this->controllerNamespace);
+            // $this->loadRoutesFromDirectory($routeCollector, $this->controllerDir, $this->controllerNamespace);
 
             // Load routes from plugin controllers
             $pluginDirs = new RecursiveDirectoryIterator($this->pluginControllerDir);
@@ -63,7 +62,7 @@ class RouteService
 
             // Save the routeMap to cache
             file_put_contents($this->cacheFile, '<?php return ' . var_export($this->routeMap, true) . ';');
-        }
+        // }
 
         // Build the dispatcher
         $this->dispatcher = new GroupCountBased($routeCollector->getData());

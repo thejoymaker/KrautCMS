@@ -3,7 +3,7 @@
 
 declare(strict_types=1);
 
-namespace Kraut\Controller;
+namespace User\Plugin\HomePagePlugin\Controller;
 
 use Kraut\Attribute\Controller;
 use Kraut\Attribute\Route;
@@ -12,7 +12,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 use Twig\Environment;
 use Nyholm\Psr7\Response;
-use Kraut\Service\GreetingService;
+use User\Plugin\HomePagePlugin\Service\GreetingService;
 
 #[Controller]
 class HomeController

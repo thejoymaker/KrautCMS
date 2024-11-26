@@ -74,7 +74,7 @@ class PluginService
             }
 
             // Cache the plugins
-            file_put_contents($this->cacheFile, '<?php return ' . var_export($this->plugins, true) . ';');
+            // file_put_contents($this->cacheFile, '<?php return ' . var_export($this->plugins, true) . ';');
         }
     }
 
