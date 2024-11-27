@@ -4,7 +4,11 @@
 declare(strict_types=1);
 
 namespace Kraut\Plugin;
-
+/**
+ * Interface ContentEntryInterface
+ *
+ * This interface represents a single content entry.
+ */
 interface ContentEntryInterface
 {
     /**

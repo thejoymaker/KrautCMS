@@ -5,6 +5,11 @@ declare(strict_types=1);
 
 namespace Kraut\Plugin;
 
+/**
+ * Interface ContentProviderInterface
+ *
+ * This interface represents a content provider.
+ */
 interface ContentProviderInterface
 {
     /**

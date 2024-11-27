@@ -7,9 +7,14 @@ namespace Kraut\Attribute;
 
 use Attribute;
 
+/**
+ * Class Controller
+ *
+ * Attribute to mark a class as a controller.
+ * This can be used for automatic route registration and dependency injection.
+ */
 #[Attribute(Attribute::TARGET_CLASS)]
 class Controller
 {
 }
-
 ?>

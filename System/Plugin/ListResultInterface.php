@@ -7,6 +7,11 @@ namespace Kraut\Plugin;
 
 use Kraut\Plugin\ContentEntryInterface;
 
+/**
+ * Interface ListResultInterface
+ *
+ * This interface represents the result of a list operation.
+ */
 interface ListResultInterface
 {
     /**

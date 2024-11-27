@@ -15,7 +15,12 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
 use ReflectionMethod;
-
+/**
+ * Class RouteService
+ *
+ * Service responsible for loading and managing routes.
+ * It scans directories for controller classes and registers their routes.
+ */
 class RouteService
 {
     private ContainerInterface $container;
@@ -37,6 +42,11 @@ class RouteService
         }
     }
 
+    /**
+     * Loads routes into the RouteCollector.
+     *
+     * @param RouteCollector $routeCollector The route collector.
+     */
     public function loadRoutes(RouteCollector $routeCollector): void
     {
         // if (!empty($this->routeMap)) {
@@ -68,6 +78,13 @@ class RouteService
         $this->dispatcher = new GroupCountBased($routeCollector->getData());
     }
 
+    /**
+     * Loads routes from a directory into the RouteCollector.
+     *
+     * @param RouteCollector $routeCollector The route collector.
+     * @param string $directory The directory to scan for controllers.
+     * @param string $namespace The namespace of the controllers.
+     */
     private function loadRoutesFromDirectory(RouteCollector $routeCollector, string $directory, string $namespace): void
     {
         if (!is_dir($directory)) {
@@ -85,6 +102,12 @@ class RouteService
         }
     }
 
+    /**
+     * Registers routes from a controller class into the RouteCollector.
+     *
+     * @param string $className The fully qualified class name of the controller.
+     * @param RouteCollector $routeCollector The route collector.
+     */
     private function registerRoutesFromClass(string $className, RouteCollector $routeCollector): void
     {
         $reflectionClass = new ReflectionClass($className);
@@ -113,11 +136,23 @@ class RouteService
         }
     }
 
+    /**
+     * Retrieves the route for a given URI and HTTP method.
+     *
+     * @param string $httpMethod The HTTP method (e.g., GET, POST).
+     * @param string $uri The request URI.
+     * @return Route|null The matched route, or null if no match is found.
+     */
     public function getRouteForUri(string $httpMethod, string $uri): ?Route
     {
         return $this->routeMap[$httpMethod][$uri]['attribute'] ?? null;
     }
 
+    /**
+     * Returns the dispatcher instance.
+     *
+     * @return Dispatcher The dispatcher instance.
+     */
     public function getDispatcher(): Dispatcher
     {
         return $this->dispatcher;

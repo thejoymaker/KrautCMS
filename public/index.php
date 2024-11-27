@@ -12,6 +12,14 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use Kraut\Kernel;
 
+/**
+ * Main entry point for the application.
+ *
+ * This function initializes the application kernel, handles the incoming HTTP request,
+ * and sends the appropriate HTTP response.
+ *
+ * @return void
+ */
 function main()
 {
     $kernel = new Kernel();

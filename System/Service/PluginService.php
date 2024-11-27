@@ -13,6 +13,12 @@ use Psr\Log\LoggerInterface;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
+/**
+ * Class PluginService
+ *
+ * Service to manage plugins.
+ * This service is responsible for loading, activating, and managing plugins within the system.
+ */
 class PluginService
 {
     private string $pluginDir;
@@ -21,6 +27,16 @@ class PluginService
     private string $cacheFile;
     private array $plugins = [];
 
+    /**
+     * PluginService constructor.
+     *
+     * @param string $pluginDir
+     *   The directory where plugins are stored.
+     * @param ContainerInterface $container
+     *   The dependency injection container.
+     * @param EventDispatcherInterface $eventDispatcher
+     *   The event dispatcher.
+     */
     public function __construct(
         string $pluginDir,
         ContainerInterface $container,
@@ -31,7 +47,15 @@ class PluginService
         $this->eventDispatcher = $eventDispatcher;
         $this->cacheFile = __DIR__ . '/../../Cache/plugin_cache.php';
     }
-    
+
+    /**
+     * Loads plugins from the plugin directory.
+     *
+     * This method scans the plugin directory, loads plugin classes, and activates them if they implement the PluginInterface.
+     * It also caches the loaded plugins to improve performance.
+     *
+     * @return void
+     */
     public function loadPlugins(): void
     {
         $config = require __DIR__ . '/../../User/Config/Plugins.php';
@@ -78,6 +102,12 @@ class PluginService
         }
     }
 
+    /**
+     * Get the active plugin directories.
+     *
+     * @return array
+     *   An array of active plugin directories.
+     */
     public function getActivePluginDirectories(): array
     {
         $activePlugins = [];
@@ -89,6 +119,12 @@ class PluginService
         return $activePlugins;
     }
 
+    /**
+     * Get the plugins.
+     *
+     * @return array
+     *   An array of plugins.
+     */
     public function getPlugins(): array
     {
         return $this->plugins;
