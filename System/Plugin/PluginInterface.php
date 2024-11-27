@@ -12,5 +12,7 @@ interface PluginInterface extends EventSubscriberInterface
     public static function getSubscribedEvents(): array;
     public function activate(): void;
     public function deactivate(): void;
+    public function getContentProvider(): ?ContentProviderInterface;
+    public function getRequirements(): array;
 }
 ?>

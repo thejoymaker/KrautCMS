@@ -9,6 +9,7 @@ use Kraut\Plugin\PluginInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 use Psr\Log\LoggerInterface;
 use Kraut\Event\ResponseEvent;
+use Kraut\Plugin\ContentProviderInterface;
 
 class WelcomePlugin implements PluginInterface
 {
@@ -34,6 +35,16 @@ class WelcomePlugin implements PluginInterface
     public function deactivate(): void
     {
         $this->logger->info('WelcomePlugin deactivated');
+    }
+
+    public function getContentProvider(): ?ContentProviderInterface
+    {
+        return null;
+    }
+
+    public function getRequirements(): array
+    {
+        return [];
     }
 
     public function onKernelResponse(ResponseEvent $event): void

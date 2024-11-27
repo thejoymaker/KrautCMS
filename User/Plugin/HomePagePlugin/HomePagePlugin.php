@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace User\Plugin\HomePagePlugin;
 
+use Kraut\Plugin\ContentProviderInterface;
 use Kraut\Plugin\PluginInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -36,6 +37,20 @@ class HomePagePlugin implements PluginInterface
     {
         // Code to run when the plugin is deactivated
         // For example, you might want to unregister routes or clean up settings
+    }
+
+    public function getContentProvider(): ?ContentProviderInterface
+    {
+        // Return the content provider for this plugin
+        // For example, you might want to return a custom content provider
+        return null;
+    }
+
+    public function getRequirements(): array
+    {
+        // Return the requirements for this plugin
+        // For example, you might want to return an array of required services
+        return [];
     }
 
     public function onKernelRequest($event): void

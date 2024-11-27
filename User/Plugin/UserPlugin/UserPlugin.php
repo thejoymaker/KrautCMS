@@ -8,6 +8,7 @@ namespace User\Plugin\UserPlugin;
 use Kraut\Plugin\PluginInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Kraut\Event\MiddlewareEvent;
+use Kraut\Plugin\ContentProviderInterface;
 use Psr\Container\ContainerInterface;
 use User\Plugin\UserPlugin\Service\AuthenticationService;
 
@@ -40,6 +41,20 @@ class UserPlugin implements PluginInterface, EventSubscriberInterface
     public function deactivate(): void
     {
         // Any deactivation logic can be placed here.
+    }
+
+    public function getContentProvider(): ?ContentProviderInterface
+    {
+        // Return the content provider for this plugin
+        // For example, you might want to return a custom content provider
+        return null;
+    }
+
+    public function getRequirements(): array
+    {
+        // Return the requirements for this plugin
+        // For example, you might want to return an array of required services
+        return [];
     }
 
     public function onKernelMiddleware(MiddlewareEvent $event): void
