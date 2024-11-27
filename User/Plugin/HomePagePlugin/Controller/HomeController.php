@@ -43,18 +43,9 @@ class HomeController
     public function hello(ServerRequestInterface $request, array $args): ResponseInterface
     {
         $name = $args['name'] ?? 'Guest';
-
         $greeting = $this->greetingService->getGreeting($name);
-
         $this->logger->info("Greeting page accessed with name: {$name}");
-
-        $content = $this->twig->render('hello.html.twig', [
-            'greeting' => $greeting,
-        ]);
-
-        $response = new Response();
-        $response->getBody()->write($content);
-        return $response;
+        return ResponseUtil::respond($this->twig, 'hello', ['greeting' => $greeting]);
     }
 }
 ?>
