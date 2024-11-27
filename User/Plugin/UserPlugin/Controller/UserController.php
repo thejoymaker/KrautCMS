@@ -11,6 +11,7 @@ use User\Plugin\UserPlugin\Entity\User;
 use Twig\Environment;
 use Kraut\Attribute\Controller;
 use Kraut\Attribute\Route;
+use Kraut\Controller\ResponseUtil;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Nyholm\Psr7\Response;
@@ -35,8 +36,9 @@ class UserController
     #[Route(path: '/login', methods: ['GET'])]
     public function showLoginForm(ServerRequestInterface $request): ResponseInterface
     {
-        $content = $this->twig->render('@UserPlugin/login.html.twig');
-        return new Response(200, [], $content);
+        // $content = $this->twig->render('@UserPlugin/login.html.twig');
+        // return new Response(200, [], $content);
+        return ResponseUtil::respondRelative($this->twig, 'UserPlugin', 'login', []);
     }
 
     #[Route(path: '/login', methods: ['POST'])]
@@ -47,25 +49,29 @@ class UserController
         $password = $data['password'] ?? '';
 
         if ($this->authService->login($username, $password)) {
-            return new Response(302, ['Location' => '/admin']);
+            return ResponseUtil::redirectTemporary('/admin');
         }
 
-        $content = $this->twig->render('@UserPlugin/login.html.twig', ['error' => 'Invalid credentials']);
-        return new Response(200, [], $content);
+        // $content = $this->twig->render('@UserPlugin/login.html.twig', ['error' => 'Invalid credentials']);
+        // return new Response(200, [], $content);
+
+        return ResponseUtil::respondRelative($this->twig, 'UserPlugin', 'login', ['error' => 'Invalid credentials']);
     }
 
     #[Route(path: '/logout', methods: ['GET'])]
     public function logout(ServerRequestInterface $request): ResponseInterface
     {
         $this->authService->logout();
-        return new Response(302, ['Location' => '/']);
+        // return new Response(302, ['Location' => '/']);
+        return ResponseUtil::redirectTemporary('/');
     }
 
     #[Route(path: '/register', methods: ['GET'])]
     public function showRegistrationForm(ServerRequestInterface $request): ResponseInterface
     {
-        $content = $this->twig->render('@UserPlugin/register.html.twig');
-        return new Response(200, [], $content);
+        // $content = $this->twig->render('@UserPlugin/register.html.twig');
+        // return new Response(200, [], $content);
+        return ResponseUtil::respondRelative($this->twig, 'UserPlugin', 'register');
     }
 
     #[Route(path: '/register', methods: ['POST'])]
@@ -78,20 +84,23 @@ class UserController
     
         // Validate that the username is not empty
         if (empty($username)) {
-            $content = $this->twig->render('@UserPlugin/register.html.twig', ['error' => 'Username cannot be empty']);
-            return new Response(200, [], $content);
+            // $content = $this->twig->render('@UserPlugin/register.html.twig', ['error' => 'Username cannot be empty']);
+            // return new Response(200, [], $content);
+            return ResponseUtil::respondRelative($this->twig, 'UserPlugin', 'register', ['error' => 'Username cannot be empty']);
         }
     
         // Validate that the passwords match
         if ($password !== $confirmPassword) {
-            $content = $this->twig->render('@UserPlugin/register.html.twig', ['error' => 'Passwords do not match']);
-            return new Response(200, [], $content);
+            // $content = $this->twig->render('@UserPlugin/register.html.twig', ['error' => 'Passwords do not match']);
+            // return new Response(200, [], $content);
+            return ResponseUtil::respondRelative($this->twig, 'UserPlugin', 'register', ['error' => 'Passwords do not match']);
         }
     
         // Check if the username already exists
         if ($this->userRepository->getUserByUsername($username)) {
-            $content = $this->twig->render('@UserPlugin/register.html.twig', ['error' => 'Username already exists']);
-            return new Response(200, [], $content);
+            // $content = $this->twig->render('@UserPlugin/register.html.twig', ['error' => 'Username already exists']);
+            // return new Response(200, [], $content);
+            return ResponseUtil::respondRelative($this->twig, 'UserPlugin', 'register', ['error' => 'Username already exists']);
         }
     
         // Proceed with registration
@@ -102,14 +111,16 @@ class UserController
         $this->userRepository->addUser($user);
         $this->authService->login($username, $password);
     
-        return new Response(302, ['Location' => '/admin']);
+        // return new Response(302, ['Location' => '/admin']);
+        return ResponseUtil::redirectTemporary('/admin');
     }
 
     #[Route(path: '/admin', methods: ['GET'], roles: ['user'])]
     public function admin(ServerRequestInterface $request): ResponseInterface
     {
-        $content = $this->twig->render('@UserPlugin/admin.html.twig');
-        return new Response(200, [], $content);
+        // $content = $this->twig->render('@UserPlugin/admin.html.twig');
+        // return new Response(200, [], $content);
+        return ResponseUtil::respondRelative($this->twig, 'UserPlugin', 'admin');
     }
     
     #[Route(path: '/change-password', methods: ['POST'])]
@@ -122,20 +133,23 @@ class UserController
     
         // Validate that the new passwords match
         if ($newPassword !== $confirmNewPassword) {
-            $content = $this->twig->render('@UserPlugin/admin.html.twig', ['error' => 'New passwords do not match']);
-            return new Response(200, [], $content);
+            // $content = $this->twig->render('@UserPlugin/admin.html.twig', ['error' => 'New passwords do not match']);
+            // return new Response(200, [], $content);
+            return ResponseUtil::respondRelative($this->twig, 'UserPlugin', 'admin', ['error' => 'New passwords do not match']);
         }
     
         // Get the current user
         $user = $this->authService->getCurrentUser();
         if (!$user) {
-            return new Response(302, ['Location' => '/login']);
+            // return new Response(302, ['Location' => '/login']);
+            return ResponseUtil::redirectTemporary('/login');
         }
     
         // Verify current password
         if (!password_verify($currentPassword, $user->getPasswordHash())) {
-            $content = $this->twig->render('@UserPlugin/admin.html.twig', ['error' => 'Current password is incorrect']);
-            return new Response(200, [], $content);
+            // $content = $this->twig->render('@UserPlugin/admin.html.twig', ['error' => 'Current password is incorrect']);
+            // return new Response(200, [], $content);
+            return ResponseUtil::respondRelative($this->twig, 'UserPlugin', 'admin', ['error' => 'Current password is incorrect']);
         }
     
         // Update password
@@ -145,7 +159,8 @@ class UserController
     
         // $content = $this->twig->render('@UserPlugin/admin.html.twig', ['success' => 'Password changed successfully']);
         // return new Response(200, [], $content);
-        return new Response(302, ['Location' => '/admin']);
+        // return new Response(302, ['Location' => '/admin']);
+        return ResponseUtil::redirectTemporary('/admin');
     }
     
     #[Route(path: '/change-theme', methods: ['POST'])]
@@ -157,7 +172,8 @@ class UserController
         // Get the current user
         $user = $this->authService->getCurrentUser();
         if (!$user) {
-            return new Response(302, ['Location' => '/login']);
+            // return new Response(302, ['Location' => '/login']);
+            return ResponseUtil::redirectTemporary('/login');
         }
     
         // Update theme preference
@@ -166,7 +182,8 @@ class UserController
     
         // $content = $this->twig->render('@UserPlugin/admin.html.twig', ['success' => 'Theme changed successfully']);
         // return new Response(200, [], $content);
-        return new Response(302, ['Location' => '/admin']);
+        // return new Response(302, ['Location' => '/admin']);
+        return ResponseUtil::redirectTemporary('/admin');
     }
 }
 ?>
