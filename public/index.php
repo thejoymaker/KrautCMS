@@ -2,21 +2,32 @@
 // public/index.php
 
 declare(strict_types=1);
-
-// Enable error reporting
-ini_set('display_errors', '1');
-ini_set('display_startup_errors', '1');
-error_reporting(E_ALL);
+function enableErrorReporting()
+{
+    ini_set('display_errors', '1');
+    ini_set('display_startup_errors', '1');
+    error_reporting(E_ALL);
+}
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use Dotenv\Dotenv;
 use Kraut\Kernel;
+use Dotenv\Dotenv;
 
 // Load environment variables from .env file
-$dotenv = Dotenv::createImmutable(__DIR__ . '/../');
-$dotenv->load();
-
+function initializeDotenv()
+{
+    $dotenv = Dotenv::createImmutable(__DIR__ . '/../');
+    $dotenv->safeLoad();
+}
+initializeDotenv();
+if (isset($_ENV['APP_ENV']) === false) {
+    echo "Failed to load environment variables.";
+    die();
+}
+if ($_ENV['APP_DEBUG'] === 'true') {
+    enableErrorReporting();
+}
 /**
  * Main entry point for the application.
  *
@@ -32,7 +43,6 @@ function main()
         $_SERVER['REQUEST_METHOD'],
         $_SERVER['REQUEST_URI']
     );
-
     // Send HTTP headers and response
     http_response_code($response->getStatusCode());
     foreach ($response->getHeaders() as $name => $values) {

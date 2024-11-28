@@ -11,4 +11,7 @@ namespace Kraut\Service;
  * This service provides a central registry for Themes and Plugins 
  * .
  */
-class SystemRegistryService {}
+class SystemRegistryService 
+{
+    
+}

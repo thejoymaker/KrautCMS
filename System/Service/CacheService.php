@@ -11,6 +11,7 @@ namespace Kraut\Service;
  * Service responsible for caching data.
  * This service provides methods to store, retrieve, and manage cached data.
  */
+#
 class CacheService
 {
     private string $cacheDir;
