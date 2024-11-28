@@ -6,26 +6,20 @@ declare(strict_types=1);
 namespace Kraut;
 
 use DI\ContainerBuilder;
-use FastRoute\Dispatcher;
-use FastRoute\RouteCollector;
-use Kraut\Routing\RouteLoader;
-use Kraut\Service\ConfigService;
 use Kraut\Service\ConfigurationService;
+use Kraut\Service\PluginService;
 use Nyholm\Psr7\Factory\Psr17Factory;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Relay\Relay;
-use function FastRoute\cachedDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Kraut\Service\PluginService;
-use Psr\Container\ContainerInterface;
 
 class Kernel
 {
-    private $container;
+    private KrautSystem $system;
+    private ContainerInterface $container;
 
     public function __construct()
     {
@@ -70,73 +64,15 @@ class Kernel
 
         // Build the container
         $this->container = $containerBuilder->build();
-
-        $this->setTheme();
-    }
-    
-    private function setTheme(): void
-    {
-        $configService = $this->container->get(ConfigurationService::class);
-        $theme = $configService->get('theme', 'default');
-
-        $loader = $this->container->get(Environment::class)->getLoader();
-        if ($loader instanceof FilesystemLoader) {
-            $loader->addPath(__DIR__ . "/../User/Theme/{$theme}", 'Theme');
-        }
+        // $system = new KrautSystem();
+        $this->system = $this->container->get(KrautSystem::class);
     }
 
     public function handle(string $method, string $uri): ResponseInterface
     {
-        // Normalize the URI
-        $uri = parse_url($uri, PHP_URL_PATH);
-        $uri = rawurldecode($uri);
-
-        if ($uri !== '/' && substr($uri, -1) === '/') {
-            $uri = rtrim($uri, '/');
-        }
-
-        // Get the PSR-17 factory from the container
-        $psr17Factory = $this->container->get(Psr17Factory::class);
-
-        // Create the ServerRequest
-        $request = $psr17Factory->createServerRequest($method, $uri);
-
-        // Load plugins
-        $pluginLoader = $this->container->get(PluginService::class);
-        $pluginLoader->loadPlugins();
-
-        // Create the default middleware queue
-        $middlewareQueue = [
-            \Kraut\Middleware\LoggingMiddleware::class,
-            \Kraut\Middleware\RequestBodyParserMiddleware::class,
-            \Kraut\Middleware\RoutingMiddleware::class,
-            \Kraut\Middleware\DispatchMiddleware::class,
-        ];
-
-        // Dispatch the middleware event
-        /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $eventDispatcher */
-        $eventDispatcher = $this->container->get(\Symfony\Component\EventDispatcher\EventDispatcherInterface::class);
-        $middlewareEvent = new \Kraut\Event\MiddlewareEvent($middlewareQueue);
-        $eventDispatcher->dispatch($middlewareEvent, 'kernel.middleware');
-
-        // Get the possibly modified middleware queue
-        $middlewareQueue = $middlewareEvent->getMiddlewareQueue();
-
-        // Create the Relay dispatcher with the container resolver
-        $relay = new \Relay\Relay($middlewareQueue, [$this->container, 'get']);
-
-        // Dispatch the request through the middleware queue
-        $response = $relay->handle($request);
-
-        // Dispatch an event after the response is generated
-        $eventDispatcher = $this->container->get(EventDispatcherInterface::class);
-        $responseEvent = new \Kraut\Event\ResponseEvent($response);
-        $eventDispatcher->dispatch($responseEvent, 'kernel.response');
-
-        // Get the possibly modified response
-        $response = $responseEvent->getResponse();
-
-        return $response;
+        $this->system->setupSystem();
+        $this->system->loadSystem();
+        return $this->system->runSystem($method, $uri);
     }
 }
 ?>
