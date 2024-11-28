@@ -6,6 +6,7 @@ declare(strict_types=1);
 namespace User\Plugin\HomePagePlugin;
 
 use Kraut\Plugin\ContentProviderInterface;
+use Kraut\Plugin\FileSystem;
 use Kraut\Plugin\PluginInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -27,7 +28,7 @@ class HomePagePlugin implements PluginInterface
         ];
     }
 
-    public function activate(): void
+    public function activate(FileSystem $fileSystem): void
     {
         // Code to run when the plugin is activated
         // For example, you might want to register routes or initialize settings

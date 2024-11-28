@@ -9,6 +9,7 @@ use Kraut\Plugin\PluginInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Kraut\Event\MiddlewareEvent;
 use Kraut\Plugin\ContentProviderInterface;
+use Kraut\Plugin\FileSystem;
 use Psr\Container\ContainerInterface;
 use User\Plugin\UserPlugin\Service\AuthenticationService;
 
@@ -28,7 +29,7 @@ class UserPlugin implements PluginInterface, EventSubscriberInterface
         ];
     }
 
-    public function activate(): void
+    public function activate(FileSystem $fileSystem): void
     {
         // Retrieve the Twig environment
         /** @var \Twig\Environment $twig */

@@ -10,7 +10,12 @@ error_reporting(E_ALL);
 
 require __DIR__ . '/../vendor/autoload.php';
 
+use Dotenv\Dotenv;
 use Kraut\Kernel;
+
+// Load environment variables from .env file
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
 
 /**
  * Main entry point for the application.

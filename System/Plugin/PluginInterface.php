@@ -35,7 +35,7 @@ interface PluginInterface extends EventSubscriberInterface
      *
      * @return void
      */
-    public function activate(): void;
+    public function activate(FileSystem $fileSystem): void;
 
     /**
      * Deactivates the plugin.

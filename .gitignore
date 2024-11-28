@@ -1,3 +1,4 @@
 Cache/
 vendor/
 User/Content/
+.env

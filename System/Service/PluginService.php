@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace Kraut\Service;
 
+use Kraut\Plugin\FileSystem;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Kraut\Plugin\PluginInterface;
@@ -92,7 +93,7 @@ class PluginService
                             }
                         }
                         $this->eventDispatcher->addSubscriber($plugin);
-                        $plugin->activate();
+                        $plugin->activate(new FileSystem($pluginPath));
                     }
                 }
             }

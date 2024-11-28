@@ -14,6 +14,9 @@ namespace Kraut\Service;
  */
 class ConfigurationService
 {
+    public const THEME = 'kraut.theme';
+    public const CACHE = 'kraut.cache';
+    public const DEBUG = 'kraut.debug';
     /**
      * @var array The configuration array holding all configuration values.
      */

@@ -10,6 +10,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 use Psr\Log\LoggerInterface;
 use Kraut\Event\ResponseEvent;
 use Kraut\Plugin\ContentProviderInterface;
+use Kraut\Plugin\FileSystem;
 
 class WelcomePlugin implements PluginInterface
 {
@@ -27,7 +28,7 @@ class WelcomePlugin implements PluginInterface
         ];
     }
 
-    public function activate(): void
+    public function activate(FileSystem $fileSystem): void
     {
         $this->logger->info('WelcomePlugin activated');
     }
