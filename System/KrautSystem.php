@@ -7,6 +7,8 @@ use DI\Container;
 use DI\ContainerBuilder;
 use Kraut\Service\ConfigurationService;
 use Kraut\Service\PluginService;
+use Kraut\Service\SystemDiscoveryService;
+use Kraut\Service\SystemSetupService;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -18,37 +20,33 @@ use Twig\Loader\FilesystemLoader;
 class KrautSystem
 {
     private ContainerInterface $container;
-    // private ConfigurationService $configService;
-    // private SystemDiscoveryService $discoveryService;
-    // private ThemeService $themeService;
-    // private PluginService $pluginService;
+    private ConfigurationService $configService;
+    private SystemSetupService $setupService;
+    private PluginService $pluginService;
 
-
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $container, ConfigurationService $configService, SystemSetupService $setupService)
     {
         $this->container = $container;
+        $this->configService = $configService;
+        $this->setupService = $setupService;
     }
     
-    private function setTheme(): void
+    private function setupTheme(): void
     {
-        $configService = $this->container->get(ConfigurationService::class);
-        $theme = $configService->get('theme', 'default');
-
+        $theme = $this->configService->get('theme', 'default');
         $loader = $this->container->get(Environment::class)->getLoader();
         if ($loader instanceof FilesystemLoader) {
-            $loader->addPath(__DIR__ . "/../User/Theme/{$theme}", 'Theme');
+            $loader->addPath(__DIR__ . "/../../User/Theme/{$theme}", 'Theme');
         }
     }
 
     public function setupSystem(): void
     {
-        $this->setTheme();
-        // Load plugins
-        $pluginLoader = $this->container->get(PluginService::class);
-        $pluginLoader->loadPlugins();
+        $this->pluginService = $this->container->get(PluginService::class);
         // TODO 1. load system configuration
         // TODO 2 discover themes
         // TODO 3. setup theme
+        $this->setupTheme();
         // TODO 4. discover plugins
         // TODO 5. load plugins
         // TODO 6. persist setup cache
@@ -56,6 +54,7 @@ class KrautSystem
     
     public function loadSystem(): void
     {
+        $this->pluginService->loadPlugins();
 
     }
 

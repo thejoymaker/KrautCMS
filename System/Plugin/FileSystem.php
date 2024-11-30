@@ -7,6 +7,11 @@ namespace Kraut\Plugin;
 
 class FileSystem
 {
+    public static function create(string $pluginDir): FileSystem
+    {
+        return new FileSystem($pluginDir);
+    }
+    
     private string $pluginDir;
 
     private string $pluginName;

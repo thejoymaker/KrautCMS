@@ -63,44 +63,44 @@ class PluginService
 
         $loader = $this->container->get(Environment::class)->getLoader();
 
-        if (false && file_exists($this->cacheFile)) {
-            $this->plugins = include $this->cacheFile;
-        } else {
-            $pluginDirectories = glob($this->pluginDir . '/*', GLOB_ONLYDIR);
+        // if (false && file_exists($this->cacheFile)) {
+        //     $this->plugins = include $this->cacheFile;
+        // } else {
+        $pluginDirectories = glob($this->pluginDir . '/*', GLOB_ONLYDIR);
 
-            foreach ($pluginDirectories as $pluginPath) {
-                $pluginName = basename($pluginPath);
+        foreach ($pluginDirectories as $pluginPath) {
+            $pluginName = basename($pluginPath);
 
-                // Check if the plugin is enabled in the configuration
-                if (!($config[$pluginName] ?? false)) {
-                    continue; // Skip loading this plugin
-                }
+            // Check if the plugin is enabled in the configuration
+            if (!($config[$pluginName] ?? false)) {
+                continue; // Skip loading this plugin
+            }
 
-                $className = "User\\Plugin\\$pluginName\\$pluginName";
-                if (class_exists($className)) {
-                    $plugin = $this->container->get($className);
-                    if ($plugin instanceof PluginInterface) {
-                        $this->plugins[$pluginName] = [
-                            'class' => $className,
-                            'active' => true,
-                        ];
+            $className = "User\\Plugin\\$pluginName\\$pluginName";
+            if (class_exists($className)) {
+                $plugin = $this->container->get($className);
+                if ($plugin instanceof PluginInterface) {
+                    $this->plugins[$pluginName] = [
+                        'class' => $className,
+                        'active' => true,
+                    ];
 
-                        if ($loader instanceof FilesystemLoader) {
-                            $viewPath = $pluginPath . '/View';
-                            $this->container->get(LoggerInterface::class)->info("View path: $viewPath");
-                            if (is_dir($viewPath)) {
-                                $loader->addPath($viewPath, $pluginName);
-                            }
+                    if ($loader instanceof FilesystemLoader) {
+                        $viewPath = $pluginPath . '/View';
+                        $this->container->get(LoggerInterface::class)->info("View path: $viewPath");
+                        if (is_dir($viewPath)) {
+                            $loader->addPath($viewPath, $pluginName);
                         }
-                        $this->eventDispatcher->addSubscriber($plugin);
-                        $plugin->activate(new FileSystem($pluginPath));
                     }
+                    $this->eventDispatcher->addSubscriber($plugin);
+                    $plugin->activate(FileSystem::create($pluginPath));
                 }
             }
+        }
 
             // Cache the plugins
             // file_put_contents($this->cacheFile, '<?php return ' . var_export($this->plugins, true) . ';');
-        }
+        // }
     }
 
     /**
