@@ -5,7 +5,7 @@ declare(strict_types=1);
 
 namespace User\Plugin\HomePagePlugin;
 
-use Kraut\Plugin\ContentProviderInterface;
+use Kraut\Plugin\Content\ContentProviderInterface;
 use Kraut\Plugin\FileSystem;
 use Kraut\Plugin\PluginInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

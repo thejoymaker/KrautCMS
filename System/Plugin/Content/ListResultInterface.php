@@ -3,9 +3,7 @@
 
 declare(strict_types=1);
 
-namespace Kraut\Plugin;
-
-use Kraut\Plugin\ContentEntryInterface;
+namespace Kraut\Plugin\Content;
 
 /**
  * Interface ListResultInterface

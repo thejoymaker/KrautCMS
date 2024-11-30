@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace Kraut\Plugin;
 
+use Kraut\Plugin\Content\ContentProviderInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -59,6 +60,8 @@ interface PluginInterface extends EventSubscriberInterface
     public function getContentProvider(): ?ContentProviderInterface;
 
     /**
+     * This method is only called when the plugin has no manifest file.
+     * 
      * Returns an array of requirements for this plugin.
      *
      * Used to declare any dependencies on other plugins or system components.

@@ -9,7 +9,7 @@ use Kraut\Plugin\PluginInterface;
 use Symfony\Contracts\EventDispatcher\Event;
 use Psr\Log\LoggerInterface;
 use Kraut\Event\ResponseEvent;
-use Kraut\Plugin\ContentProviderInterface;
+use Kraut\Plugin\Content\ContentProviderInterface;
 use Kraut\Plugin\FileSystem;
 
 class WelcomePlugin implements PluginInterface

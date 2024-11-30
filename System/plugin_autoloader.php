@@ -1,28 +1,25 @@
 <?php
+declare(strict_types=1);
+
 // plugins_autoloader.php
 
 class PluginAutoloader
 {
-    private $pluginsDirectory;
-    private $cacheFile;
-    private $classMap = [];
-    private $cacheEnabled = true;
+    private string $pluginsDirectory;
+    private array $namespaceMap = [];
+    private bool $cacheEnabled;
+    private string $cacheFile;
 
-    public function __construct($pluginsDirectory = null, $cacheEnabled = true)
+    public function __construct(string $pluginsDirectory = null, bool $cacheEnabled = true)
     {
         $this->pluginsDirectory = $pluginsDirectory ?: __DIR__ . '/plugins';
-        $this->cacheFile = sys_get_temp_dir() . '/plugin_classmap.php';
         $this->cacheEnabled = $cacheEnabled;
+        $this->cacheFile = sys_get_temp_dir() . '/plugin_psr4_autoload.php';
 
-        $this->initialize();
-    }
-
-    private function initialize()
-    {
         if ($this->cacheEnabled && $this->isCacheValid()) {
-            $this->loadClassMapFromCache();
+            $this->loadNamespaceMapFromCache();
         } else {
-            $this->buildClassMap();
+            $this->buildNamespaceMap();
             if ($this->cacheEnabled) {
                 $this->writeCache();
             }
@@ -31,7 +28,7 @@ class PluginAutoloader
         $this->registerAutoloader();
     }
 
-    private function isCacheValid()
+    private function isCacheValid(): bool
     {
         if (!file_exists($this->cacheFile)) {
             return false;
@@ -43,7 +40,7 @@ class PluginAutoloader
         return $cacheMTime >= $pluginsMTime;
     }
 
-    private function getPluginsModificationTime()
+    private function getPluginsModificationTime(): int
     {
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($this->pluginsDirectory, FilesystemIterator::SKIP_DOTS)
@@ -51,6 +48,7 @@ class PluginAutoloader
 
         $maxMTime = 0;
         foreach ($iterator as $file) {
+            /** @var SplFileInfo $file */
             $mtime = $file->getMTime();
             if ($mtime > $maxMTime) {
                 $maxMTime = $mtime;
@@ -60,74 +58,58 @@ class PluginAutoloader
         return $maxMTime;
     }
 
-    private function loadClassMapFromCache()
+    private function loadNamespaceMapFromCache(): void
     {
-        $this->classMap = require $this->cacheFile;
+        $this->namespaceMap = require $this->cacheFile;
     }
 
-    private function buildClassMap()
+    private function buildNamespaceMap(): void
     {
-        $this->classMap = [];
-        $directoryIterator = new RecursiveDirectoryIterator(
-            $this->pluginsDirectory,
-            FilesystemIterator::SKIP_DOTS
-        );
-        $iterator = new RecursiveIteratorIterator($directoryIterator);
-
-        foreach ($iterator as $file) {
-            if ($file->isFile() && $file->getExtension() === 'php') {
-                $classes = $this->getClassesFromFile($file->getPathname());
-                foreach ($classes as $class) {
-                    $this->classMap[$class] = $file->getPathname();
+        $this->namespaceMap = [];
+        foreach (glob($this->pluginsDirectory . '/*', GLOB_ONLYDIR) as $pluginDir) {
+            $manifestFile = $pluginDir . '/plugin.json';
+            if (file_exists($manifestFile)) {
+                $manifest = json_decode(file_get_contents($manifestFile), true);
+                if (isset($manifest['autoload']['psr-4'])) {
+                    foreach ($manifest['autoload']['psr-4'] as $namespace => $path) {
+                        $baseDir = realpath($pluginDir . '/' . $path);
+                        if ($baseDir) {
+                            $this->namespaceMap[$namespace] = $baseDir . '/';
+                        }
+                    }
+                }
+            } else {
+                // Default to plugin directory name as namespace and 'src/' as base directory
+                $pluginName = basename($pluginDir);
+                $namespace = $pluginName . '\\';
+                $baseDir = realpath($pluginDir . '/src');
+                if ($baseDir) {
+                    $this->namespaceMap[$namespace] = $baseDir . '/';
                 }
             }
         }
     }
 
-    private function getClassesFromFile($file)
+    private function writeCache(): void
     {
-        $contents = file_get_contents($file);
-        $tokens = token_get_all($contents);
-
-        $namespace = '';
-        $classes = [];
-        $i = 0;
-
-        while ($i < count($tokens)) {
-            if ($tokens[$i][0] === T_NAMESPACE) {
-                $namespace = '';
-                $i += 2; // Skip namespace keyword and whitespace
-                while ($tokens[$i][0] !== T_WHITESPACE && $tokens[$i] !== ';') {
-                    $namespace .= is_array($tokens[$i]) ? $tokens[$i][1] : $tokens[$i];
-                    $i++;
-                }
-            }
-
-            if ($tokens[$i][0] === T_CLASS) {
-                $i += 2; // Skip class keyword and whitespace
-                $className = $tokens[$i][1];
-                $fullClassName = ($namespace ? $namespace . '\\' : '') . $className;
-                $classes[] = $fullClassName;
-            }
-
-            $i++;
-        }
-
-        return $classes;
-    }
-
-    private function writeCache()
-    {
-        $exported = var_export($this->classMap, true);
+        $exported = var_export($this->namespaceMap, true);
         $content = "<?php\nreturn $exported;\n";
         file_put_contents($this->cacheFile, $content, LOCK_EX);
     }
 
-    private function registerAutoloader()
+    private function registerAutoloader(): void
     {
-        spl_autoload_register(function ($class) {
-            if (isset($this->classMap[$class])) {
-                require $this->classMap[$class];
+        spl_autoload_register(function (string $class): void {
+            foreach ($this->namespaceMap as $prefix => $baseDir) {
+                if (strpos($class, $prefix) === 0) {
+                    $relativeClass = substr($class, strlen($prefix));
+                    $file = $baseDir . str_replace('\\', '/', $relativeClass) . '.php';
+
+                    if (file_exists($file)) {
+                        require $file;
+                    }
+                    return;
+                }
             }
         });
     }
@@ -135,4 +117,3 @@ class PluginAutoloader
 
 // Initialize the plugin autoloader
 // new PluginAutoloader();
-?>

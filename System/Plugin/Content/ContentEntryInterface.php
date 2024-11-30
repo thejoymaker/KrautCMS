@@ -1,9 +1,9 @@
 <?php
-// System/ContentProvider/ContentProviderServiceInterface.php
+// System/Plugin/Content/ContentEntryInterface.php
 
 declare(strict_types=1);
 
-namespace Kraut\Plugin;
+namespace Kraut\Plugin\Content;
 /**
  * Interface ContentEntryInterface
  *
