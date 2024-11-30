@@ -40,7 +40,7 @@ class KrautSystem
         }
     }
 
-    public function setupSystem(): void
+    public function discover(): void
     {
         $this->pluginService = $this->container->get(PluginService::class);
         // TODO 1. load system configuration
@@ -52,13 +52,13 @@ class KrautSystem
         // TODO 6. persist setup cache
     }
     
-    public function loadSystem(): void
+    public function load(): void
     {
         $this->pluginService->loadPlugins();
 
     }
 
-    public function runSystem(string $method, string $uri): ResponseInterface
+    public function run(string $method, string $uri): ResponseInterface
     {
         // Normalize the URI
         $uri = parse_url($uri, PHP_URL_PATH);

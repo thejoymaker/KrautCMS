@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace User\Plugin\UserPlugin\Middleware;
 
+use Kraut\Controller\ResponseUtil;
 use Kraut\Service\RouteService;
 use User\Plugin\UserPlugin\Service\AuthenticationService;
 use Psr\Http\Message\ServerRequestInterface;
@@ -36,7 +37,7 @@ class AuthenticationMiddleware implements MiddlewareInterface
         if ($route && !empty($route->roles)) {
             // Check if user has any of the required roles
             if (!$user || empty(array_intersect($user->getRoles(), $route->roles))) {
-                return new Response(302, ['Location' => '/login']);
+                return ResponseUtil::redirectTemporary('/login');
             }
         }
 

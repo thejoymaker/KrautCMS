@@ -1,0 +1,11 @@
+
+{
+    "name": "Welcome Plugin",
+    "version": "1.0.0",
+    "type": "cms-plugin",
+    "license": "MIT",
+    "compatible_with": {
+      "cms_version": ">=1.0.0,<2.0.0"
+    },
+    
+}

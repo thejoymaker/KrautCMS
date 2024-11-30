@@ -1,0 +1,16 @@
+{
+    "kraut": {
+        "debug":  true,
+        "theme": {
+            "name": "default"
+        },
+        "caching": {
+            "enabled": true,
+            "maxAge": 3600
+        },
+        "logging": {
+            "enabled": true,
+            "level": "info"
+        }
+    }
+}

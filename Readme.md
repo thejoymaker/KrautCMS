@@ -51,6 +51,159 @@ The core should remain as small and simple as possible. Plugins can be created t
 * reside in `User\Plugin` namespace.
 * follow the naming convention: `User\Plugin\[MyPlugin]\[MyPlugin]`.php
 * implement the interface `Kraut\Plugin\PluginInterface` (which extends `Symfony\Component\EventDispatcher\EventSubscriberInterface`)
+* declare a manifest file called `[MyPlugin].json`
+
+#### Required Manifest File Fields _WIP_
+
+```json
+{
+  "name": "MyPlugin",
+  "version": "1.2.0",
+  "type": "cms-plugin",
+  "license": "MIT",
+  "compatible_with": {
+    "cms_version": ">=1.0.0,<2.0.0"
+  },
+  "routes": [ "/my-endpoint-path/*" ],
+}
+
+```
+
+#### Recommended Manifest File Fields / NIY
+
+```json
+
+  "description": "Adds advanced search capabilities to your CMS.",
+
+```
+
+```json
+
+  "keywords": ["search", "CMS", "plugin", "advanced"],
+
+```
+
+#### Documentation / NIY
+
+```json
+
+  "changelog": {
+    "1.0.0": "Initial release.",
+    "1.1.0": "Added new search filters.",
+    "1.2.0": "Fixed compatibility issues with CMS v1.5."
+  },
+
+```
+
+#### Declaring dependencies / NIY
+
+**Kraut Core Version**
+
+```json
+
+  "compatible_with": {
+    "kraut_version": ">=1.0.0,<2.0.0"
+  },
+
+```
+
+**Other Plugins**
+
+```json
+
+  "dependencies": {
+    "AnotherPlugin": "^2.0"
+  },
+
+```
+
+**PHP Version**
+
+```json
+
+  "require": {
+    "php": ">=7.4",
+    "ext-json": "*"
+  },
+
+```
+
+**PHP Extensions**
+
+```json
+
+  "environment": {
+    "extensions": ["mbstring", "curl"]
+  }
+
+```
+
+#### Authorship / NIY
+
+```json
+
+  "authors": [
+    {
+      "name": "Jane Doe",
+      "email": "jane.doe@example.com",
+      "homepage": "https://www.janedoe.com",
+      "role": "Developer"
+    }
+  ],
+
+```
+
+#### Support / NIY
+
+```json
+
+  "homepage": "https://github.com/username/myplugin",
+  "support": {
+    "email": "support@example.com",
+    "issues": "https://github.com/username/myplugin/issues",
+    "wiki": "https://github.com/username/myplugin/wiki"
+  },
+
+```
+
+#### PSR-4 Namespace / _WIP_
+
+```json
+
+  "autoload": {
+    "psr-4": {
+      "MyPlugin\\": "lib/"
+    }
+  },
+
+```
+
+#### i18n / GUI Labels / NIY
+
+```json
+
+  "languages": {
+    "en": "lang/en.json",
+    "es": "lang/es.json"
+  },
+
+```
+
+#### User Management / _WIP_
+
+```json
+
+  "roles": ["client", "editor", "admin"],
+
+```
+
+#### Icon / NIY
+
+```json
+
+  "icon": "assets/images/icon.png",
+
+```
 
 #### FS Organization
 
@@ -70,13 +223,8 @@ KrautCMS
             │   └── MyService.php
             ├── View
             │   └── my-view.html.twig
+            ├── MyPlugin.json
             └── MyPlugin.php
 
 
 ```
-
-To install the plugin it must be entered in `User\Config\Plugins`.
-
-If the plugin has own config files they should be stored in: `User/Config/MyPlugin/MyPluginConfig.php`
-
-If the plugin persists any content data then it should store it under `User/Content/MyPlugin`

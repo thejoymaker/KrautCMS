@@ -77,9 +77,9 @@ class Kernel
      */
     public function handle(string $method, string $uri): ResponseInterface
     {
-        $this->system->setupSystem();
-        $this->system->loadSystem();
-        return $this->system->runSystem($method, $uri);
+        $this->system->discover();
+        $this->system->load();
+        return $this->system->run($method, $uri);
     }
 }
 ?>
