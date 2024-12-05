@@ -5,10 +5,8 @@ declare(strict_types=1);
 
 namespace Kraut\Service;
 
+use Kraut\Util\TimeUtil;
 use Psr\Container\ContainerInterface;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-use SplFileInfo;
 
 /**
  * Class CacheService
@@ -63,7 +61,7 @@ class CacheService
 
     private function loadCached(string $cacheFile, callable $loader, String $resource): array
     {
-        $maxFileTime = $this->getMaxFileTime($resource);
+        $maxFileTime = TimeUtil::maxFileMTime($resource);
         $cacheFileTime = file_exists($cacheFile) ? filemtime($cacheFile) : 0;
         if ($cacheFileTime >= $maxFileTime) {
             echo "Loading from cache " . date("d-m-Y H:i:s", $maxFileTime) . " < " . date("d-m-Y H:i:s", $cacheFileTime) . "<br>\n";
@@ -86,22 +84,6 @@ class CacheService
         }
         file_put_contents($cacheFile, '<?php return ' . var_export($data, true) . '; ?>');
         return $data;
-    }
-
-    private function getMaxFileTime(string $resource): int
-    {
-        if(is_dir($resource)) {
-            $directory = new RecursiveDirectoryIterator($resource);
-            $iterator = new RecursiveIteratorIterator($directory);
-            $maxFileTime = 0;
-            /** @var SplFileInfo $file */
-            foreach ($iterator as $file) {
-                $maxFileTime = max($maxFileTime, filemtime($file->getPathname()));
-            }
-            return $maxFileTime;
-        } else {
-            return filemtime($resource);
-        }
     }
 }
 ?>
