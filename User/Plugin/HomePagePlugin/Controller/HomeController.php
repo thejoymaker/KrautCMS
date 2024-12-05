@@ -39,7 +39,7 @@ class HomeController
         return ResponseUtil::respondRelative($this->twig, 'Theme', 'home', []);
     }
 
-    #[Route(path: '/hello[/{name}]', methods: ['GET'])]
+    #[Route(path: '/hello[/{name}]', methods: ['GET'], roles: ['user'])]
     public function hello(ServerRequestInterface $request, array $args): ResponseInterface
     {
         $name = $args['name'] ?? 'Guest';

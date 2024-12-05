@@ -67,12 +67,72 @@ class PagesController
         return $pages;
     }
 
-    #[Route(path: '/pages/{slug:[a-zA-Z0-9\-]+}/edit', methods: ['GET'])]
+    #[Route(path: '/pages/{slug:[a-zA-Z0-9\-]+}/edit', methods: ['GET', 'POST'], roles: ['editor'])]
     public function editPage(ServerRequestInterface $request, array $args): ResponseInterface
     {
-        // Implement the edit page functionality
-        // ...
-        return new Response(500, [], 'NIY');
+        $slug = $args['slug'] ?? '';
+
+        // Fetch the page content based on slug
+        $page = $this->getPageContent($slug);
+
+        if ($page === null) {
+            return new Response(404, [], 'Page not found');
+        }
+
+        if ($request->getMethod() === 'POST') {
+            $parsedBody = $request->getParsedBody();
+            $content = $parsedBody['content'] ?? '';
+
+            // Save the content to file
+            $this->savePageContent($slug, $content);
+
+            // Redirect to the page view
+            return new Response(302, ['Location' => $this->generateUrl('page_show', ['slug' => $slug])]);
+        }
+
+        // Render the editor template
+        return ResponseUtil::respondRelative(
+            $this->twig,
+            'PagesPlugin',
+            'editor',
+            ['page' => [
+                'id' => $slug,
+                'title' => $page['title'],
+                'content' => $page['content'],
+            ]]
+        );
+    }
+
+    private function savePageContent(string $slug, string $content): void
+    {
+        // Define the path to your content files
+        $contentDir = __DIR__ . '/../../../Content/PagesPlugin/pages';
+
+        // Sanitize the slug to prevent directory traversal
+        $safeSlug = basename($slug);
+
+        // Construct the file path
+        $filePath = $contentDir . '/' . $safeSlug . '/content.txt';
+
+        // Ensure the directory exists
+        if (!is_dir(dirname($filePath))) {
+            mkdir(dirname($filePath), 0777, true);
+        }
+
+        // Write the content to the file
+        file_put_contents($filePath, $content);
+    }
+
+    private function generateUrl(string $routeName, array $parameters = []): string
+    {
+        // Use the same logic as in your PageRoutingExtension
+        switch ($routeName) {
+            case 'page_show':
+                $slug = $parameters['slug'] ?? '';
+                return '/pages/' . urlencode($slug);
+            default:
+                return '/';
+        }
     }
 
     #[Route(path: '/pages/{slug:[a-zA-Z0-9\-]+}', methods: ['GET'])]

@@ -192,8 +192,18 @@ class PluginService
             }
             foreach ($routeMap as $httpMethod => $routes) {
                 foreach ($routes as $routePath => $info) {
-                    if ($routePath === $path && $httpMethod === $method) {
-                        $roles = array_merge($roles, $info['roles']);
+                    $sanePath = str_replace('[', '(', $routePath);
+                    $sanePath = str_replace(']', ')?', $sanePath);
+                    $pattern = preg_replace('/\{[^{}]*\}/', '([^/]+)', $sanePath);
+                    // Escape delimiter in route (if using '/' as delimiter)
+                    $pattern = str_replace('/', '\/', $pattern);
+                    // Build the final regex pattern
+                    $regex = '/^' . $pattern . '$/';
+                    // echo "Pattern: $regex\n<br>";
+                    if (preg_match($regex, $path) && $httpMethod === $method) {
+                        if (isset($info['roles'])) {
+                            $roles = array_merge($roles, $info['roles']);
+                        }
                     }
                 }
             }
