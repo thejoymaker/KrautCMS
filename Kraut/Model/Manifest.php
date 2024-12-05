@@ -5,24 +5,11 @@ namespace Kraut\Model;
 use Kraut\Util\ArrayUtil;
 
 class Manifest {
-    //  manifest.json
-    // {
-    //     "name": "Kraut CMS",
-    //     "cms_version": "1.0.0",
-    //     "type": "cms",
-    //     "license": "MIT",
-    //     "required": {
-    //         "php_version": "8.0.0",
-    //         "php_modules": {
-    //             "json": "*"
-    //         }
-    //     }
-    // }
     private array $manifestData;
 
     public static function __set_state($array) 
     {
-        return new self($array);
+        return new self($array['manifestData']);
     }
     
     public function __construct($input) {
@@ -33,13 +20,6 @@ class Manifest {
         } else {
             throw new \Exception('Invalid input');
         }
-        // $manifestData = json_decode(file_get_contents($filePath), true);
-        // $this->name = $manifestData['name'];
-        // $this->cms_version = $manifestData['cms_version'];
-        // $this->type = $manifestData['type'];
-        // $this->license = $manifestData['license'];
-        // $this->requiredPhpVersion = $manifestData['required']['php_version'];
-        // $this->requiredPhpModules = $manifestData['required']['php_modules'];
     }
 
     public function getName() : string {
@@ -47,30 +27,23 @@ class Manifest {
     }
 
     public function getCmsVersion() : string {
-        // return $this->cms_version;
         return $this->manifestData['cms_version'];
     }
 
     public function getType() : string {
-        // return $this->type;
         return $this->manifestData['type'];
     }
 
     public function getLicense() : string {
-        // return $this->license;
         return $this->manifestData['license'];
     }
 
     public function getRequiredPhpVersion() : ?string {
-        // return $this->requiredPhpVersion;
         return $this->manifestData['required']['php_version'];
     }
 
     public function getRequiredPhpModules() : array {
-        // return $this->requiredPhpModules;
-        // return $this->manifestData['required']['php_modules'];
-        $key = 'required.php_modules';
-        return $this->get($key);
+        return $this->manifestData['required']['php_modules'];
     }
 
     /**
