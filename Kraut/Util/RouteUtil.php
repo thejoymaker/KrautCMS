@@ -1,9 +1,8 @@
 <?php
-// System/Service/RouteService.php
 
 declare(strict_types=1);
 
-namespace Kraut\Service;
+namespace Kraut\Util;
 
 use Kraut\Attribute\Controller;
 use Kraut\Attribute\Route;
@@ -12,25 +11,26 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
 use ReflectionMethod;
+
 /**
- * Class RouteService
+ * Class RouteUtil
  *
- * Service responsible for discovering routes.
- * It scans directories for controller classes and registers their routes.
+ * Utility class for discovering routes.
  */
-class RouteService
+class RouteUtil
 {
+
     /**
      * Discovers routes from a controller directory.
      *
      * @param string $controllerPath The path to the controller directory.
      */
-    public function discoverRoutes(string $controllerPath): RouteModel
+    public static function discoverRoutes(string $controllerPath): RouteModel
     {
         $model = new RouteModel();
         $pluginName = basename(realpath($controllerPath . '/..'));
         $controllerNamespace = 'User\\Plugin\\' . $pluginName . '\\Controller\\';
-        $this->loadRoutesFromDirectory($controllerPath, $controllerNamespace, $model);
+        self::loadRoutesFromDirectory($controllerPath, $controllerNamespace, $model);
         return $model;
     }
 
@@ -41,7 +41,7 @@ class RouteService
      * @param string $namespace The namespace of the controllers.
      * @param RouteModel $model The route model to load routes into.
      */
-    private function loadRoutesFromDirectory(string $directory, string $namespace, RouteModel $model): void
+    private static function loadRoutesFromDirectory(string $directory, string $namespace, RouteModel $model): void
     {
         if (!is_dir($directory)) {
             return;
@@ -52,7 +52,7 @@ class RouteService
             if ($file->isFile() && $file->getExtension() === 'php') {
                 $className = $namespace . $file->getBasename('.php');
                 if (class_exists($className)) {
-                    $this->registerRoutesFromClass($className, $model);
+                    self::registerRoutesFromClass($className, $model);
                 }
             }
         }
@@ -64,7 +64,7 @@ class RouteService
      * @param string $className The fully qualified class name of the controller.
      * @param RouteModel $model The route model to load routes into.
      */
-    private function registerRoutesFromClass(string $className, RouteModel $model): void
+    private static function registerRoutesFromClass(string $className, RouteModel $model): void
     {
         $reflectionClass = new ReflectionClass($className);
         if (!$reflectionClass->getAttributes(Controller::class)) {
@@ -86,4 +86,6 @@ class RouteService
         }
     }
 }
+
+
 ?>

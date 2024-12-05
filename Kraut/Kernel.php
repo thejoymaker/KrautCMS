@@ -65,8 +65,7 @@ class Kernel
                     $c,
                     $c->get(EventDispatcherInterface::class),
                     $c->get(ConfigurationService::class),
-                    $c->get(CacheService::class),
-                    $c->get(RouteService::class)
+                    $c->get(CacheService::class)
                 );
             },
         ]);

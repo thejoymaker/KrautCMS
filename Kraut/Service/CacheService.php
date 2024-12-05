@@ -34,6 +34,8 @@ class CacheService
      * @var string The plugin cache file.
      */
     private string $pluginCacheFile;
+
+    private string $fastRouteCacheFile;
     
     public function __construct(ContainerInterface $container)
     {
@@ -41,6 +43,7 @@ class CacheService
         $this->configCacheFile = $this->cacheDir . 'System/config.cache.php';
         // $this->themeCacheFile = $this->cacheDir . 'System/theme.cache.php';
         $this->pluginCacheFile = $this->cacheDir . 'System/plugin.cache.php';
+        $this->fastRouteCacheFile = $this->cacheDir . 'System/fastroute.cache.php';
         $this->cacheEnabled = isset($_ENV['CACHE_ENABLED']) ? $_ENV['CACHE_ENABLED'] === 'true' : false;
     }
 
@@ -69,9 +72,14 @@ class CacheService
         switch($cacheFile) {
             case $this->configCacheFile:
                 // Clear the plugin cache if the config cache is being rebuilt
-                unlink($this->pluginCacheFile);
+                if(file_exists($this->pluginCacheFile)){
+                    unlink($this->pluginCacheFile);
+                }
+                break;
             case $this->pluginCacheFile:
-                // TODO unlink the route cache if the plugin cache is being rebuilt
+                if(file_exists($this->fastRouteCacheFile)){
+                    unlink($this->fastRouteCacheFile);
+                }
                 break;
         }
         $data = call_user_func($loader);

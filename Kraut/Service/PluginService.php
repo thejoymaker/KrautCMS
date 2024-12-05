@@ -12,6 +12,7 @@ use Kraut\Plugin\FileSystem;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Kraut\Plugin\PluginInterface;
+use Kraut\Util\RouteUtil;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
@@ -34,15 +35,13 @@ class PluginService
      * @param EventDispatcherInterface $eventDispatcher The event dispatcher.
      * @param ConfigurationService $configService The configuration service.
      * @param CacheService $cacheService The cache service.
-     * @param RouteService $routeService The route service.
      */
     public function __construct(
         private string $pluginDir,
         private ContainerInterface $container,
         private EventDispatcherInterface $eventDispatcher,
         private ConfigurationService $configService,
-        private CacheService $cacheService,
-        private RouteService $routeService
+        private CacheService $cacheService
     ) {
     }
 
@@ -79,7 +78,7 @@ class PluginService
             if (!is_dir($controllersPath)) {
                 $controllersPath = null;
             } else {
-                $pluginRoutes = $this->routeService->discoverRoutes($controllersPath);
+                $pluginRoutes = RouteUtil::discoverRoutes($controllersPath);
             }
 
             $pluginNameLower = strtolower($pluginName);
@@ -120,7 +119,6 @@ class PluginService
             if (!$pluginInfo->isActive()) {
                 continue; // Skip loading this plugin
             }
-
             $className = "User\\Plugin\\$pluginName\\$pluginName";
             if (class_exists($className)) {
                 $plugin = $this->container->get($className);
@@ -204,7 +202,7 @@ class PluginService
     }
 
     /**
-     * Get the maximum required PHP version for all plugins.
+     * Get the maximum required PHP version of all active plugins.
      *
      * @param string $systemRequiredVersion
      *   The system required PHP version.
@@ -216,6 +214,9 @@ class PluginService
     {
         $maxVersion = $systemRequiredVersion;
         foreach ($this->pluginModel as $pluginName => $pluginInfo) {
+            if (!$pluginInfo->isActive()) {
+                continue;
+            }
             $requiredVersion = $pluginInfo->getManifest()->getRequiredPhpVersion();
             if(is_null($requiredVersion)) {
                 continue;
@@ -228,12 +229,15 @@ class PluginService
     }
 
     /**
-     * Get the required PHP extensions for all plugins.
+     * Get the required PHP extensions for all active plugins.
      */
     public function getRequiredExtensions(): array
     {
         $extensions = [];
         foreach ($this->pluginModel as $pluginName => $pluginInfo) {
+            if (!$pluginInfo->isActive()) {
+                continue;
+            }
             $requiredExtensions = $pluginInfo->getManifest()->getRequiredPhpModules();
             foreach ($requiredExtensions as $extension => $version) {
                 if (!in_array($extension, $extensions)) {

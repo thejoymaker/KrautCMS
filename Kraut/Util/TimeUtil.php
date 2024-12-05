@@ -5,6 +5,7 @@ namespace Kraut\Util;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use SplFileInfo;
 
 class TimeUtil
 {

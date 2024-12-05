@@ -20,12 +20,10 @@ use function FastRoute\cachedDispatcher;
 class RoutingMiddleware implements MiddlewareInterface
 {
     private Dispatcher $dispatcher;
-    private ContainerInterface $container;
+    // private ContainerInterface $container;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container, private PluginService $pluginService)
     {
-        $this->container = $container;
-
         $this->dispatcher = cachedDispatcher(function (RouteCollector $routeCollector) {
             // $routeLoader = new RouteLoader($this->container);
             /**
@@ -34,8 +32,8 @@ class RoutingMiddleware implements MiddlewareInterface
             $routeLoader = $this->container->get(PluginService::class);
             $routeLoader->collectRoutes($routeCollector);
         }, [
-            'cacheFile' => __DIR__ . '/../../Cache/route.cache',
-            'cacheDisabled' => true,
+            'cacheFile' => __DIR__ . '/../../Cache/System/fastroute.cache.php',
+            'cacheDisabled' => $_ENV['CACHE_ENABLED'] !== 'true',
         ]);
     }
 
