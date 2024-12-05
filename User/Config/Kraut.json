@@ -1,14 +1,13 @@
 {
     "kraut": {
-        "debug":  true,
         "theme": {
             "name": "default"
         },
-        "caching": {
-            "enabled": true,
+        "cache": {
+            "enabled": false,
             "maxAge": 3600
         },
-        "logging": {
+        "log": {
             "enabled": true,
             "level": "info"
         }

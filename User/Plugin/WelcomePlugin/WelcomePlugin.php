@@ -11,14 +11,17 @@ use Psr\Log\LoggerInterface;
 use Kraut\Event\ResponseEvent;
 use Kraut\Plugin\Content\ContentProviderInterface;
 use Kraut\Plugin\FileSystem;
+use Kraut\Service\ConfigurationService;
+use PSpell\Config;
 
 class WelcomePlugin implements PluginInterface
 {
     private LoggerInterface $logger;
-
-    public function __construct(LoggerInterface $logger)
+    private ConfigurationService $configService;
+    public function __construct(LoggerInterface $logger, ConfigurationService $configService)
     {
         $this->logger = $logger;
+        $this->configService = $configService;
     }
 
     public static function getSubscribedEvents(): array
@@ -52,7 +55,7 @@ class WelcomePlugin implements PluginInterface
     {
         $response = $event->getResponse();
         $content = $response->getBody()->__toString();
-        $content .= '<!-- WelcomePlugin Footer -->';
+        $content .= '<!-- '.$this->configService->get("WelcomePlugin.content").' -->';
 
         // Create a new response with the modified content
         $newResponse = $response->withBody(\Nyholm\Psr7\Stream::create($content));

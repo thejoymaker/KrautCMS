@@ -7,6 +7,7 @@ namespace Kraut\Middleware;
 
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
+use Kraut\Service\PluginService;
 use Kraut\Service\RouteService;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Container\ContainerInterface;
@@ -27,11 +28,14 @@ class RoutingMiddleware implements MiddlewareInterface
 
         $this->dispatcher = cachedDispatcher(function (RouteCollector $routeCollector) {
             // $routeLoader = new RouteLoader($this->container);
-            $routeLoader = $this->container->get(RouteService::class);
-            $routeLoader->loadRoutes($routeCollector);
+            /**
+             * @var PluginService $routeLoader
+             */
+            $routeLoader = $this->container->get(PluginService::class);
+            $routeLoader->collectRoutes($routeCollector);
         }, [
             'cacheFile' => __DIR__ . '/../../Cache/route.cache',
-            'cacheDisabled' => false,
+            'cacheDisabled' => true,
         ]);
     }
 

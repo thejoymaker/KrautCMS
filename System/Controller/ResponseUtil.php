@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Kraut\Controller;
 
 use Nyholm\Psr7\Response;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Twig\Environment;
 
@@ -70,6 +71,39 @@ class ResponseUtil
         $response->getBody()->write($content);
         return $response;
     }
-}
 
+    public static function respondError(\Throwable $e, ContainerInterface $container): ResponseInterface
+    {
+        $twig = $container->get(Environment::class);
+        $content = $twig->render('error.html.twig', ['error' => $e->getMessage()]);
+        $response = new Response(500);
+        $response->getBody()->write($content);
+        return $response;
+    }
+
+    public static function respondErrorDetailed(\Throwable $e, ContainerInterface $container): ResponseInterface
+    {
+        $twig = $container->get(Environment::class);
+        $trace = $e->getTrace();
+        $content = $twig->render('error.html.twig', [
+            'error' => $e->getMessage(),
+            'stack_trace' => $trace
+        ]);
+        $response = new Response(500);
+        $response->getBody()->write($content);
+        return $response;
+    }
+
+    public static function respondRequirementsError(ContainerInterface $container, array $missingModules, string $requirementsMessage = null): ResponseInterface
+    {
+        $twig = $container->get(Environment::class);
+        $content = $twig->render('requirements-error.html.twig', [
+            'requirements_message' => $requirementsMessage,
+            'missing_modules' => $missingModules
+        ]);
+        $response = new Response(500);
+        $response->getBody()->write($content);
+        return $response;
+    }
+}
 ?>

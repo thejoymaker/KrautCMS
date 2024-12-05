@@ -5,11 +5,15 @@ declare(strict_types=1);
 
 namespace Kraut\Service;
 
+use FastRoute\RouteCollector;
+use Kraut\Model\Manifest;
+use Kraut\Model\PluginInfo;
 use Kraut\Plugin\FileSystem;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Kraut\Plugin\PluginInterface;
 use Monolog\Logger;
+use PSpell\Config;
 use Psr\Log\LoggerInterface;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
@@ -25,8 +29,11 @@ class PluginService
     private string $pluginDir;
     private ContainerInterface $container;
     private EventDispatcherInterface $eventDispatcher;
-    private string $cacheFile;
-    private array $plugins = [];
+    private ConfigurationService $configService;
+    private CacheService $cacheService;
+    private RouteService $routeService;
+    /** @var array<string,PluginInfo> */
+    private array $pluginModel = [];
 
     /**
      * PluginService constructor.
@@ -41,38 +48,108 @@ class PluginService
     public function __construct(
         string $pluginDir,
         ContainerInterface $container,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        ConfigurationService $configService
     ) {
         $this->pluginDir = $pluginDir;
         $this->container = $container;
         $this->eventDispatcher = $eventDispatcher;
-        $this->cacheFile = __DIR__ . '/../../Cache/plugin_cache.php';
+        // $this->cacheFile = __DIR__ . '/../../Cache/plugin_cache.php';
+        $this->configService = $configService;
+        $this->cacheService = $container->get(CacheService::class);
+        $this->routeService = $container->get(RouteService::class);
+    }
+
+    public function collectRoutes(RouteCollector $routeCollector): void
+    {
+        foreach ($this->pluginModel as $pluginName => $pluginInfo) {
+            if (!$pluginInfo->isActive()) {
+                continue;
+            }
+            $routeMap = $pluginInfo->getRouteModel()?->getRouteMap();
+            if (!$routeMap) {
+                continue;
+            }
+            foreach ($routeMap as $httpMethod => $routes) {
+                foreach ($routes as $path => $info) {
+                    $routeCollector->addRoute($httpMethod, $path, $info['handler']);
+                }
+            }
+        }
+        // $routeMap = $this->routeModel->getRouteMap();
+        // foreach ($routeMap as $httpMethod => $routes) {
+        //     foreach ($routes as $path => $info) {
+        //         $routeCollector->addRoute($httpMethod, $path, $info['handler']);
+        //     }
+        // }
+        // $this->routeCollector = $routeCollector;
+    }
+
+    public function discoverPlugins() {
+        $this->pluginModel = $this->cacheService->loadCachedPluginModel([$this, 'initializeModel'], 
+            $this->pluginDir);
     }
 
     /**
-     * Loads plugins from the plugin directory.
+     * Initialize the plugin model. called by CacheService. Do not call directly!
      *
-     * This method scans the plugin directory, loads plugin classes, and activates them if they implement the PluginInterface.
-     * It also caches the loaded plugins to improve performance.
-     *
-     * @return void
+     * @return array The plugin model.
      */
-    public function loadPlugins(): void
+    public function initializeModel(): array
     {
-        $config = require __DIR__ . '/../../User/Config/Plugins.php';
-
-        $loader = $this->container->get(Environment::class)->getLoader();
-
-        // if (false && file_exists($this->cacheFile)) {
-        //     $this->plugins = include $this->cacheFile;
-        // } else {
+        // $routeModel = $this->routeService->discoverRoutes();
+        // $this->pluginConfig = $this->cacheService->loadCachedConfig();
+        $plugins = [];
         $pluginDirectories = glob($this->pluginDir . '/*', GLOB_ONLYDIR);
-
         foreach ($pluginDirectories as $pluginPath) {
             $pluginName = basename($pluginPath);
+            $manifestFile = $pluginPath . "/{$pluginName}.json";
+            if(!file_exists($manifestFile)) {
+                continue;
+            }
+            $manifest = new Manifest($pluginPath . "/{$pluginName}.json");
+            $viewsPath = $pluginPath . '/View';
+            if (!is_dir($viewsPath)) {
+                $viewsPath = null;
+            }
+            $controllersPath = $pluginPath . '/Controller';
+            $pluginRoutes = null;
+            if (!is_dir($controllersPath)) {
+                $controllersPath = null;
+            } else {
+                $pluginRoutes = $this->routeService->discoverRoutes($controllersPath);
+            }
 
+            $pluginNameLower = strtolower($pluginName);
+            $active = $this->configService->get("{$pluginNameLower}.active", null);
+            if ($active === null) {
+                $defaultConfig = "{$pluginPath}/default.config.json";
+                if(!file_exists($defaultConfig)) {
+                    $defaultConfig = null;
+                }
+                $this->configService->installPluginConfig($pluginName, $defaultConfig);
+                $active = $this->configService->get("{$pluginNameLower}.active", true);
+            }
+            $className = "User\\Plugin\\$pluginName\\$pluginName";
+            $plugins[$pluginName] = new PluginInfo(
+                $className, 
+                $active, 
+                $pluginPath, 
+                $manifest,
+                $viewsPath,
+                $controllersPath,
+                $pluginRoutes
+            );
+        }
+        return $plugins;
+    }
+
+    public function loadPlugins(string $method, string $path): void
+    {
+        $loader = $this->container->get(Environment::class)->getLoader();
+        foreach ($this->pluginModel as $pluginName => $pluginInfo) {
             // Check if the plugin is enabled in the configuration
-            if (!($config[$pluginName] ?? false)) {
+            if (!$pluginInfo->isActive()) {
                 continue; // Skip loading this plugin
             }
 
@@ -80,27 +157,18 @@ class PluginService
             if (class_exists($className)) {
                 $plugin = $this->container->get($className);
                 if ($plugin instanceof PluginInterface) {
-                    $this->plugins[$pluginName] = [
-                        'class' => $className,
-                        'active' => true,
-                    ];
-
-                    if ($loader instanceof FilesystemLoader) {
-                        $viewPath = $pluginPath . '/View';
-                        $this->container->get(LoggerInterface::class)->info("View path: $viewPath");
+                    if ($loader instanceof FilesystemLoader && $pluginInfo->getViews() !== null) {
+                        $viewPath = $pluginInfo->getViews();
+                        // $this->container->get(LoggerInterface::class)->info("View path: $viewPath");
                         if (is_dir($viewPath)) {
                             $loader->addPath($viewPath, $pluginName);
                         }
                     }
                     $this->eventDispatcher->addSubscriber($plugin);
-                    $plugin->activate(FileSystem::create($pluginPath));
+                    $plugin->activate(FileSystem::create($pluginInfo->getPath()));
                 }
             }
         }
-
-            // Cache the plugins
-            // file_put_contents($this->cacheFile, '<?php return ' . var_export($this->plugins, true) . ';');
-        // }
     }
 
     /**
@@ -112,9 +180,9 @@ class PluginService
     public function getActivePluginDirectories(): array
     {
         $activePlugins = [];
-        foreach ($this->plugins as $pluginName => $pluginData) {
-            if ($pluginData['active']) {
-                $activePlugins[] = $this->pluginDir . '/' . $pluginName;
+        foreach ($this->pluginModel as $pluginName => $pluginInfo) {
+            if ($pluginInfo->isActive()) {
+                $activePlugins[] = $pluginInfo->getPath();
             }
         }
         return $activePlugins;
@@ -126,9 +194,38 @@ class PluginService
      * @return array
      *   An array of plugins.
      */
-    public function getPlugins(): array
+    public function getModel(): array
     {
-        return $this->plugins;
+        return $this->pluginModel;
+    }
+
+    public function getMaxRequiredPhpVersion(string $systemRequiredVersion): string
+    {
+        $maxVersion = $systemRequiredVersion;
+        foreach ($this->pluginModel as $pluginName => $pluginInfo) {
+            $requiredVersion = $pluginInfo->getManifest()->getRequiredPhpVersion();
+            if(is_null($requiredVersion)) {
+                continue;
+            }
+            if (version_compare($requiredVersion, $maxVersion, '>')) {
+                $maxVersion = $requiredVersion;
+            }
+        }
+        return $maxVersion;
+    }
+
+    public function getRequiredExtensions(): array
+    {
+        $extensions = [];
+        foreach ($this->pluginModel as $pluginName => $pluginInfo) {
+            $requiredExtensions = $pluginInfo->getManifest()->getRequiredPhpModules();
+            foreach ($requiredExtensions as $extension => $version) {
+                if (!in_array($extension, $extensions)) {
+                    $extensions[] = $extension;
+                }
+            }
+        }
+        return $extensions;
     }
 }
 ?>

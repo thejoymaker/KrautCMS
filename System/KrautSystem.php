@@ -5,10 +5,12 @@ namespace Kraut;
 
 use DI\Container;
 use DI\ContainerBuilder;
+use Kraut\Model\Manifest;
 use Kraut\Service\ConfigurationService;
 use Kraut\Service\PluginService;
 use Kraut\Service\SystemDiscoveryService;
 use Kraut\Service\SystemSetupService;
+use Kraut\Service\ThemeService;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -21,14 +23,18 @@ class KrautSystem
 {
     private ContainerInterface $container;
     private ConfigurationService $configService;
-    private SystemSetupService $setupService;
+    private ThemeService $themeService;
     private PluginService $pluginService;
+    private Manifest $manifest;
 
-    public function __construct(ContainerInterface $container, ConfigurationService $configService, SystemSetupService $setupService)
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->configService = $configService;
-        $this->setupService = $setupService;
+        $this->configService = $container->get(ConfigurationService::class);
+        $this->pluginService = $this->container->get(PluginService::class);
+        $this->themeService = $this->container->get(ThemeService::class);
+        $this->manifest = new Manifest(__DIR__ . '/Kraut.json');
+        $this->setupTheme();
     }
     
     private function setupTheme(): void
@@ -36,25 +42,63 @@ class KrautSystem
         $theme = $this->configService->get('theme', 'default');
         $loader = $this->container->get(Environment::class)->getLoader();
         if ($loader instanceof FilesystemLoader) {
-            $loader->addPath(__DIR__ . "/../../User/Theme/{$theme}", 'Theme');
+            $loader->addPath(__DIR__ . "/../User/Theme/{$theme}", 'Theme');
         }
     }
 
     public function discover(): void
     {
-        $this->pluginService = $this->container->get(PluginService::class);
-        // TODO 1. load system configuration
-        // TODO 2 discover themes
-        // TODO 3. setup theme
-        $this->setupTheme();
-        // TODO 4. discover plugins
-        // TODO 5. load plugins
-        // TODO 6. persist setup cache
+        $this->themeService->discoverThemes();
+        $this->pluginService->discoverPlugins();
+    }
+
+    public function requirementsMet(): bool|array|string
+    {
+        if(!is_writable(__DIR__ . '/../Cache')) {
+            return 'The cache directory is not writable.';
+        }
+        $requiredPhpVersion = $this->pluginService->getMaxRequiredPhpVersion($this->manifest->getRequiredPhpVersion());
+        $currentPhpVersion = phpversion();
+        if(version_compare($currentPhpVersion, $requiredPhpVersion, '<')) {
+            return 'Current PHP Version: ' . $currentPhpVersion . ' < Required PHP Version: ' . $requiredPhpVersion;
+        }
+        $requiredExtensions = $this->pluginService->getRequiredExtensions();
+        $systemRequiredExtensions = $this->manifest->getRequiredPhpModules();
+        foreach ($systemRequiredExtensions as $extension => $version) {
+            if (!in_array($extension, $requiredExtensions)) {
+                $extensions[] = $extension;
+            }
+        }
+        foreach ($requiredExtensions as $extension) {
+            if (!extension_loaded($extension)) {
+                $missingExtensions[] = $extension;
+            }
+        }
+        if(!empty($missingExtensions)) {
+            return $missingExtensions;
+        }
+        return true;
+        // return ['some', 'bogus'];
+    }
+
+    public function getMissingModules(Manifest $manifest): array {
+        $missingModules = [];
+        $outdatedModules = [];
+        foreach ($manifest->getRequiredPhpModules() as $module => $version) {
+            if (!extension_loaded($module)) {
+                $missingModules[] = $module;
+            } elseif ($version !== '*' && phpversion($module) !== false 
+            && version_compare(phpversion($module), $version, '<')) {
+                $outdatedModules[] = $module;
+            }
+        }
+        return ['missing' => $missingModules, 'outdated' => $outdatedModules];
     }
     
-    public function load(): void
+    public function load(string $method, string $path): void
     {
-        $this->pluginService->loadPlugins();
+        $this->pluginService->loadPlugins($method, $path);
+        throw new \RuntimeException('Not implemented');
 
     }
 

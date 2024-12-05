@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+    {# <link rel="stylesheet" href="/path/to/your/styles.css"> #}
+</head>
+<body>
+    <header>
+        <h1>Error</h1>
+    </header>
+    <main>
+        <p>Sorry, something went wrong.</p>
+        <p>{{ error }}</p>
+        {% if stack_trace is defined and stack_trace|length > 0 %}
+            <h2>Stack Trace:</h2>
+            <ul>
+                {% for trace in stack_trace %}
+                    <li>{{ trace.file }}::{{trace.function}}:{{trace.line}}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </main>
+    <footer>
+        <p>&copy; {{ "now"|date("Y") }} Your Company</p>
+    </footer>
+</body>
+</html>

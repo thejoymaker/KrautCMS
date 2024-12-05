@@ -6,9 +6,12 @@ declare(strict_types=1);
 namespace Kraut;
 
 use DI\ContainerBuilder;
+use Kraut\Controller\ResponseUtil;
 use Kraut\Service\ConfigurationService;
 use Kraut\Service\PluginService;
 use Nyholm\Psr7\Factory\Psr17Factory;
+use Nyholm\Psr7\Response;
+use PSpell\Config;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -31,7 +34,8 @@ class Kernel
 
         // Add definitions for services
         $containerBuilder->addDefinitions([
-            ConfigurationService::class => \DI\create(ConfigurationService::class),
+            KrautSystem::class => \DI\autowire(KrautSystem::class),
+            ConfigurationService::class => \DI\autowire(ConfigurationService::class),
             Psr17Factory::class => \DI\create(Psr17Factory::class),
             \Psr\Http\Message\ResponseFactoryInterface::class => \DI\get(Psr17Factory::class),
             \Psr\Http\Message\ServerRequestFactoryInterface::class => \DI\get(Psr17Factory::class),
@@ -44,7 +48,7 @@ class Kernel
                 return $logger;
             },
             Environment::class => function () {
-                $loader = new FilesystemLoader(__DIR__ . '/../User/Theme/default');
+                $loader = new FilesystemLoader(__DIR__ . '/View');
                 $twig = new Environment($loader, [
                     'cache' => __DIR__ . '/../Cache/twig',
                     'debug' => true,
@@ -57,7 +61,8 @@ class Kernel
                 return new PluginService(
                     __DIR__ . '/../User/Plugin',
                     $c,
-                    $c->get(EventDispatcherInterface::class)
+                    $c->get(EventDispatcherInterface::class),
+                    $c->get(ConfigurationService::class)
                 );
             },
         ]);
@@ -77,9 +82,30 @@ class Kernel
      */
     public function handle(string $method, string $uri): ResponseInterface
     {
-        $this->system->discover();
-        $this->system->load();
-        return $this->system->run($method, $uri);
+        $response = null;
+        try {
+            $this->system->discover();
+            $requirementsMet = $this->system->requirementsMet();
+            if(is_bool($requirementsMet) && $requirementsMet === true) {
+                $this->system->load($method, $uri);
+                $response = $this->system->run($method, $uri);
+            } else {
+                if(is_string($requirementsMet)) {
+                    return ResponseUtil::respondRequirementsError($this->container, [], $requirementsMet);
+                } else if(is_array($requirementsMet)) {
+                    return ResponseUtil::respondRequirementsError($this->container, $requirementsMet);
+                } else {
+                    return ResponseUtil::respondRequirementsError($this->container, [], "Unknown requirements error.");
+                }
+            }
+        } catch (\Throwable $e) {
+            if(isset($_ENV['APP_DEBUG']) && $_ENV['APP_DEBUG'] === 'true') {
+                $response = ResponseUtil::respondErrorDetailed($e, $this->container);
+            } else {
+                $response = ResponseUtil::respondError($e, $this->container);
+            }
+        }
+        return $response;
     }
 }
 ?>

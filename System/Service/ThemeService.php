@@ -28,6 +28,11 @@ class ThemeService
     {
         return $this->loadedTheme;
     }
+
+    public function discoverThemes(): void
+    {
+        // Discover themes
+    }
 }
 
 ?>

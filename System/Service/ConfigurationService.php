@@ -5,6 +5,8 @@ declare(strict_types=1);
 
 namespace Kraut\Service;
 
+use Kraut\Util\ArrayUtil;
+
 /**
  * Class ConfigurationService
  *
@@ -18,15 +20,18 @@ class ConfigurationService
     public const THEME_NAME = 'kraut.theme.name';
     public const CACHE_ENABLED = 'kraut.cache.enabled';
     public const CACHE_MAX_AGE = 'kraut.cache.maxAge';
-    public const LOGGING_ENABLED = 'logging.enabled';
-    public const LOGGING_LEVEL = 'logging.level';
-    
+    public const LOGGING_ENABLED = 'log.enabled';
+    public const LOGGING_LEVEL = 'log.level';
+    private string $SYSTEM_CONFIG_DIR;
+    /**
+     * @var CacheService The cache service instance.
+     */
+    private CacheService $cacheService;
     /**
      * @var array The configuration array holding all configuration values.
      */
     private array $config;
     private array $theme;
-    private CacheService $cacheService;
 
     /**
      * ConfigurationService constructor.
@@ -35,9 +40,40 @@ class ConfigurationService
      */
     public function __construct(CacheService $cacheService)
     {
+        $this->SYSTEM_CONFIG_DIR = realpath(__DIR__ . '/../../User/Config');
         $this->cacheService = $cacheService;
         // $this->loadConfig();
-        $this->config = $this->cacheService->loadCachedConfig([$this, 'loadSystemConfig'], "../../User/Config");
+        $this->config = $this->cacheService->loadCachedConfig([$this, 'loadSystemConfig'],
+             $this->SYSTEM_CONFIG_DIR);
+    }
+
+    private function registerAutoloader(): void
+    {
+        spl_autoload_register(function (string $class): void {
+
+            // foreach ($this->namespaceMap as $prefix => $baseDir) {
+            //     if (strpos($class, $prefix) === 0) {
+            //         $relativeClass = substr($class, strlen($prefix));
+            //         $file = $baseDir . str_replace('\\', '/', $relativeClass) . '.php';
+
+            //         if (file_exists($file)) {
+            //             require $file;
+            //         }
+            //         return;
+            //     }
+            // }
+        });
+    }
+
+    public function loadSystemConfig(): array
+    {
+        $totalConfig = [];
+        $allConfigFiles = glob("{$this->SYSTEM_CONFIG_DIR}/*.json");
+        foreach ($allConfigFiles as $configFile) {
+            $config = $this->loadConfig($configFile);
+            $totalConfig = array_merge($totalConfig, $config);
+        }
+        return $totalConfig;
     }
 
     /**
@@ -62,9 +98,20 @@ class ConfigurationService
         return $config;
     }
 
-    private function loadSystemConfig(): array
+    public function installPluginConfig(string $pluginName, ?string $defaultFile): void
     {
-        return $this->loadConfig("../../User/Config/Kraut.json");
+        if (null === $defaultFile || !file_exists($defaultFile)) {
+            $defaults = [];
+        } else {
+            $defaults = json_decode(file_get_contents($defaultFile), true);
+        }
+        if(!isset($defaults[strtolower($pluginName)]['active'])) {
+            $defaults[strtolower($pluginName)]['active'] = true;
+        }
+        $pluginConfigFile = "{$this->SYSTEM_CONFIG_DIR}/{$pluginName}.json";
+        // $pluginConfig = $this->loadConfig($pluginConfigFile);
+        $this->config = array_merge($this->config, $defaults);
+        file_put_contents($pluginConfigFile, json_encode($defaults, JSON_PRETTY_PRINT));
     }
 
     /**
@@ -79,17 +126,12 @@ class ConfigurationService
      */
     public function get(string $key, $default = null)
     {
-        $keyList = explode('.', $key);
-        $tmp = $this->config;
-        for($i = 0; $i < count($keyList); $i++) {
-            $key = $keyList[$i];
-            if (isset($tmp[$key])) {
-                $tmp = $tmp[$key];
-            } else {
-                return $default;
-            }
+        try {
+            $tmp = ArrayUtil::unpack($key, $this->config);
+            return $tmp;
+        } catch (\Exception $e) {
+            return $default;
         }
-        return $tmp;
     }
 }
 ?>

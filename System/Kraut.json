@@ -1,17 +1,12 @@
-
 {
-    "name": "Welcome Plugin",
-    "cms_version": ">=1.0.0,<2.0.0",
-    "type": "cms-plugin",
+    "name": "Kraut CMS",
+    "cms_version": "1.0.0",
+    "type": "cms",
     "license": "MIT",
-    "paths": [
-      "/*"
-    ],
     "required": {
         "php_version": "8.0.0",
         "php_modules": {
             "json": "*"
         }
     }
-
 }

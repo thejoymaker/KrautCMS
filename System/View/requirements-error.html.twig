@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Requirements Error</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background: #ffdddd;
+            margin: 5px 0;
+            padding: 10px;
+            border: 1px solid #ffaaaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Requirements Are Not Met!</h1>
+        {% if requirements_message is not null %}
+            <p>{{ requirements_message }}</p>
+        {% else %}
+            <p>The following PHP modules need to be installed:</p>
+            <ul>
+                {% for module in missing_modules %}
+                    <li>{{ module }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</body>
+</html>
