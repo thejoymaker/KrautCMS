@@ -8,7 +8,6 @@ namespace User\Plugin\PagesPlugin;
 use Kraut\Plugin\Content\ContentProviderInterface;
 use Kraut\Plugin\FileSystem;
 use Kraut\Plugin\PluginInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class PagesPlugin implements PluginInterface

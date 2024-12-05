@@ -80,11 +80,7 @@ class RouteService
                 $handler = [$className, $method->getName()];
                 // Register the route
                 foreach ($route->methods as $httpMethod) {
-                    try {
-                        $model->addRoute($route, $handler);
-                    } catch (\Throwable $e) {
-                        echo $e->getMessage();
-                    }
+                    $model->addRoute($route, $handler);
                 }
             }
         }
