@@ -63,10 +63,7 @@ class CacheService
     {
         $maxFileTime = TimeUtil::maxFileMTime($resource);
         $cacheFileTime = file_exists($cacheFile) ? filemtime($cacheFile) : 0;
-        if ($cacheFileTime >= $maxFileTime) {
-            echo "Loading from cache " . date("d-m-Y H:i:s", $maxFileTime) . " < " . date("d-m-Y H:i:s", $cacheFileTime) . "<br>\n";
-        }
-        if ($this->cacheEnabled && file_exists($cacheFile) && filemtime($cacheFile) >= $maxFileTime) {
+        if ($this->cacheEnabled && file_exists($cacheFile) && $cacheFileTime >= $maxFileTime) {
             return require $cacheFile;
         }
         switch($cacheFile) {
