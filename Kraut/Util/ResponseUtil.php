@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Kraut\Controller;
+namespace Kraut\Util;
 
 use Nyholm\Psr7\Response;
 use Psr\Container\ContainerInterface;

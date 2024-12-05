@@ -6,7 +6,7 @@ declare(strict_types=1);
 namespace Kraut;
 
 use DI\ContainerBuilder;
-use Kraut\Controller\ResponseUtil;
+use Kraut\Util\ResponseUtil;
 use Kraut\Service\ConfigurationService;
 use Kraut\Service\PluginService;
 use Nyholm\Psr7\Factory\Psr17Factory;

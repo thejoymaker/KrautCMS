@@ -7,7 +7,7 @@ namespace User\Plugin\HomePagePlugin\Controller;
 
 use Kraut\Attribute\Controller;
 use Kraut\Attribute\Route;
-use Kraut\Controller\ResponseUtil;
+use Kraut\Util\ResponseUtil;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
@@ -36,7 +36,7 @@ class HomeController
     public function index(ServerRequestInterface $request, array $args): ResponseInterface
     {
         $this->logger->info('Home page accessed');
-        return ResponseUtil::respond($this->twig, 'home', []);
+        return ResponseUtil::respondRelative($this->twig, 'Theme', 'home', []);
     }
 
     #[Route(path: '/hello[/{name}]', methods: ['GET'])]
@@ -45,7 +45,7 @@ class HomeController
         $name = $args['name'] ?? 'Guest';
         $greeting = $this->greetingService->getGreeting($name);
         $this->logger->info("Greeting page accessed with name: {$name}");
-        return ResponseUtil::respond($this->twig, 'hello', ['greeting' => $greeting]);
+        return ResponseUtil::respondRelative($this->twig, 'Theme', 'hello', ['greeting' => $greeting]);
     }
 }
 ?>

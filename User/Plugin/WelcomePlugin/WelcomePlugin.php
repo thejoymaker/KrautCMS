@@ -55,7 +55,7 @@ class WelcomePlugin implements PluginInterface
     {
         $response = $event->getResponse();
         $content = $response->getBody()->__toString();
-        $content .= '<!-- '.$this->configService->get("WelcomePlugin.content").' -->';
+        $content .= '<!-- '.$this->configService->get("welcomeplugin.content").' -->';
 
         // Create a new response with the modified content
         $newResponse = $response->withBody(\Nyholm\Psr7\Stream::create($content));

@@ -60,7 +60,7 @@ class RouteService
             // $this->loadRoutesFromDirectory($routeCollector, $this->controllerDir, $this->controllerNamespace);
 
             // Load routes from plugin controllers
-            
+
             // $pluginDirs = new RecursiveDirectoryIterator($this->pluginDir);
             // foreach ($pluginDirs as $pluginDir) {
             //     if ($pluginDir->isDir() && !in_array($pluginDir->getFilename(), ['.', '..'])) {
@@ -79,7 +79,7 @@ class RouteService
     public function discoverRoutes(string $controllerPath): RouteModel
     {
         $model = new RouteModel();
-        $pluginName = basename($controllerPath . '/..');
+        $pluginName = basename(realpath($controllerPath . '/..'));
         $controllerNamespace = 'User\\Plugin\\' . $pluginName . '\\Controller\\';
         $this->loadRoutesFromDirectory($controllerPath, $controllerNamespace, $model);
         return $model;
@@ -140,10 +140,16 @@ class RouteService
             foreach ($routeAttributes as $attribute) {
                 /** @var Route $route */
                 $route = $attribute->newInstance();
+                /** @var callable $handler */
                 $handler = [$className, $method->getName()];
                 // Register the route
                 foreach ($route->methods as $httpMethod) {
-                    $model->addRoute($route, $handler);
+                    try {
+                        $model->addRoute($route, $handler);
+                    } catch (\Throwable $e) {
+                        echo $e->getMessage();
+                    }
+                    // $model->addRoute($route, $handler);
                 }
             }
         }

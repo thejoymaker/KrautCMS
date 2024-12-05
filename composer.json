@@ -4,7 +4,7 @@
     "license": "HIPPOCRATIC LICENSE",
     "autoload": {
         "psr-4": {
-            "Kraut\\": "System/",
+            "Kraut\\": "Kraut/",
             "User\\Plugin\\": "User/Plugin/"
         }
     },

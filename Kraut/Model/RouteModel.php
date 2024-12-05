@@ -10,14 +10,23 @@ class RouteModel
     /**
      * [httpMethod][path][handler|roles]
      */
-    private array $routeMap = [];
+    private array $routeMap;
 
+    public static function __set_state($array): RouteModel
+    {
+        return new self($array['routeMap']);
+    }
+
+    public function __construct(array $routeMap = [])
+    {
+        $this->routeMap = $routeMap;
+    }
     /**
      * Adds a route to the route map.
      *
      * @param Route $route The route to add.
      */
-    public function addRoute(Route $route, callable $handler): void
+    public function addRoute(Route $route, $handler): void
     {
         foreach ($route->methods as $method) {
             $this->routeMap[$method][$route->path] = [

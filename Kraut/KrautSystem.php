@@ -98,7 +98,7 @@ class KrautSystem
     public function load(string $method, string $path): void
     {
         $this->pluginService->loadPlugins($method, $path);
-        throw new \RuntimeException('Not implemented');
+        // throw new \RuntimeException('Not implemented');
 
     }
 
