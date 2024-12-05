@@ -60,6 +60,28 @@ class PluginService
         $this->routeService = $container->get(RouteService::class);
     }
 
+    public function getRolesForRoute(string $method, string $path): array
+    {
+        $roles = [];
+        foreach ($this->pluginModel as $pluginName => $pluginInfo) {
+            if (!$pluginInfo->isActive()) {
+                continue;
+            }
+            $routeMap = $pluginInfo->getRouteModel()?->getRouteMap();
+            if (!$routeMap) {
+                continue;
+            }
+            foreach ($routeMap as $httpMethod => $routes) {
+                foreach ($routes as $routePath => $info) {
+                    if ($routePath === $path && $httpMethod === $method) {
+                        $roles = array_merge($roles, $info['roles']);
+                    }
+                }
+            }
+        }
+        return $roles;
+    }
+
     public function collectRoutes(RouteCollector $routeCollector): void
     {
         foreach ($this->pluginModel as $pluginName => $pluginInfo) {

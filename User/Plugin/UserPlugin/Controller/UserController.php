@@ -11,7 +11,7 @@ use User\Plugin\UserPlugin\Entity\User;
 use Twig\Environment;
 use Kraut\Attribute\Controller;
 use Kraut\Attribute\Route;
-use Kraut\Controller\ResponseUtil;
+use Kraut\Util\ResponseUtil;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Nyholm\Psr7\Response;

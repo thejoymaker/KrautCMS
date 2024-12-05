@@ -5,7 +5,8 @@ declare(strict_types=1);
 
 namespace User\Plugin\UserPlugin\Middleware;
 
-use Kraut\Controller\ResponseUtil;
+use Kraut\Service\PluginService;
+use Kraut\Util\ResponseUtil;
 use Kraut\Service\RouteService;
 use User\Plugin\UserPlugin\Service\AuthenticationService;
 use Psr\Http\Message\ServerRequestInterface;
@@ -16,14 +17,13 @@ use Nyholm\Psr7\Response;
 
 class AuthenticationMiddleware implements MiddlewareInterface
 {
-    private AuthenticationService $authService;
-    private RouteService $routeService;
 
-    public function __construct(AuthenticationService $authService, RouteService $routeService)
-    {
-        $this->authService = $authService;
-        $this->routeService = $routeService;
-    }
+
+    public function __construct(
+        private AuthenticationService $authService,
+        private PluginService $pluginService,
+        )
+    {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -31,12 +31,12 @@ class AuthenticationMiddleware implements MiddlewareInterface
         $httpMethod = $request->getMethod();
         $user = $this->authService->getCurrentUser();
 
-        // Get route attributes
-        $route = $this->routeService->getRouteForUri($httpMethod, $uri);
+        // Get route roles
+        $roles = $this->pluginService->getRolesForRoute($httpMethod, $uri);
 
-        if ($route && !empty($route->roles)) {
+        if (!empty($roles)) {
             // Check if user has any of the required roles
-            if (!$user || empty(array_intersect($user->getRoles(), $route->roles))) {
+            if (!$user || empty(array_intersect($user->getRoles(), $roles))) {
                 return ResponseUtil::redirectTemporary('/login');
             }
         }

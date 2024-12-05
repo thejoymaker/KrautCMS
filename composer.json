@@ -1,7 +1,7 @@
 {
     "name": "krautcms/krautcms",
     "type": "project",
-    "license": "HIPPOCRATIC LICENSE",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "Kraut\\": "Kraut/",
