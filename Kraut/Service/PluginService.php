@@ -26,12 +26,6 @@ use Twig\Loader\FilesystemLoader;
  */
 class PluginService
 {
-    private string $pluginDir;
-    private ContainerInterface $container;
-    private EventDispatcherInterface $eventDispatcher;
-    private ConfigurationService $configService;
-    private CacheService $cacheService;
-    private RouteService $routeService;
     /** @var array<string,PluginInfo> */
     private array $pluginModel = [];
 
@@ -46,18 +40,13 @@ class PluginService
      *   The event dispatcher.
      */
     public function __construct(
-        string $pluginDir,
-        ContainerInterface $container,
-        EventDispatcherInterface $eventDispatcher,
-        ConfigurationService $configService
+        private string $pluginDir,
+        private ContainerInterface $container,
+        private EventDispatcherInterface $eventDispatcher,
+        private ConfigurationService $configService,
+        private CacheService $cacheService,
+        private RouteService $routeService
     ) {
-        $this->pluginDir = $pluginDir;
-        $this->container = $container;
-        $this->eventDispatcher = $eventDispatcher;
-        // $this->cacheFile = __DIR__ . '/../../Cache/plugin_cache.php';
-        $this->configService = $configService;
-        $this->cacheService = $container->get(CacheService::class);
-        $this->routeService = $container->get(RouteService::class);
     }
 
     public function getRolesForRoute(string $method, string $path): array

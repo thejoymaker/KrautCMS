@@ -17,8 +17,6 @@ use Nyholm\Psr7\Response;
 
 class AuthenticationMiddleware implements MiddlewareInterface
 {
-
-
     public function __construct(
         private AuthenticationService $authService,
         private PluginService $pluginService,
