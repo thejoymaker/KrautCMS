@@ -6,9 +6,11 @@ declare(strict_types=1);
 namespace Kraut;
 
 use DI\ContainerBuilder;
+use Kraut\Service\CacheService;
 use Kraut\Util\ResponseUtil;
 use Kraut\Service\ConfigurationService;
 use Kraut\Service\PluginService;
+use Kraut\Service\RouteService;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
 use PSpell\Config;
@@ -62,7 +64,9 @@ class Kernel
                     __DIR__ . '/../User/Plugin',
                     $c,
                     $c->get(EventDispatcherInterface::class),
-                    $c->get(ConfigurationService::class)
+                    $c->get(ConfigurationService::class),
+                    $c->get(CacheService::class),
+                    $c->get(RouteService::class)
                 );
             },
         ]);

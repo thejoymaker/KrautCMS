@@ -12,9 +12,6 @@ use Kraut\Plugin\FileSystem;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Kraut\Plugin\PluginInterface;
-use Monolog\Logger;
-use PSpell\Config;
-use Psr\Log\LoggerInterface;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
@@ -32,12 +29,12 @@ class PluginService
     /**
      * PluginService constructor.
      *
-     * @param string $pluginDir
-     *   The directory where plugins are stored.
-     * @param ContainerInterface $container
-     *   The dependency injection container.
-     * @param EventDispatcherInterface $eventDispatcher
-     *   The event dispatcher.
+     * @param string $pluginDir The directory where plugins are stored.
+     * @param ContainerInterface $container The dependency injection container.
+     * @param EventDispatcherInterface $eventDispatcher The event dispatcher.
+     * @param ConfigurationService $configService The configuration service.
+     * @param CacheService $cacheService The cache service.
+     * @param RouteService $routeService The route service.
      */
     public function __construct(
         private string $pluginDir,
@@ -49,53 +46,9 @@ class PluginService
     ) {
     }
 
-    public function getRolesForRoute(string $method, string $path): array
-    {
-        $roles = [];
-        foreach ($this->pluginModel as $pluginName => $pluginInfo) {
-            if (!$pluginInfo->isActive()) {
-                continue;
-            }
-            $routeMap = $pluginInfo->getRouteModel()?->getRouteMap();
-            if (!$routeMap) {
-                continue;
-            }
-            foreach ($routeMap as $httpMethod => $routes) {
-                foreach ($routes as $routePath => $info) {
-                    if ($routePath === $path && $httpMethod === $method) {
-                        $roles = array_merge($roles, $info['roles']);
-                    }
-                }
-            }
-        }
-        return $roles;
-    }
-
-    public function collectRoutes(RouteCollector $routeCollector): void
-    {
-        foreach ($this->pluginModel as $pluginName => $pluginInfo) {
-            if (!$pluginInfo->isActive()) {
-                continue;
-            }
-            $routeMap = $pluginInfo->getRouteModel()?->getRouteMap();
-            if (!$routeMap) {
-                continue;
-            }
-            foreach ($routeMap as $httpMethod => $routes) {
-                foreach ($routes as $path => $info) {
-                    $routeCollector->addRoute($httpMethod, $path, $info['handler']);
-                }
-            }
-        }
-        // $routeMap = $this->routeModel->getRouteMap();
-        // foreach ($routeMap as $httpMethod => $routes) {
-        //     foreach ($routes as $path => $info) {
-        //         $routeCollector->addRoute($httpMethod, $path, $info['handler']);
-        //     }
-        // }
-        // $this->routeCollector = $routeCollector;
-    }
-
+    /**
+     * Discover plugins (cached).
+     */
     public function discoverPlugins() {
         $this->pluginModel = $this->cacheService->loadCachedPluginModel([$this, 'initializeModel'], 
             $this->pluginDir);
@@ -108,8 +61,6 @@ class PluginService
      */
     public function initializeModel(): array
     {
-        // $routeModel = $this->routeService->discoverRoutes();
-        // $this->pluginConfig = $this->cacheService->loadCachedConfig();
         $plugins = [];
         $pluginDirectories = glob($this->pluginDir . '/*', GLOB_ONLYDIR);
         foreach ($pluginDirectories as $pluginPath) {
@@ -155,6 +106,12 @@ class PluginService
         return $plugins;
     }
 
+    /**
+     * Load the plugins.
+     *
+     * @param string $method The HTTP method.
+     * @param string $path The request path.
+     */
     public function loadPlugins(string $method, string $path): void
     {
         $loader = $this->container->get(Environment::class)->getLoader();
@@ -183,20 +140,26 @@ class PluginService
     }
 
     /**
-     * Get the active plugin directories.
+     * Collect routes from all active plugins.
      *
-     * @return array
-     *   An array of active plugin directories.
+     * @param RouteCollector $routeCollector The route collector.
      */
-    public function getActivePluginDirectories(): array
+    public function collectRoutes(RouteCollector $routeCollector): void
     {
-        $activePlugins = [];
         foreach ($this->pluginModel as $pluginName => $pluginInfo) {
-            if ($pluginInfo->isActive()) {
-                $activePlugins[] = $pluginInfo->getPath();
+            if (!$pluginInfo->isActive()) {
+                continue;
+            }
+            $routeMap = $pluginInfo->getRouteModel()?->getRouteMap();
+            if (!$routeMap) {
+                continue;
+            }
+            foreach ($routeMap as $httpMethod => $routes) {
+                foreach ($routes as $path => $info) {
+                    $routeCollector->addRoute($httpMethod, $path, $info['handler']);
+                }
             }
         }
-        return $activePlugins;
     }
 
     /**
@@ -210,6 +173,45 @@ class PluginService
         return $this->pluginModel;
     }
 
+    /**
+     * Get the roles required for a route.
+     *
+     * @param string $method The HTTP method.
+     * @param string $path The request path.
+     *
+     * @return array The roles required for the route.
+     */
+    public function getRolesForRoute(string $method, string $path): array
+    {
+        $roles = [];
+        foreach ($this->pluginModel as $pluginName => $pluginInfo) {
+            if (!$pluginInfo->isActive()) {
+                continue;
+            }
+            $routeMap = $pluginInfo->getRouteModel()?->getRouteMap();
+            if (!$routeMap) {
+                continue;
+            }
+            foreach ($routeMap as $httpMethod => $routes) {
+                foreach ($routes as $routePath => $info) {
+                    if ($routePath === $path && $httpMethod === $method) {
+                        $roles = array_merge($roles, $info['roles']);
+                    }
+                }
+            }
+        }
+        return $roles;
+    }
+
+    /**
+     * Get the maximum required PHP version for all plugins.
+     *
+     * @param string $systemRequiredVersion
+     *   The system required PHP version.
+     *
+     * @return string
+     *   The maximum required PHP version.
+     */
     public function getMaxRequiredPhpVersion(string $systemRequiredVersion): string
     {
         $maxVersion = $systemRequiredVersion;
@@ -225,6 +227,9 @@ class PluginService
         return $maxVersion;
     }
 
+    /**
+     * Get the required PHP extensions for all plugins.
+     */
     public function getRequiredExtensions(): array
     {
         $extensions = [];
