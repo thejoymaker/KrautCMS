@@ -10,6 +10,7 @@ use Kraut\Service\ThemeService;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
@@ -180,8 +181,6 @@ class KrautSystem
         } else {
             throw new \RuntimeException('Wrong sequence');
         }
-        // throw new \RuntimeException('Not implemented');
-
     }
 
     /**
@@ -209,30 +208,8 @@ class KrautSystem
             // Create the ServerRequest
             $request = $psr17Factory->createServerRequest($method, $uri);
             // Create the default middleware queue
-            $middlewareQueue = [
-                \Kraut\Middleware\SessionMiddleware::class,
-                \Kraut\Middleware\LoggingMiddleware::class,
-                \Kraut\Middleware\RequestBodyParserMiddleware::class,
-                \Kraut\Middleware\CsrfValidationMiddleware::class,
-                \Kraut\Middleware\CsrfMiddleware::class,
-                \Kraut\Middleware\RoutingMiddleware::class,
-                \Kraut\Middleware\DispatchMiddleware::class,
-            ];
 
-            // Dispatch the middleware event
-            /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $eventDispatcher */
-            $eventDispatcher = $this->container->get(\Symfony\Component\EventDispatcher\EventDispatcherInterface::class);
-            $middlewareEvent = new \Kraut\Event\MiddlewareEvent($middlewareQueue);
-            $eventDispatcher->dispatch($middlewareEvent, 'kernel.middleware');
-
-            // Get the possibly modified middleware queue
-            $middlewareQueue = $middlewareEvent->getMiddlewareQueue();
-
-            // Create the Relay dispatcher with the container resolver
-            $relay = new \Relay\Relay($middlewareQueue, [$this->container, 'get']);
-
-            // Dispatch the request through the middleware queue
-            $response = $relay->handle($request);
+            $response = $this->executeMiddleware($request);
 
             // Dispatch an event after the response is generated
             $eventDispatcher = $this->container->get(EventDispatcherInterface::class);
@@ -246,6 +223,35 @@ class KrautSystem
         } else {
             throw new \RuntimeException('Wrong sequence');
         }
+    }
+
+    private function executeMiddleware(ServerRequestInterface $request): ResponseInterface
+    {            
+        $middlewareQueue = [
+            \Kraut\Middleware\SessionMiddleware::class,
+            \Kraut\Middleware\LoggingMiddleware::class,
+            \Kraut\Middleware\RequestBodyParserMiddleware::class,
+            \Kraut\Middleware\CsrfValidationMiddleware::class,
+            \Kraut\Middleware\CsrfMiddleware::class,
+            \Kraut\Middleware\RoutingMiddleware::class,
+            \Kraut\Middleware\DispatchMiddleware::class,
+        ];
+
+        // Dispatch the middleware event
+        /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $eventDispatcher */
+        $eventDispatcher = $this->container->get(\Symfony\Component\EventDispatcher\EventDispatcherInterface::class);
+        $middlewareEvent = new \Kraut\Event\MiddlewareEvent($middlewareQueue);
+        $eventDispatcher->dispatch($middlewareEvent, 'kernel.middleware');
+
+        // Get the possibly modified middleware queue
+        $middlewareQueue = $middlewareEvent->getMiddlewareQueue();
+
+        // Create the Relay dispatcher with the container resolver
+        $relay = new \Relay\Relay($middlewareQueue, [$this->container, 'get']);
+
+        // Dispatch the request through the middleware queue
+        $response = $relay->handle($request);
+        return $response;
     }
 }
 ?>

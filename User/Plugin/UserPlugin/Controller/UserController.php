@@ -38,7 +38,7 @@ class UserController
     {
         // $content = $this->twig->render('@UserPlugin/login.html.twig');
         // return new Response(200, [], $content);
-        return ResponseUtil::respondRelative($this->twig, 'UserPlugin', 'login', []);
+        return ResponseUtil::respondRelative($this->twig, 'UserPlugin', 'login');
     }
 
     #[Route(path: '/login', methods: ['POST'])]
