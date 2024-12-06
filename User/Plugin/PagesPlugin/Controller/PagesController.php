@@ -13,13 +13,16 @@ use Psr\Http\Message\ServerRequestInterface;
 use Twig\Environment;
 use Nyholm\Psr7\Response;
 use Psr\Container\ContainerInterface;
+use User\Plugin\PagesPlugin\Persistence\PageEntry;
 use User\Plugin\PagesPlugin\Persistence\PageRepository;
 use User\Plugin\PagesPlugin\Twig\PageRoutingExtension;
 
 #[Controller]
 class PagesController
 {
-    public function __construct(private ContainerInterface $container, private Environment $twig)
+    public function __construct(private ContainerInterface $container, 
+                                private Environment $twig, 
+                                private PageRepository $pageRepository)
     {
         $twig->addExtension(new PageRoutingExtension());
     }
@@ -27,10 +30,8 @@ class PagesController
     #[Route(path: '/pages', methods: ['GET'])]
     public function listPages(ServerRequestInterface $request): ResponseInterface
     {
-        /** @var PageRepository */
-        $pageRepository = $this->container->get(PageRepository::class);
         // Fetch the list of pages
-        $pages = $pageRepository->list();
+        $pages = $this->pageRepository->list();
 
         // Render the template with the list of pages
         // $html = $this->twig->render('@PagesPlugin/list.html.twig', ['pages' => $pages]);
@@ -46,7 +47,7 @@ class PagesController
         $slug = $args['slug'] ?? '';
 
         // Fetch the page content based on slug
-        $page = $this->getPageContent($slug);
+        $page = $this->pageRepository->getPage($slug);
 
         if ($page === null) {
             return new Response(404, [], 'Page not found');
@@ -56,8 +57,9 @@ class PagesController
             $parsedBody = $request->getParsedBody();
             $content = $parsedBody['content'] ?? '';
 
+            // PageEntry::validateContent($content);
             // Save the content to file
-            $this->savePageContent($slug, $content);
+            $this->pageRepository->save(new PageEntry($slug, '', $content));
 
             // Redirect to the page view
             return new Response(302, ['Location' => $this->generateUrl('page_show', ['slug' => $slug])]);
@@ -68,32 +70,8 @@ class PagesController
             $this->twig,
             'PagesPlugin',
             'editor',
-            ['page' => [
-                'id' => $slug,
-                'title' => $page['title'],
-                'content' => $page['content'],
-            ]]
+            ['page' => $page]
         );
-    }
-
-    private function savePageContent(string $slug, string $content): void
-    {
-        // Define the path to your content files
-        $contentDir = __DIR__ . '/../../../Content/PagesPlugin/pages';
-
-        // Sanitize the slug to prevent directory traversal
-        $safeSlug = basename($slug);
-
-        // Construct the file path
-        $filePath = $contentDir . '/' . $safeSlug . '/content.txt';
-
-        // Ensure the directory exists
-        if (!is_dir(dirname($filePath))) {
-            mkdir(dirname($filePath), 0777, true);
-        }
-
-        // Write the content to the file
-        file_put_contents($filePath, $content);
     }
 
     private function generateUrl(string $routeName, array $parameters = []): string
@@ -114,7 +92,7 @@ class PagesController
         $slug = $args['slug'] ?? '';
     
         // Fetch the page content based on slug
-        $page = $this->getPageContent($slug);
+        $page = $this->pageRepository->getPage($slug);
     
         if ($page === null) {
             return new Response(404, [], 'Page not found');
@@ -123,32 +101,5 @@ class PagesController
         $html = $this->twig->render('@PagesPlugin/page.html.twig', ['page' => $page]);
     
         return new Response(200, [], $html);
-    }
-
-    private function getPageContent(string $slug): ?array
-    {
-        // Define the path to your content files
-        $contentDir = __DIR__ . '/../../../Content/PagesPlugin/pages';
-
-        // Sanitize the slug to prevent directory traversal
-        $safeSlug = basename($slug);
-
-        // Construct the file path
-        $filePath = $contentDir . '/' . $safeSlug . '/content.txt';
-
-        if (!file_exists($filePath)) {
-                return null;
-        }
-
-        // Read the content from the file
-        $content = file_get_contents($filePath);
-
-        // Generate a title from the slug or include a title in the content file
-        $title = ucwords(str_replace('-', ' ', $safeSlug));
-
-        return [
-            'title' => $title,
-            'content' => $content,
-        ];
     }
 }

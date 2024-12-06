@@ -4,14 +4,14 @@
 
 {% block content %}
     <h1>Edit Page: {{ page.title }}</h1>
-    <form method="post" action="{{ path('page_edit', {'slug': page.id}) }}">
+    <form method="post" action="{{ path('page_edit', {'slug': page.slug}) }}">
         <div>
             <label for="content">Content:</label><br>
             <textarea id="content" name="content" rows="20" cols="80">{{ page.content }}</textarea>
         </div>
         <div>
             <button type="submit">Save</button>
-            <a href="{{ path('page_show', {'slug': page.id}) }}">Cancel</a>
+            <a href="{{ path('page_show', {'slug': page.slug}) }}">Cancel</a>
         </div>
     </form>
 {% endblock %}

@@ -15,7 +15,7 @@ use User\Plugin\PagesPlugin\Persistence\PageRepository;
 
 class PagesPlugin implements PluginInterface
 {
-    private ?ContentProviderInterface $contentProvider = null;
+    // private ?ContentProviderInterface $contentProvider = null;
 
     public function __construct(private EventDispatcherInterface $eventDispatcher,
                                 private ContainerInterface $container)
@@ -46,10 +46,11 @@ class PagesPlugin implements PluginInterface
     {
         // Return the content provider for this plugin
         // For example, you might want to return a custom content provider
-        if(is_null($this->contentProvider)){
-            $this->contentProvider = new PageRepository();
-        }
-        return $this->contentProvider;
+        // if(is_null($this->contentProvider)){
+        //     $this->contentProvider = new PageRepository();
+        // }
+        // return $this->contentProvider;
+        return $this->container->get(PageRepository::class);
     }
 
     public function onKernelRequest($event): void

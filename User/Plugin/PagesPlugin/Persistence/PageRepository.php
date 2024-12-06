@@ -53,5 +53,84 @@ class PageRepository implements ContentProviderInterface {
         }
         return $pages;
     }
+
+    public function getPage(string $slug): ?PageEntry
+    {
+        return $this->getPageContent($slug);
+    }
+
+    private function getPageContent(string $slug): ?PageEntry
+    {
+        // Define the path to your content files
+        $contentDir = __DIR__ . '/../../../Content/PagesPlugin/pages';
+
+        // Sanitize the slug to prevent directory traversal
+        $safeSlug = basename($slug);
+
+        // Construct the file path
+        $filePath = $contentDir . '/' . $safeSlug . '/content.txt';
+
+        if (!file_exists($filePath)) {
+                return null;
+        }
+
+        // Read the content from the file
+        $content = file_get_contents($filePath);
+
+        // Generate a title from the slug or include a title in the content file
+        // $title = ucwords(str_replace('-', ' ', $safeSlug));
+
+        return new PageEntry($safeSlug, $filePath, $content);
+    }
+    // {
+    //     // Define the path to your content files
+    //     $contentDir = __DIR__ . '/../../../Content/PagesPlugin/pages';
+
+    //     // Sanitize the slug to prevent directory traversal
+    //     $safeSlug = basename($slug);
+
+    //     // Construct the file path
+    //     $filePath = $contentDir . '/' . $safeSlug . '/content.txt';
+
+    //     if (!file_exists($filePath)) {
+    //             return null;
+    //     }
+
+    //     // Read the content from the file
+    //     $content = file_get_contents($filePath);
+
+    //     // Generate a title from the slug or include a title in the content file
+    //     $title = ucwords(str_replace('-', ' ', $safeSlug));
+
+    //     return [
+    //         'title' => $title,
+    //         'content' => $content,
+    //     ];
+    // }
+
+    public function save(PageEntry $page): void
+    {
+        $this->savePageContent($page->getSlug(), $page->getContent());
+    }
+
+    private function savePageContent(string $slug, string $content): void
+    {
+        // Define the path to your content files
+        $contentDir = __DIR__ . '/../../../Content/PagesPlugin/pages';
+
+        // Sanitize the slug to prevent directory traversal
+        $safeSlug = basename($slug);
+
+        // Construct the file path
+        $filePath = $contentDir . '/' . $safeSlug . '/content.txt';
+
+        // Ensure the directory exists
+        if (!is_dir(dirname($filePath))) {
+            mkdir(dirname($filePath), 0777, true);
+        }
+
+        // Write the content to the file
+        file_put_contents($filePath, $content);
+    }
 }
 ?>
