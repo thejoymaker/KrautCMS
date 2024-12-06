@@ -21,7 +21,7 @@ function initializeDotenv()
     $dotenv->safeLoad();
 }
 initializeDotenv();
-if (isset($_ENV['APP_ENV']) === false) {
+if (isset($_ENV['APP_DEBUG']) === false) {
     echo "Failed to load environment variables.";
     die();
 }

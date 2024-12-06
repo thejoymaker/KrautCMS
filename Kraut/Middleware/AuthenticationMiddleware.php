@@ -35,7 +35,7 @@ class AuthenticationMiddleware implements MiddlewareInterface
             if (!$user || empty(array_intersect($user->getRoles(), $roles))) {
                 /** @var Session $session */
                 $session = $request->getAttribute('session');
-                $session->set('redirect', $uri);
+                $session?->set('redirect', $uri);
                 return ResponseUtil::redirectTemporary('/login');
             }
         }

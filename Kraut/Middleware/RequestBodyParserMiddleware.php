@@ -127,8 +127,6 @@ class RequestBodyParserMiddleware implements MiddlewareInterface
     private function getBaseContentType(string $contentType): string
     {
         $this->logger->info("Parsing request body as {$contentType}");
-        // echo var_dump($_POST);
-        // die();
         // Extract base content type without parameters
         if ($pos = strpos($contentType, ';')) {
             return trim(substr($contentType, 0, $pos));

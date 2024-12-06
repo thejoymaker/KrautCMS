@@ -52,7 +52,7 @@ class CsrfMiddleware implements MiddlewareInterface
 
     private function isHtmlResponse(ResponseInterface $response): bool
     {
-        $contentType = $response->getHeaderLine('Content-Type');
+        $contentType = strtolower($response->getHeaderLine('Content-Type'));
         return strpos($contentType, 'text/html') !== false;
     }
 
