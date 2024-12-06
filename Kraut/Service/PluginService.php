@@ -14,6 +14,7 @@ use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Kraut\Plugin\PluginInterface;
 use Kraut\Util\RouteUtil;
+use Psr\Log\LoggerInterface;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
@@ -114,6 +115,7 @@ class PluginService
      */
     public function loadPlugins(string $method, string $path): void
     {
+        $loadedPlugins = [];
         $loader = $this->container->get(Environment::class)->getLoader();
         foreach ($this->pluginModel as $pluginName => $pluginInfo) {
             // Check if the plugin is enabled in the configuration
@@ -126,11 +128,18 @@ class PluginService
                 if(!$routeModel->hasRoute($method, $path)){
                     $enablerRoutes = $pluginInfo->getManifest()->getPaths();
                     if($enablerRoutes !== null) {
+                        $proceedLoadingPlugin = false;
                         foreach($enablerRoutes as $enablerRoute) {
-                            if("/*" === $enablerRoute || $enablerRoute === $path) {
-                                $routeModel->appendAll(RouteUtil::discoverRoutes($pluginInfo->getControllers()));
+                            if("/*" === $enablerRoute 
+                            || $enablerRoute === $path
+                            || (substr($enablerRoute, -1) === '*' 
+                                && strpos($path, substr($enablerRoute, 0, -1)) === 0)) {
+                                $proceedLoadingPlugin = true;
                                 break;
                             }
+                        }
+                        if(!$proceedLoadingPlugin) {
+                            continue;
                         }
                     }
                 }
@@ -148,9 +157,11 @@ class PluginService
                     }
                     $this->eventDispatcher->addSubscriber($plugin);
                     $plugin->activate(FileSystem::create($pluginInfo->getPath()));
+                    $loadedPlugins[] = $pluginName;
                 }
             }
         }
+        $this->container->get(LoggerInterface::class)->info("Loaded plugins for $method $path: " . implode(', ', $loadedPlugins));
     }
 
     /**

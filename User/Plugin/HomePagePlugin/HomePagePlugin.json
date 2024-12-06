@@ -5,7 +5,6 @@
     "type": "cms-plugin",
     "license": "MIT",
     "paths": [
-      "/*"
     ],
     "required": {
         "php_version": "8.0.0",

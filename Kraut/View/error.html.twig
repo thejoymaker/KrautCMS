@@ -17,7 +17,7 @@
             <h2>Stack Trace:</h2>
             <ul>
                 {% for trace in stack_trace %}
-                    <li>{{ trace.file }}::{{trace.function}}:{{trace.line}}</li>
+                    <li>{{ trace.file }}({{trace.line}}) calling {{trace.function}}</li>
                 {% endfor %}
             </ul>
         {% endif %}
