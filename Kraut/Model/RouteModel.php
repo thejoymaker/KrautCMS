@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Kraut\Model;
 
 use Kraut\Attribute\Route;
+use Kraut\Util\RouteUtil;
 
 class RouteModel
 {
@@ -48,7 +49,16 @@ class RouteModel
 
     public function hasRoute(string $httpMethod, string $path): bool
     {
-        return isset($this->routeMap[$httpMethod][$path]);
+        if( isset($this->routeMap[$httpMethod][$path]) ) {
+            return true;
+        } else {
+            foreach ($this->routeMap[$httpMethod] as $routePath => $info) {
+                if (RouteUtil::pathMatchesRoute($path, $routePath)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public function appendAll(RouteModel $otherModel): void

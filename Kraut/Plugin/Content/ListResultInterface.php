@@ -19,12 +19,12 @@ interface ListResultInterface
      */
     public function getEntries(): array;
 
-    /**
-     * Returns the total number of entries available.
-     *
-     * @return int The total count of entries.
-     */
-    public function getTotalCount(): int;
+    // /**
+    //  * Returns the total number of entries available.
+    //  *
+    //  * @return int The total count of entries.
+    //  */
+    // public function getTotalCount(): int;
 
     /**
      * Returns the number of entries in the current list.

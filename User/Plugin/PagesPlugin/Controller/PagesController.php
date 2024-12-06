@@ -12,59 +12,32 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Twig\Environment;
 use Nyholm\Psr7\Response;
+use Psr\Container\ContainerInterface;
+use User\Plugin\PagesPlugin\Persistence\PageRepository;
 use User\Plugin\PagesPlugin\Twig\PageRoutingExtension;
 
 #[Controller]
 class PagesController
 {
-    private Environment $twig;
-
-    public function __construct(Environment $twig)
+    public function __construct(private ContainerInterface $container, private Environment $twig)
     {
-        $this->twig = $twig;
         $twig->addExtension(new PageRoutingExtension());
     }
 
     #[Route(path: '/pages', methods: ['GET'])]
     public function listPages(ServerRequestInterface $request): ResponseInterface
     {
+        /** @var PageRepository */
+        $pageRepository = $this->container->get(PageRepository::class);
         // Fetch the list of pages
-        $pages = $this->getPages();
+        $pages = $pageRepository->list();
 
         // Render the template with the list of pages
         // $html = $this->twig->render('@PagesPlugin/list.html.twig', ['pages' => $pages]);
 
         // return new Response(200, [], $html);
 
-        return ResponseUtil::respondRelative($this->twig, 'PagesPlugin','list', ['pages' => $pages]);
-    }
-
-    private function getPages(): array
-    {
-        // Define the path to your content files
-        $contentDir = __DIR__ . '/../../../Content/PagesPlugin/pages';
-
-        // Initialize an empty array to hold the pages
-        $pages = [];
-
-        // Iterate over the content directory to fetch page information
-        foreach (glob($contentDir . '/*', GLOB_ONLYDIR) as $dir) {
-            $slug = basename($dir);
-            $filePath = $dir . '/content.txt';
-
-            if (file_exists($filePath)) {
-                $content = file_get_contents($filePath);
-                $title = ucwords(str_replace('-', ' ', $slug));
-
-                $pages[] = [
-                    'id' => $slug,
-                    'title' => $title,
-                    'content' => $content,
-                ];
-            }
-        }
-
-        return $pages;
+        return ResponseUtil::respondRelative($this->twig, 'PagesPlugin','list', ['pages' => $pages->getEntries()]);
     }
 
     #[Route(path: '/pages/{slug:[a-zA-Z0-9\-]+}/edit', methods: ['GET', 'POST'], roles: ['editor'])]

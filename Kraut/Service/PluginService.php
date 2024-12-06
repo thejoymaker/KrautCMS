@@ -8,6 +8,7 @@ namespace Kraut\Service;
 use FastRoute\RouteCollector;
 use Kraut\Model\Manifest;
 use Kraut\Model\PluginInfo;
+use Kraut\Model\RouteModel;
 use Kraut\Plugin\FileSystem;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -119,6 +120,21 @@ class PluginService
             if (!$pluginInfo->isActive()) {
                 continue; // Skip loading this plugin
             }
+            if($pluginInfo->getRouteModel() !== null) {
+                /** @var RouteModel $routeModel */
+                $routeModel = $pluginInfo->getRouteModel();
+                if(!$routeModel->hasRoute($method, $path)){
+                    $enablerRoutes = $pluginInfo->getManifest()->getPaths();
+                    if($enablerRoutes !== null) {
+                        foreach($enablerRoutes as $enablerRoute) {
+                            if("/*" === $enablerRoute || $enablerRoute === $path) {
+                                $routeModel->appendAll(RouteUtil::discoverRoutes($pluginInfo->getControllers()));
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
             $className = "User\\Plugin\\$pluginName\\$pluginName";
             if (class_exists($className)) {
                 $plugin = $this->container->get($className);
@@ -192,18 +208,7 @@ class PluginService
             }
             foreach ($routeMap as $httpMethod => $routes) {
                 foreach ($routes as $routePath => $info) {
-                    // Convert route path to regex pattern
-                    // replace square brackets with parentheses to make optional
-                    $sanePath = str_replace('[', '(', $routePath);
-                    $sanePath = str_replace(']', ')?', $sanePath);
-                    // Replace route parameters with regex pattern
-                    $pattern = preg_replace('/\{[^{}]*\}/', '([^/]+)', $sanePath);
-                    // Escape delimiter in route (if using '/' as delimiter)
-                    $pattern = str_replace('/', '\/', $pattern);
-                    // Build the final regex pattern
-                    $regex = '/^' . $pattern . '$/';
-                    // echo "Route: $routePath \n<br> Pattern: $regex\n<br><br>";
-                    if (preg_match($regex, $path) && $httpMethod === $method) {
+                    if (RouteUtil::pathMatchesRoute($path, $routePath) && $httpMethod === $method) {
                         if (isset($info['roles'])) {
                             $roles = array_merge($roles, $info['roles']);
                         }

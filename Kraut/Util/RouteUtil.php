@@ -19,6 +19,21 @@ use ReflectionMethod;
  */
 class RouteUtil
 {
+    public static function pathMatchesRoute(string $path, string $route): bool
+    {
+        // Convert route path to regex pattern
+        // replace square brackets with parentheses to make optional
+        $sanePath = str_replace('[', '(', $route);
+        $sanePath = str_replace(']', ')?', $sanePath);
+        // Replace route parameters with regex pattern
+        $pattern = preg_replace('/\{[^{}]*\}/', '([^/]+)', $sanePath);
+        // Escape delimiter in route (if using '/' as delimiter)
+        $pattern = str_replace('/', '\/', $pattern);
+        // Build the final regex pattern
+        $regex = '/^' . $pattern . '$/';
+        // echo "Route: $routePath \n<br> Pattern: $regex\n<br><br>";
+        return preg_match($regex, $path) === 1;
+    }
 
     /**
      * Discovers routes from a controller directory.

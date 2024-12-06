@@ -42,8 +42,12 @@ class Manifest {
         return $this->manifestData['required']['php_version'];
     }
 
-    public function getRequiredPhpModules() : array {
+    public function getRequiredPhpModules() : ?array {
         return $this->manifestData['required']['php_modules'];
+    }
+
+    public function getPaths() : ?array {
+        return $this->manifestData['paths'];
     }
 
     /**
@@ -55,7 +59,7 @@ class Manifest {
      * 
      * @return mixed the value of the key or null if the key does not exist
      */
-    private function get(string $key) : mixed {
+    public function get(string $key) : mixed {
         try {
             return ArrayUtil::unpack($key, $this->manifestData);
         } catch (\Exception $e) {

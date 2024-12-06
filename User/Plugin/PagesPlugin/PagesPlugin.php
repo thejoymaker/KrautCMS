@@ -6,17 +6,20 @@ declare(strict_types=1);
 namespace User\Plugin\PagesPlugin;
 
 use Kraut\Plugin\Content\ContentProviderInterface;
+use Kraut\Plugin\Content\ListResultInterface;
 use Kraut\Plugin\FileSystem;
 use Kraut\Plugin\PluginInterface;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use User\Plugin\PagesPlugin\Persistence\PageRepository;
 
 class PagesPlugin implements PluginInterface
 {
-    private EventDispatcherInterface $eventDispatcher;
+    private ?ContentProviderInterface $contentProvider = null;
 
-    public function __construct(EventDispatcherInterface $eventDispatcher)
+    public function __construct(private EventDispatcherInterface $eventDispatcher,
+                                private ContainerInterface $container)
     {
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     public static function getSubscribedEvents(): array
@@ -43,7 +46,10 @@ class PagesPlugin implements PluginInterface
     {
         // Return the content provider for this plugin
         // For example, you might want to return a custom content provider
-        return null;
+        if(is_null($this->contentProvider)){
+            $this->contentProvider = new PageRepository();
+        }
+        return $this->contentProvider;
     }
 
     public function onKernelRequest($event): void
