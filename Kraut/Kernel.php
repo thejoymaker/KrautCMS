@@ -16,6 +16,7 @@ use Nyholm\Psr7\Response;
 use PSpell\Config;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Twig\Environment;
@@ -65,7 +66,8 @@ class Kernel
                     $c,
                     $c->get(EventDispatcherInterface::class),
                     $c->get(ConfigurationService::class),
-                    $c->get(CacheService::class)
+                    $c->get(CacheService::class),
+                    $c->get(LoggerInterface::class)
                 );
             },
         ]);
@@ -85,6 +87,8 @@ class Kernel
      */
     public function handle(string $method, string $uri): ResponseInterface
     {
+        $startTime = microtime(true);
+        $logger = $this->container->get(LoggerInterface::class);
         $response = null;
         try {
             $this->system->discover();
@@ -98,16 +102,19 @@ class Kernel
                 } else if(is_array($requirementsMet)) {
                     return ResponseUtil::respondRequirementsError($this->container, $requirementsMet);
                 } else {
-                    return ResponseUtil::respondRequirementsError($this->container, [], "Unknown requirements error.");
+                    return ResponseUtil::respondRequirementsError($this->container, [], "Unknown requirements error. [{$method}] {$uri}");
                 }
             }
         } catch (\Throwable $e) {
+            $logger->error($e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
             if(isset($_ENV['APP_DEBUG']) && $_ENV['APP_DEBUG'] === 'true') {
                 $response = ResponseUtil::respondErrorDetailed($e, $this->container);
             } else {
                 $response = ResponseUtil::respondError($e, $this->container);
             }
         }
+        $endTime = microtime(true);
+        $logger->info("Request {$method} {$uri} completed in " . ($endTime - $startTime) . " seconds.");
         return $response;
     }
 }

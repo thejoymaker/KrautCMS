@@ -14,6 +14,7 @@ use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Kraut\Plugin\PluginInterface;
 use Kraut\Util\RouteUtil;
+use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
@@ -43,7 +44,8 @@ class PluginService
         private ContainerInterface $container,
         private EventDispatcherInterface $eventDispatcher,
         private ConfigurationService $configService,
-        private CacheService $cacheService
+        private CacheService $cacheService,
+        private LoggerInterface $logger
     ) {
     }
 
@@ -161,7 +163,7 @@ class PluginService
                 }
             }
         }
-        $this->container->get(LoggerInterface::class)->info("Loaded plugins for $method $path: " . implode(', ', $loadedPlugins));
+        $this->logger->info("Loaded plugins for $method $path: " . implode(', ', $loadedPlugins));
     }
 
     /**

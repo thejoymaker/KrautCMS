@@ -7,6 +7,7 @@ namespace Kraut\Service;
 
 use Kraut\Util\TimeUtil;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class CacheService
@@ -37,7 +38,7 @@ class CacheService
 
     private string $fastRouteCacheFile;
     
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
         $this->cacheDir = __DIR__ . '/../../Cache/';
         $this->configCacheFile = $this->cacheDir . 'System/config.cache.php';
@@ -66,7 +67,9 @@ class CacheService
     {
         $maxFileTime = TimeUtil::maxFileMTime($resource);
         $cacheFileTime = file_exists($cacheFile) ? filemtime($cacheFile) : 0;
+        $logger = $this->container->get(LoggerInterface::class);
         if ($this->cacheEnabled && file_exists($cacheFile) && $cacheFileTime >= $maxFileTime) {
+            $logger->info("Loading cached data from {$cacheFile}");
             return require $cacheFile;
         }
         switch($cacheFile) {
@@ -87,6 +90,7 @@ class CacheService
         if (!is_dir(dirname($cacheFile))) {
             mkdir(dirname($cacheFile), 0777, true);
         }
+        $logger->info("Caching data to {$cacheFile}");
         file_put_contents($cacheFile, '<?php return ' . var_export($data, true) . '; ?>');
         return $data;
     }

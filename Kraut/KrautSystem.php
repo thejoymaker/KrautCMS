@@ -3,33 +3,26 @@ declare(strict_types=1);
 
 namespace Kraut;
 
-use DI\Container;
-use DI\ContainerBuilder;
 use Kraut\Model\Manifest;
 use Kraut\Service\ConfigurationService;
 use Kraut\Service\PluginService;
-use Kraut\Service\SystemDiscoveryService;
-use Kraut\Service\SystemSetupService;
 use Kraut\Service\ThemeService;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
 class KrautSystem
 {
-    private ContainerInterface $container;
     private ConfigurationService $configService;
     private ThemeService $themeService;
     private PluginService $pluginService;
     private Manifest $manifest;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(private ContainerInterface $container)
     {
-        $this->container = $container;
         $this->configService = $container->get(ConfigurationService::class);
         $this->pluginService = $this->container->get(PluginService::class);
         $this->themeService = $this->container->get(ThemeService::class);
@@ -97,6 +90,14 @@ class KrautSystem
     
     public function load(string $method, string $path): void
     {
+        // Normalize the URI
+        $path = parse_url($path, PHP_URL_PATH);
+        $path = rawurldecode($path);
+
+        if ($path !== '/' && substr($path, -1) === '/') {
+            $path = rtrim($path, '/');
+        }
+
         $this->pluginService->loadPlugins($method, $path);
         // throw new \RuntimeException('Not implemented');
 

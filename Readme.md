@@ -21,8 +21,9 @@ then run the php development server
 ```bash
 php -S localhost:8000 -t public
 ```
-
 then KrautCMS should be available on localhost:8000 (open in web browser).
+
+alternatively there is a debug server launch config in `.vscode`
 
 ## Wiki
 
@@ -34,7 +35,7 @@ The namespace `Kraut` contains the CMS system core. It should not be modified by
 
 `public/index.php` is the application entry point for every request. it contains the `main` method which instantiates the `Kernel` class for processing the request and returning the response. then the response is sent to the client accordingly.
 
-`System/Kernel.php` is as it is named the core processor of the system. During construction the **DI/IOC** container is configured and built. The method `handle(method, uri):Response` is the `Kernel`s only method. It initially sanitizes the uri and then proceeds to obtain the request from the PSR-17 factory. Then the **plugins are loaded**! the first event the `Kernel` emits is the `kernel.middleware` event which will enable the subscribed plugins to inject middlewares... then the middleware stack is processed through the `Relay`. After the request was successfully dispatched through the middleware queue the event `kernel.response` is emitted; the response is returned.
+`System/Kernel.php` is as it is named the core processor of the system. During construction the **DI/IOC** container is configured and built. The method `handle(method, uri):Response` is the `Kernel`s only method.
 
 ### Kernel Events:
 
@@ -64,7 +65,7 @@ The core should remain as small and simple as possible. Plugins can be created t
   "compatible_with": {
     "cms_version": ">=1.0.0,<2.0.0"
   },
-  "routes": [ "/my-endpoint-path/*" ],
+  "routes": [ "/some-endpoint-path-to-activate-plugin/*", "/*" ],
 }
 
 ```
