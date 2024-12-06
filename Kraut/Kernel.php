@@ -52,7 +52,7 @@ class Kernel
             \Psr\Http\Message\UriFactoryInterface::class => \DI\get(Psr17Factory::class),
             \Psr\Log\LoggerInterface::class => function () {
                 $logger = new \Monolog\Logger('krautcms');
-                $logger->pushHandler(new \Monolog\Handler\StreamHandler(__DIR__ . '/../Cache/app.log', \Monolog\Logger::DEBUG));
+                $logger->pushHandler(new \Monolog\Handler\StreamHandler(__DIR__ . '/../Log/app.log', \Monolog\Level::Debug));
                 return $logger;
             },
             Environment::class => function () {

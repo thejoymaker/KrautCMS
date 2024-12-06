@@ -52,7 +52,7 @@ class KrautSystem
      */
     private Manifest $manifest;
 
-    private int $sequence = 0;
+    private int $sequence;
 
     /**
      * The constructor of the KrautSystem class.
@@ -66,7 +66,7 @@ class KrautSystem
         $this->themeService = $this->container->get(ThemeService::class);
         $this->manifest = new Manifest(__DIR__ . '/Kraut.json');
         $this->setupTheme();
-        $this->sequence++;
+        $this->sequence = 1;
     }
     
     /**
@@ -86,13 +86,12 @@ class KrautSystem
      */
     public function discover(): void
     {
-        if($this->sequence == 1) {
-            $this->themeService->discoverThemes();
-            $this->pluginService->discoverPlugins();
-            $this->sequence++;
-        } else {
+        if($this->sequence !== 1) {
             throw new \RuntimeException('Wrong sequence');
         }
+        $this->themeService->discoverThemes();
+        $this->pluginService->discoverPlugins();
+        $this->sequence++;
     }
     
     /**
@@ -106,36 +105,34 @@ class KrautSystem
      */
     public function requirementsMet(): bool|array|string
     {
-        if($this->sequence == 2) {
-            if(!is_writable(__DIR__ . '/../Cache')) {
-                return 'The cache directory is not writable.';
-            }
-            $requiredPhpVersion = $this->pluginService->getMaxRequiredPhpVersion($this->manifest->getRequiredPhpVersion());
-            $currentPhpVersion = phpversion();
-            if(version_compare($currentPhpVersion, $requiredPhpVersion, '<')) {
-                return 'Current PHP Version: ' . $currentPhpVersion . ' < Required PHP Version: ' . $requiredPhpVersion;
-            }
-            $requiredExtensions = $this->pluginService->getRequiredExtensions();
-            $systemRequiredExtensions = $this->manifest->getRequiredPhpModules();
-            foreach ($systemRequiredExtensions as $extension => $version) {
-                if (!in_array($extension, $requiredExtensions)) {
-                    $extensions[] = $extension;
-                }
-            }
-            foreach ($requiredExtensions as $extension) {
-                if (!extension_loaded($extension)) {
-                    $missingExtensions[] = $extension;
-                }
-            }
-            if(!empty($missingExtensions)) {
-                return $missingExtensions;
-            }
-            $this->sequence++;
-            return true;
-        } else {
+        if($this->sequence !== 2) {
             throw new \RuntimeException('Wrong sequence');
         }
-        return false;
+        if(!is_writable(__DIR__ . '/../Cache')) {
+            return 'The cache directory is not writable.';
+        }
+        $requiredPhpVersion = $this->pluginService->getMaxRequiredPhpVersion($this->manifest->getRequiredPhpVersion());
+        $currentPhpVersion = phpversion();
+        if(version_compare($currentPhpVersion, $requiredPhpVersion, '<')) {
+            return 'Current PHP Version: ' . $currentPhpVersion . ' < Required PHP Version: ' . $requiredPhpVersion;
+        }
+        $requiredExtensions = $this->pluginService->getRequiredExtensions();
+        $systemRequiredExtensions = $this->manifest->getRequiredPhpModules();
+        foreach ($systemRequiredExtensions as $extension => $version) {
+            if (!in_array($extension, $requiredExtensions)) {
+                $extensions[] = $extension;
+            }
+        }
+        foreach ($requiredExtensions as $extension) {
+            if (!extension_loaded($extension)) {
+                $missingExtensions[] = $extension;
+            }
+        }
+        if(!empty($missingExtensions)) {
+            return $missingExtensions;
+        }
+        $this->sequence++;
+        return true;
         // return ['some', 'bogus'];
     }
 
@@ -168,19 +165,18 @@ class KrautSystem
      */
     public function load(string $method, string $path): void
     {
-        if($this->sequence == 3) {
-            // Normalize the URI
-            $path = parse_url($path, PHP_URL_PATH);
-            $path = rawurldecode($path);
-    
-            if ($path !== '/' && substr($path, -1) === '/') {
-                $path = rtrim($path, '/');
-            }
-            $this->pluginService->loadPlugins($method, $path);
-            $this->sequence++;
-        } else {
+        if($this->sequence !== 3) {
             throw new \RuntimeException('Wrong sequence');
         }
+        // Normalize the URI
+        $path = parse_url($path, PHP_URL_PATH);
+        $path = rawurldecode($path);
+
+        if ($path !== '/' && substr($path, -1) === '/') {
+            $path = rtrim($path, '/');
+        }
+        $this->pluginService->loadPlugins($method, $path);
+        $this->sequence++;
     }
 
     /**
@@ -193,36 +189,35 @@ class KrautSystem
      */
     public function run(string $method, string $uri): ResponseInterface
     {
-        if($this->sequence == 4) {
-            // Normalize the URI
-            $uri = parse_url($uri, PHP_URL_PATH);
-            $uri = rawurldecode($uri);
-
-            if ($uri !== '/' && substr($uri, -1) === '/') {
-                $uri = rtrim($uri, '/');
-            }
-
-            // Get the PSR-17 factory from the container
-            $psr17Factory = $this->container->get(Psr17Factory::class);
-
-            // Create the ServerRequest
-            $request = $psr17Factory->createServerRequest($method, $uri);
-            // Create the default middleware queue
-
-            $response = $this->executeMiddleware($request);
-
-            // Dispatch an event after the response is generated
-            $eventDispatcher = $this->container->get(EventDispatcherInterface::class);
-            $responseEvent = new \Kraut\Event\ResponseEvent($response);
-            $eventDispatcher->dispatch($responseEvent, 'kernel.response');
-
-            // Get the possibly modified response
-            $response = $responseEvent->getResponse();
-
-            return $response;
-        } else {
+        if($this->sequence !== 4) {
             throw new \RuntimeException('Wrong sequence');
         }
+        // Normalize the URI
+        $uri = parse_url($uri, PHP_URL_PATH);
+        $uri = rawurldecode($uri);
+
+        if ($uri !== '/' && substr($uri, -1) === '/') {
+            $uri = rtrim($uri, '/');
+        }
+
+        // Get the PSR-17 factory from the container
+        $psr17Factory = $this->container->get(Psr17Factory::class);
+
+        // Create the ServerRequest
+        $request = $psr17Factory->createServerRequest($method, $uri);
+        // Create the default middleware queue
+
+        $response = $this->executeMiddleware($request);
+
+        // Dispatch an event after the response is generated
+        $eventDispatcher = $this->container->get(EventDispatcherInterface::class);
+        $responseEvent = new \Kraut\Event\ResponseEvent($response);
+        $eventDispatcher->dispatch($responseEvent, 'kernel.response');
+
+        // Get the possibly modified response
+        $response = $responseEvent->getResponse();
+
+        return $response;
     }
 
     private function executeMiddleware(ServerRequestInterface $request): ResponseInterface
