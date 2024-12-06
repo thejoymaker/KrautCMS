@@ -9,24 +9,11 @@ class PageRepository implements ContentProviderInterface {
     public function __construct(
     )
     {
-        
     }
 
     public function list(?int $max = 100, ?int $pageNumber = null): ListResultInterface
     {
-        // $files = scandir($this->contentPath);
-        // $files = array_filter($files, fn($file) => $file !== '.' && $file !== '..');
-        // $files = array_slice($files, $pageNumber * $max, $max);
-
-        // $pages = [];
-        // foreach ($files as $file) {
-        //     $slug = basename($file);
-        //     $content = file_get_contents($this->contentPath . '/' . $file);
-        //     $pages[] = new PageEntry($slug, $file, $content);
-        // }
         $pagesList = $this->getPages();
-        // $listResult = new PagesListResult($pagesList);
-
         return new PagesListResult($pagesList);
     }
 
@@ -37,20 +24,21 @@ class PageRepository implements ContentProviderInterface {
      */
     private function getPages(): array
     {
-        // Define the path to your content files
         $contentDir = __DIR__ . '/../../../Content/PagesPlugin/pages';
-        // Initialize an empty array to hold the pages
         $pages = [];
-        // Iterate over the content directory to fetch page information
+
         foreach (glob($contentDir . '/*', GLOB_ONLYDIR) as $dir) {
             $slug = basename($dir);
-            $filePath = $dir . '/content.txt';
+            $contentFile = $dir . '/content.txt';
+            $titleFile = $dir . '/meta.txt';
 
-            if (file_exists($filePath)) {
-                $content = file_get_contents($filePath);
-                $pages[] = new PageEntry($slug, $filePath, $content);
+            if (file_exists($contentFile)) {
+                $content = file_get_contents($contentFile);
+                $title = file_exists($titleFile) ? file_get_contents($titleFile) : '';
+                $pages[] = new PageEntry($slug, $contentFile, $content, $title);
             }
         }
+
         return $pages;
     }
 
@@ -61,76 +49,42 @@ class PageRepository implements ContentProviderInterface {
 
     private function getPageContent(string $slug): ?PageEntry
     {
-        // Define the path to your content files
         $contentDir = __DIR__ . '/../../../Content/PagesPlugin/pages';
-
-        // Sanitize the slug to prevent directory traversal
         $safeSlug = basename($slug);
+        $pageDir = $contentDir . '/' . $safeSlug;
+        $contentFile = $pageDir . '/content.txt';
+        $titleFile = $pageDir . '/meta.txt';
 
-        // Construct the file path
-        $filePath = $contentDir . '/' . $safeSlug . '/content.txt';
-
-        if (!file_exists($filePath)) {
-                return null;
+        if (!file_exists($contentFile)) {
+            return null;
         }
 
-        // Read the content from the file
-        $content = file_get_contents($filePath);
+        $content = file_get_contents($contentFile);
+        $title = file_exists($titleFile) ? file_get_contents($titleFile) : '';
 
-        // Generate a title from the slug or include a title in the content file
-        // $title = ucwords(str_replace('-', ' ', $safeSlug));
-
-        return new PageEntry($safeSlug, $filePath, $content);
+        return new PageEntry($safeSlug, $contentFile, $content, $title);
     }
-    // {
-    //     // Define the path to your content files
-    //     $contentDir = __DIR__ . '/../../../Content/PagesPlugin/pages';
-
-    //     // Sanitize the slug to prevent directory traversal
-    //     $safeSlug = basename($slug);
-
-    //     // Construct the file path
-    //     $filePath = $contentDir . '/' . $safeSlug . '/content.txt';
-
-    //     if (!file_exists($filePath)) {
-    //             return null;
-    //     }
-
-    //     // Read the content from the file
-    //     $content = file_get_contents($filePath);
-
-    //     // Generate a title from the slug or include a title in the content file
-    //     $title = ucwords(str_replace('-', ' ', $safeSlug));
-
-    //     return [
-    //         'title' => $title,
-    //         'content' => $content,
-    //     ];
-    // }
 
     public function save(PageEntry $page): void
     {
-        $this->savePageContent($page->getSlug(), $page->getContent());
+        $this->savePageContent($page->getSlug(), $page->getContent(), $page->getTitle());
     }
 
-    private function savePageContent(string $slug, string $content): void
+    private function savePageContent(string $slug, string $content, string $title): void
     {
-        // Define the path to your content files
         $contentDir = __DIR__ . '/../../../Content/PagesPlugin/pages';
-
-        // Sanitize the slug to prevent directory traversal
         $safeSlug = basename($slug);
+        $pageDir = $contentDir . '/' . $safeSlug;
 
-        // Construct the file path
-        $filePath = $contentDir . '/' . $safeSlug . '/content.txt';
-
-        // Ensure the directory exists
-        if (!is_dir(dirname($filePath))) {
-            mkdir(dirname($filePath), 0777, true);
+        if (!is_dir($pageDir)) {
+            mkdir($pageDir, 0777, true);
         }
 
-        // Write the content to the file
-        file_put_contents($filePath, $content);
+        $contentFile = $pageDir . '/content.txt';
+        $titleFile = $pageDir . '/meta.txt';
+
+        file_put_contents($contentFile, $content);
+        file_put_contents($titleFile, $title);
     }
 }
 ?>

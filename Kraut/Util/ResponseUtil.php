@@ -50,7 +50,7 @@ class ResponseUtil
     public static function respond(Environment $twig, string $template, array $parameters = []): ResponseInterface
     {
         $content = $twig->render("{$template}.html.twig", $parameters);
-        $response = new Response();
+        $response = new Response(200, ['Content-Type' => 'text/html; charset=UTF-8']);
         $response->getBody()->write($content);
         return $response;
     }
@@ -64,20 +64,29 @@ class ResponseUtil
      * @param array       $parameters Optional associative array of parameters to pass to the template.
      * @return ResponseInterface A response object containing the rendered HTML content.
      */
-    public static function respondRelative(Environment $twig, string $namespace, string $template, array $parameters = []): ResponseInterface
+    // public static function respondRelative(Environment $twig, string $namespace, string $template, array $parameters = []): ResponseInterface
+    // {
+    //     $content = $twig->render("@{$namespace}/{$template}.html.twig", $parameters);
+    //     $response = new Response();
+    //     $response->getBody()->write($content);
+    //     return $response;
+    // }
+    public static function respondRelative(Environment $twig, string $pluginName, string $templateName, array $data = []): ResponseInterface
     {
-        $content = $twig->render("@{$namespace}/{$template}.html.twig", $parameters);
-        $response = new Response();
-        $response->getBody()->write($content);
-        return $response;
+        $templatePath = "@{$pluginName}/{$templateName}.html.twig";
+        $html = $twig->render($templatePath, $data);
+        return new Response(
+            200,
+            ['Content-Type' => 'text/html; charset=UTF-8'],
+            $html
+        );
     }
 
     public static function respondError(\Throwable $e, ContainerInterface $container): ResponseInterface
     {
         $twig = $container->get(Environment::class);
         $content = $twig->render('error.html.twig', ['error' => $e->getMessage()]);
-        $response = new Response(500);
-        $response->getBody()->write($content);
+        $response = new Response(500, ['Content-Type' => 'text/html; charset=UTF-8'], $content);
         return $response;
     }
 
@@ -89,8 +98,7 @@ class ResponseUtil
             'error' => $e->getMessage(),
             'stack_trace' => $trace
         ]);
-        $response = new Response(500);
-        $response->getBody()->write($content);
+        $response = new Response(500, ['Content-Type' => 'text/html; charset=UTF-8'], $content);
         return $response;
     }
 
@@ -101,8 +109,7 @@ class ResponseUtil
             'requirements_message' => $requirementsMessage,
             'missing_modules' => $missingModules
         ]);
-        $response = new Response(500);
-        $response->getBody()->write($content);
+        $response = new Response(500, ['Content-Type' => 'text/html; charset=UTF-8'], $content);
         return $response;
     }
 }

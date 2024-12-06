@@ -27,6 +27,9 @@ class Kernel
     private KrautSystem $system;
     private ContainerInterface $container;
 
+    /**
+     * 
+     */
     public function __construct()
     {
         // Initialize the DI container
@@ -98,11 +101,11 @@ class Kernel
                 $response = $this->system->run($method, $uri);
             } else {
                 if(is_string($requirementsMet)) {
-                    return ResponseUtil::respondRequirementsError($this->container, [], $requirementsMet);
+                    $response = ResponseUtil::respondRequirementsError($this->container, [], $requirementsMet);
                 } else if(is_array($requirementsMet)) {
-                    return ResponseUtil::respondRequirementsError($this->container, $requirementsMet);
+                    $response = ResponseUtil::respondRequirementsError($this->container, $requirementsMet);
                 } else {
-                    return ResponseUtil::respondRequirementsError($this->container, [], "Unknown requirements error. [{$method}] {$uri}");
+                    $response = ResponseUtil::respondRequirementsError($this->container, [], "Unknown requirements error. [{$method}] {$uri}");
                 }
             }
         } catch (\Throwable $e) {

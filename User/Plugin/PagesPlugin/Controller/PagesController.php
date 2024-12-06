@@ -74,13 +74,88 @@ class PagesController
         );
     }
 
+    #[Route(path: '/pages/create', methods: ['GET', 'POST'], roles: ['editor'])]
+    public function createPage(ServerRequestInterface $request): ResponseInterface
+    {
+        if ($request->getMethod() === 'POST') {
+            $parsedBody = $request->getParsedBody();
+
+            // Retrieve form data
+            $slug = $parsedBody['slug'] ?? '';
+            $title = $parsedBody['title'] ?? '';
+            $content = $parsedBody['content'] ?? '';
+
+            // Validate input
+            $errors = $this->validatePageData($slug, $title, $content);
+            if (!empty($errors)) {
+                // Render the form again with errors
+                return ResponseUtil::respondRelative(
+                    $this->twig,
+                    'PagesPlugin',
+                    'create',
+                    [
+                        'errors' => $errors,
+                        'page' => [
+                            'slug' => $slug,
+                            'title' => $title,
+                            'content' => $content,
+                        ],
+                    ]
+                );
+            }
+
+            // Save the new page
+            $this->pageRepository->save(new PageEntry($slug, '', $content, $title));
+
+            // Redirect to the page list
+            return new Response(302, ['Location' => $this->generateUrl('page_list')]);
+        }
+
+        // Render the creation form
+        return ResponseUtil::respondRelative(
+            $this->twig,
+            'PagesPlugin',
+            'create',
+            []
+        );
+    }
+
+    private function validatePageData(string $slug, string $title, string $content): array
+    {
+        $errors = [];
+
+        if (empty($slug)) {
+            $errors['slug'] = 'Slug is required.';
+        } elseif (!preg_match('/^[a-z0-9\-]+$/', $slug)) {
+            $errors['slug'] = 'Slug can only contain lowercase letters, numbers, and hyphens.';
+        } elseif ($this->pageRepository->getPage($slug) !== null) {
+            $errors['slug'] = 'A page with this slug already exists.';
+        }
+
+        if (empty($title)) {
+            $errors['title'] = 'Title is required.';
+        }
+
+        if (empty($content)) {
+            $errors['content'] = 'Content is required.';
+        }
+
+        return $errors;
+    }
+
     private function generateUrl(string $routeName, array $parameters = []): string
     {
-        // Use the same logic as in your PageRoutingExtension
         switch ($routeName) {
             case 'page_show':
                 $slug = $parameters['slug'] ?? '';
                 return '/pages/' . urlencode($slug);
+            case 'page_edit':
+                $slug = $parameters['slug'] ?? '';
+                return '/pages/' . urlencode($slug) . '/edit';
+            case 'page_list':
+                return '/pages';
+            case 'page_create':
+                return '/pages/create';
             default:
                 return '/';
         }

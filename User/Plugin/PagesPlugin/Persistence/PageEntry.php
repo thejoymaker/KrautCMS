@@ -6,16 +6,15 @@ use Kraut\Plugin\Content\ContentEntryInterface;
 
 class PageEntry implements ContentEntryInterface
 {
-    private string $title;
-
     public function __construct(
         private string $slug,
         private string $filename,
-        private string $content
-    )
-    {
-        // Capitalize the first letters of the title words
-        $this->title = ucwords(str_replace('-', ' ', $slug));
+        private string $content,
+        private string $title = ''
+    ) {
+        if (empty($this->title)) {
+            $this->title = ucwords(str_replace('-', ' ', $this->slug));
+        }
     }
 
     public function getSlug(): string

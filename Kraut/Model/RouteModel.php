@@ -51,7 +51,7 @@ class RouteModel
     {
         if( isset($this->routeMap[$httpMethod][$path]) ) {
             return true;
-        } else {
+        } else if( isset($this->routeMap[$httpMethod]) ) {
             foreach ($this->routeMap[$httpMethod] as $routePath => $info) {
                 if (RouteUtil::pathMatchesRoute($path, $routePath)) {
                     return true;

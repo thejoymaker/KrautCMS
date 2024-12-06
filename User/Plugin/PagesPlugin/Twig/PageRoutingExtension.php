@@ -28,13 +28,16 @@ class PageRoutingExtension extends AbstractExtension
         // Implement your route generation logic here.
         // This is a simple example for demonstration purposes.
 
+        $slug = $parameters['slug'] ?? '';
         switch ($routeName) {
             case 'page_show':
-                $slug = $parameters['slug'] ?? '';
                 return '/pages/' . urlencode($slug);
             case 'page_edit':
-                $slug = $parameters['slug'] ?? '';
                 return '/pages/' . urlencode($slug) . '/edit';
+            case 'page_create':
+                return '/pages/create';
+            case 'page_list':
+                return '/pages';
             default:
                 return '/';
         }
