@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace Kraut\Middleware;
 
+use Kraut\Util\CsrfTokenUtil;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -28,11 +29,11 @@ class CsrfValidationMiddleware implements MiddlewareInterface
                 throw new \RuntimeException('Session is required for CSRF protection.');
             }
 
-            $tokenInSession = $session->get($this->csrfTokenKey);
+            // $tokenInSession = $session->get($this->csrfTokenKey);
             $parsedBody = $request->getParsedBody();
             $tokenInForm = $parsedBody[$this->csrfTokenKey] ?? null;
 
-            if (!$tokenInForm || !hash_equals($tokenInSession, $tokenInForm)) {
+            if (!$tokenInForm || !CsrfTokenUtil::isValidToken($tokenInForm)) {
                 // Invalid CSRF token
                 $responseFactory = $this->container->get(\Psr\Http\Message\ResponseFactoryInterface::class);
                 $response = $responseFactory->createResponse(403);

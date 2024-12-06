@@ -6,11 +6,14 @@ declare(strict_types=1);
 namespace Kraut;
 
 use DI\ContainerBuilder;
+use Kraut\Service\AuthenticationServiceInterface;
 use Kraut\Service\CacheService;
 use Kraut\Util\ResponseUtil;
 use Kraut\Service\ConfigurationService;
+use Kraut\Service\NoopAuthenticationService;
 use Kraut\Service\PluginService;
 use Kraut\Service\RouteService;
+use Kraut\Util\ServiceUtil;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
 use Psr\Container\ContainerInterface;
@@ -72,7 +75,10 @@ class Kernel
                     $c->get(LoggerInterface::class)
                 );
             },
+            AuthenticationServiceInterface::class => \DI\autowire(NoopAuthenticationService::class),
         ]);
+
+        ServiceUtil::discoverPluginServices($containerBuilder);
 
         // Build the container
         $this->container = $containerBuilder->build();

@@ -5,7 +5,7 @@ namespace Kraut\Util;
 
 class CsrfTokenUtil
 {
-    public function generateToken(): string
+    public static function generateToken(): string
     {
         if (!isset($_SESSION['csrf_token'])) {
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
@@ -13,7 +13,7 @@ class CsrfTokenUtil
         return $_SESSION['csrf_token'];
     }
 
-    public static function validateToken(string $token): bool
+    public static function isValidToken(string $token): bool
     {
         if (!isset($_SESSION['csrf_token'])) {
             return false;
