@@ -47,9 +47,9 @@ class UserController
         $data = $request->getParsedBody();
         $username = $data['username'] ?? '';
         $password = $data['password'] ?? '';
-
+        $redirect = $request->getAttribute('session')->get('redirect');
         if ($this->authService->login($username, $password)) {
-            return ResponseUtil::redirectTemporary('/admin');
+            return ResponseUtil::redirectTemporary($redirect ?? '/admin');
         }
 
         // $content = $this->twig->render('@UserPlugin/login.html.twig', ['error' => 'Invalid credentials']);
