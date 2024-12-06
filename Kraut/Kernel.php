@@ -13,7 +13,6 @@ use Kraut\Service\PluginService;
 use Kraut\Service\RouteService;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
-use PSpell\Config;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
@@ -28,7 +27,7 @@ class Kernel
     private ContainerInterface $container;
 
     /**
-     * 
+     * Initializes the DI container and the system.
      */
     public function __construct()
     {
