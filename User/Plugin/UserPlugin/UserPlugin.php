@@ -15,7 +15,7 @@ use User\Plugin\UserPlugin\Service\AuthenticationService;
 
 class UserPlugin implements PluginInterface, EventSubscriberInterface
 {
-    private $container;
+    private ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
     {
@@ -36,7 +36,9 @@ class UserPlugin implements PluginInterface, EventSubscriberInterface
         $twig = $this->container->get(\Twig\Environment::class);
     
         // Add current_user as a global variable in Twig
-        $twig->addGlobal('current_user', $this->container->get(AuthenticationService::class)->getCurrentUser());
+        $twig->addGlobal('current_user', $this->container->
+            get(AuthenticationService::class)->getCurrentUser());
+        
     }
 
     public function deactivate(): void

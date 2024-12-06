@@ -6,11 +6,12 @@ declare(strict_types=1);
 namespace User\Plugin\UserPlugin\Service;
 
 use Kraut\Attribute\Service;
+use Kraut\Service\AuthenticationServiceInterface;
 use User\Plugin\UserPlugin\Repository\UserRepository;
 use User\Plugin\UserPlugin\Entity\User;
 
 #[Service]
-class AuthenticationService
+class AuthenticationService implements AuthenticationServiceInterface
 {
     private UserRepository $userRepository;
     private ?User $currentUser = null;
@@ -62,19 +63,6 @@ class AuthenticationService
     public function getCurrentUser(): ?User
     {
         return $this->currentUser;
-    }
-    
-    public function generateCsrfToken(): string
-    {
-        if (!isset($_SESSION['csrf_token'])) {
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-        }
-        return $_SESSION['csrf_token'];
-    }
-    
-    public function validateCsrfToken(string $token): bool
-    {
-        return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
     }
     
 }

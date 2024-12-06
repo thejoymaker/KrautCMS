@@ -5,7 +5,9 @@ declare(strict_types=1);
 
 namespace User\Plugin\UserPlugin\Entity;
 
-class User
+use Kraut\Model\UserInterface;
+
+class User implements UserInterface
 {
     private string $id;
     private string $username;

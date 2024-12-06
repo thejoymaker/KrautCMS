@@ -7,6 +7,7 @@ namespace User\Plugin\PagesPlugin\Controller;
 
 use Kraut\Attribute\Controller;
 use Kraut\Attribute\Route;
+use Kraut\Service\AuthenticationServiceInterface;
 use Kraut\Util\ResponseUtil;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -33,12 +34,24 @@ class PagesController
         // Fetch the list of pages
         $pages = $this->pageRepository->list();
 
-        // Render the template with the list of pages
-        // $html = $this->twig->render('@PagesPlugin/list.html.twig', ['pages' => $pages]);
+        $userRoles = [];
 
-        // return new Response(200, [], $html);
+        // throws an exception because the service is not found
+        $authenticationService = $this->container->get(AuthenticationServiceInterface::class);
 
-        return ResponseUtil::respondRelative($this->twig, 'PagesPlugin','list', ['pages' => $pages->getEntries()]);
+        if ($authenticationService->isAuthenticated()) {
+            $userRoles = $authenticationService->getCurrentUser()->getRoles();
+        }
+
+        return ResponseUtil::respondRelative(
+            $this->twig, 
+            'PagesPlugin',
+            'list', 
+            [
+                'pages' => $pages->getEntries(),
+                'userRoles' => $userRoles
+            ]
+        );
     }
 
     #[Route(path: '/pages/{slug:[a-zA-Z0-9\-]+}/edit', methods: ['GET', 'POST'], roles: ['editor'])]

@@ -5,7 +5,9 @@
 {% block content %}
     <h1>Page List</h1>
 
-    <a href="{{ path('page_create') }}">Add New Page</a>
+    {% if 'editor' in userRoles %}
+        <a href="{{ path('page_create') }}">Add New Page</a>
+    {% endif %}
 
     <table>
         <thead>
@@ -22,7 +24,9 @@
                     <td>{{ page.title }}</td>
                     <td>
                         <a href="{{ path('page_show', {'slug': page.slug}) }}">view</a>
-                        <a href="{{ path('page_edit', {'slug': page.slug}) }}">edit</a>
+                        {% if 'editor' in userRoles %}
+                            <a href="{{ path('page_edit', {'slug': page.slug}) }}">edit</a>
+                        {% endif %}
                     </td>
                 </tr>
             {% else %}
