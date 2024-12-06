@@ -59,17 +59,17 @@ interface PluginInterface extends EventSubscriberInterface
      */
     public function getContentProvider(): ?ContentProviderInterface;
 
-    /**
-     * This method is only called when the plugin has no manifest file.
-     * 
-     * Returns an array of requirements for this plugin.
-     *
-     * Used to declare any dependencies on other plugins or system components.
-     * The system can check these requirements before activating the plugin
-     * to ensure all dependencies are met.
-     *
-     * @return array An array of required plugin names or identifiers.
-     */
-    public function getRequirements(): array;
+    // /**
+    //  * This method is only called when the plugin has no manifest file.
+    //  * 
+    //  * Returns an array of requirements for this plugin.
+    //  *
+    //  * Used to declare any dependencies on other plugins or system components.
+    //  * The system can check these requirements before activating the plugin
+    //  * to ensure all dependencies are met.
+    //  *
+    //  * @return array An array of required plugin names or identifiers.
+    //  */
+    // public function getRequirements(): array;
 }
 ?>

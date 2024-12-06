@@ -46,11 +46,6 @@ class WelcomePlugin implements PluginInterface
         return null;
     }
 
-    public function getRequirements(): array
-    {
-        return [];
-    }
-
     public function onKernelResponse(ResponseEvent $event): void
     {
         $response = $event->getResponse();

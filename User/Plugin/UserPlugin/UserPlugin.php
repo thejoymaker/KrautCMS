@@ -51,13 +51,6 @@ class UserPlugin implements PluginInterface, EventSubscriberInterface
         return null;
     }
 
-    public function getRequirements(): array
-    {
-        // Return the requirements for this plugin
-        // For example, you might want to return an array of required services
-        return [];
-    }
-
     public function onKernelMiddleware(MiddlewareEvent $event): void
     {
         // Insert AuthMiddleware before RoutingMiddleware

@@ -192,14 +192,17 @@ class PluginService
             }
             foreach ($routeMap as $httpMethod => $routes) {
                 foreach ($routes as $routePath => $info) {
+                    // Convert route path to regex pattern
+                    // replace square brackets with parentheses to make optional
                     $sanePath = str_replace('[', '(', $routePath);
                     $sanePath = str_replace(']', ')?', $sanePath);
+                    // Replace route parameters with regex pattern
                     $pattern = preg_replace('/\{[^{}]*\}/', '([^/]+)', $sanePath);
                     // Escape delimiter in route (if using '/' as delimiter)
                     $pattern = str_replace('/', '\/', $pattern);
                     // Build the final regex pattern
                     $regex = '/^' . $pattern . '$/';
-                    // echo "Pattern: $regex\n<br>";
+                    // echo "Route: $routePath \n<br> Pattern: $regex\n<br><br>";
                     if (preg_match($regex, $path) && $httpMethod === $method) {
                         if (isset($info['roles'])) {
                             $roles = array_merge($roles, $info['roles']);

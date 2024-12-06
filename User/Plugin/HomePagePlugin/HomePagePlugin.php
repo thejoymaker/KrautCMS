@@ -47,13 +47,6 @@ class HomePagePlugin implements PluginInterface
         return null;
     }
 
-    public function getRequirements(): array
-    {
-        // Return the requirements for this plugin
-        // For example, you might want to return an array of required services
-        return [];
-    }
-
     public function onKernelRequest($event): void
     {
         // Handle the kernel.request event
