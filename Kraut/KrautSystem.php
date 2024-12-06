@@ -233,6 +233,7 @@ class KrautSystem
             \Kraut\Middleware\RequestBodyParserMiddleware::class,
             \Kraut\Middleware\CsrfValidationMiddleware::class,
             \Kraut\Middleware\CsrfMiddleware::class,
+            \Kraut\Middleware\AuthenticationMiddleware::class,
             \Kraut\Middleware\RoutingMiddleware::class,
             \Kraut\Middleware\DispatchMiddleware::class,
         ];

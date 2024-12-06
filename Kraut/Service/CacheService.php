@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace Kraut\Service;
 
+use Kraut\Util\CacheUtil;
 use Kraut\Util\TimeUtil;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -63,15 +64,8 @@ class CacheService
         return $this->loadCached($this->pluginCacheFile, $loader, $resource);
     }
 
-    private function loadCached(string $cacheFile, callable $loader, String $resource): array
+    public function invalidateCache($cacheFile): void
     {
-        $maxFileTime = TimeUtil::maxFileMTime($resource);
-        $cacheFileTime = file_exists($cacheFile) ? filemtime($cacheFile) : 0;
-        $logger = $this->container->get(LoggerInterface::class);
-        if ($this->cacheEnabled && file_exists($cacheFile) && $cacheFileTime >= $maxFileTime) {
-            $logger->info("Loading cached data from {$cacheFile}");
-            return require $cacheFile;
-        }
         switch($cacheFile) {
             case $this->configCacheFile:
                 // Clear the plugin cache if the config cache is being rebuilt
@@ -80,19 +74,19 @@ class CacheService
                 }
                 break;
             case $this->pluginCacheFile:
+                // Clear the fast route cache if the plugin cache is being rebuilt
                 if(file_exists($this->fastRouteCacheFile)){
                     unlink($this->fastRouteCacheFile);
                 }
                 break;
         }
-        $data = call_user_func($loader);
-        // Create parent directory if it does not exist
-        if (!is_dir(dirname($cacheFile))) {
-            mkdir(dirname($cacheFile), 0777, true);
-        }
-        $logger->info("Caching data to {$cacheFile}");
-        file_put_contents($cacheFile, '<?php return ' . var_export($data, true) . '; ?>');
-        return $data;
+    }
+
+    private function loadCached(string $cacheFile, callable $loader, String $resource): array
+    {
+        $logger = $this->container->get(LoggerInterface::class);
+        return CacheUtil::loadCached($cacheFile, $loader, $resource, 
+            $this->cacheEnabled, [$this, 'invalidateCache'], $logger);
     }
 }
 ?>

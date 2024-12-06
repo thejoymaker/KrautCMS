@@ -36,7 +36,6 @@ class PagesController
 
         $userRoles = [];
 
-        // throws an exception because the service is not found
         $authenticationService = $this->container->get(AuthenticationServiceInterface::class);
 
         if ($authenticationService->isAuthenticated()) {

@@ -25,7 +25,6 @@ class UserPlugin implements PluginInterface, EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            'kernel.middleware' => 'onKernelMiddleware',
         ];
     }
 
@@ -38,7 +37,7 @@ class UserPlugin implements PluginInterface, EventSubscriberInterface
         // Add current_user as a global variable in Twig
         $twig->addGlobal('current_user', $this->container->
             get(AuthenticationService::class)->getCurrentUser());
-        
+
     }
 
     public function deactivate(): void
@@ -51,15 +50,6 @@ class UserPlugin implements PluginInterface, EventSubscriberInterface
         // Return the content provider for this plugin
         // For example, you might want to return a custom content provider
         return null;
-    }
-
-    public function onKernelMiddleware(MiddlewareEvent $event): void
-    {
-        // Insert AuthMiddleware before RoutingMiddleware
-        $event->insertBefore(
-            \Kraut\Middleware\RoutingMiddleware::class,
-            \User\Plugin\UserPlugin\Middleware\AuthenticationMiddleware::class
-        );
     }
 }
 

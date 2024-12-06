@@ -3,24 +3,21 @@
 
 declare(strict_types=1);
 
-namespace User\Plugin\UserPlugin\Middleware;
+namespace Kraut\Middleware;
 
 use Kraut\Http\Session;
+use Kraut\Service\AuthenticationServiceInterface;
 use Kraut\Service\PluginService;
 use Kraut\Util\ResponseUtil;
-use Kraut\Service\RouteService;
-use User\Plugin\UserPlugin\Service\AuthenticationService;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Nyholm\Psr7\Response;
-use Symfony\Component\Yaml\Yaml;
 
 class AuthenticationMiddleware implements MiddlewareInterface
 {
     public function __construct(
-        private AuthenticationService $authService,
+        private AuthenticationServiceInterface $authService,
         private PluginService $pluginService,
         )
     {}
@@ -33,7 +30,6 @@ class AuthenticationMiddleware implements MiddlewareInterface
 
         // Get route roles
         $roles = $this->pluginService->getRolesForRoute($httpMethod, $uri);
-
         if (!empty($roles)) {
             // Check if user has any of the required roles
             if (!$user || empty(array_intersect($user->getRoles(), $roles))) {
