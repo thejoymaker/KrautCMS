@@ -15,10 +15,17 @@ use ReflectionMethod;
 /**
  * Class RouteUtil
  *
- * Utility class for discovering routes.
+ * Utility class for discovering and analyzing routes.
  */
 class RouteUtil
 {
+    /**
+     * Checks if a path matches a route.
+     *
+     * @param string $path The path to check.
+     * @param string $route The route to match.
+     * @return bool True if the path matches the route, false otherwise.
+     */
     public static function pathMatchesRoute(string $path, string $route): bool
     {
         // Convert route path to regex pattern

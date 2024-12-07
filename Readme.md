@@ -35,7 +35,13 @@ The namespace `Kraut` contains the CMS system core. It should not be modified by
 
 `public/index.php` is the application entry point for every request. it contains the `main` method which instantiates the `Kernel` class for processing the request and returning the response. then the response is sent to the client accordingly.
 
-`System/Kernel.php` is as it is named the core processor of the system. During construction the **DI/IOC** container is configured and built. The method `handle(method, uri):Response` is the `Kernel`s only method.
+`System/Kernel.php` is as it is named the core processor of the system. 
+
+During the `Kernel` construction the **DI/IOC** container is configured and built. The method `handle(method, uri):Response` is the `Kernel`s only method.
+
+**Important**
+
+* The `Kernel` constructor will also perform a **quick scan** for `...ServiceInterface` implementations in the plugins `Service` directory before building the IOC container. These service implementation classes must reside in the namespace `\\User\\Plugin\\[MyPlugin]\\Service`
 
 ### Kernel Events:
 
