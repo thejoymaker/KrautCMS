@@ -49,6 +49,23 @@ class CacheService
         $this->cacheEnabled = isset($_ENV['CACHE_ENABLED']) ? $_ENV['CACHE_ENABLED'] === 'true' : false;
     }
 
+    public function nukeCache(): void
+    {
+        $cacheFiles = [
+            $this->cacheDir . 'services.php',
+            $this->configCacheFile,
+            // $this->themeCacheFile,
+            $this->pluginCacheFile,
+            $this->fastRouteCacheFile
+        ];
+
+        foreach ($cacheFiles as $cacheFile) {
+            if (file_exists($cacheFile)) {
+                unlink($cacheFile);
+            }
+        }
+    }
+
     public function loadCachedConfig(callable $loader, String $resource): array
     {
         return $this->loadCached($this->configCacheFile, $loader, $resource);
