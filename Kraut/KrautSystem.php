@@ -64,6 +64,9 @@ class KrautSystem
         $this->configService = $container->get(ConfigurationService::class);
         $this->pluginService = $this->container->get(PluginService::class);
         $this->themeService = $this->container->get(ThemeService::class);
+        if(!extension_loaded('json')) {
+            throw new \RuntimeException('The JSON extension is required.');
+        }
         $this->manifest = new Manifest(__DIR__ . '/Kraut.json');
         $this->setupTheme();
         $this->sequence = 1;
@@ -221,7 +224,7 @@ class KrautSystem
     }
 
     private function executeMiddleware(ServerRequestInterface $request): ResponseInterface
-    {            
+    {
         $middlewareQueue = [
             \Kraut\Middleware\MalIntentDetectionMiddleware::class,
             \Kraut\Middleware\SessionMiddleware::class,
