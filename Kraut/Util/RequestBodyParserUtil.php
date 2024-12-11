@@ -16,7 +16,7 @@ class RequestBodyParserUtil
         'multipart/form-data' => 'parseMultipartData'
     ];
 
-    public static function parseRequestBody(ServerRequestInterface $request, LoggerInterface $logger) : ServerRequestInterface
+    public static function parseRequestBody(ServerRequestInterface $request, ?LoggerInterface $logger) : ServerRequestInterface
     {
         $contentType = $request->getHeaderLine('Content-Type');
         $baseContentType = self::getBaseContentType($contentType);
@@ -37,12 +37,12 @@ class RequestBodyParserUtil
                 // Parse body
                 $request = self::{$parser}($request);
                 
-                $logger->info('Parsed request body', [
+                $logger?->info('Parsed request body', [
                     'content_type' => $baseContentType,
                     'parsed_data' => $request->getParsedBody()
                 ]);
             } catch (\Throwable $e) {
-                $logger->error("Failed to parse request body", [
+                $logger?->error("Failed to parse request body", [
                     'content_type' => $baseContentType,
                     'error' => $e->getMessage()
                 ]);

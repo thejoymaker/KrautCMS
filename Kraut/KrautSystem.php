@@ -204,12 +204,13 @@ class KrautSystem
         }
 
         // Get the PSR-17 factory from the container
+        /** @var Psr17Factory $psr17Factory */
         $psr17Factory = $this->container->get(Psr17Factory::class);
 
         // Create the ServerRequest
         $request = $psr17Factory->createServerRequest($method, $uri);
         // Create the default middleware queue
-
+        $_POST['csrf_token'] = $_POST['csrf_token'] ?? '';
         $response = $this->executeMiddleware($request);
 
         // Dispatch an event after the response is generated

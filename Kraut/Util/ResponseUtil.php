@@ -74,7 +74,12 @@ class ResponseUtil
     public static function respondRelative(Environment $twig, string $pluginName, string $templateName, array $data = []): ResponseInterface
     {
         $templatePath = "@{$pluginName}/{$templateName}.html.twig";
-        $html = $twig->render($templatePath, $data);
+        try {
+            $html = $twig->render($templatePath, $data);
+        } catch (\Throwable $e) {
+            throw new \RuntimeException("Error rendering template: {$templatePath}", 0, $e);
+        }
+        // $html = $twig->render($templatePath, $data);
         return new Response(
             200,
             ['Content-Type' => 'text/html; charset=UTF-8'],

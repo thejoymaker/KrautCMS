@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace Kraut\Middleware;
 
+use Kraut\Util\RequestBodyParserUtil;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
@@ -67,9 +68,10 @@ class MalIntentDetectionMiddleware implements MiddlewareInterface
 
         // Collect raw body data
         $body = (string) $request->getBody();
-        $contentType = $request->getHeaderLine('Content-Type');
-        $parsedBody = $this->parseRawBody($body, $contentType);
-        $dataToCheck = array_merge($dataToCheck, $this->flattenData($parsedBody));
+        // $contentType = $request->getHeaderLine('Content-Type');
+        // $parsedBody = $this->parseRawBody($body, $contentType);
+        $request = RequestBodyParserUtil::parseRequestBody($request, $this->logger);
+        $dataToCheck = array_merge($dataToCheck, $this->flattenData($request->getParsedBody()));
 
         // Collect headers
         $headers = $request->getHeaders();
@@ -94,42 +96,42 @@ class MalIntentDetectionMiddleware implements MiddlewareInterface
         return false;
     }
 
-    private function parseRawBody(string $body, string $contentType): array
-    {
-        $parsedBody = [];
+    // private function parseRawBody(string $body, string $contentType): array
+    // {
+    //     $parsedBody = [];
 
-        if(empty($contentType)) {
-            $contentType = 'application/x-www-form-urlencoded';
-        }
+    //     if(empty($contentType)) {
+    //         $contentType = 'application/x-www-form-urlencoded';
+    //     }
 
-        // Extract base content type without charset or boundary
-        $semicolonPosition = strpos($contentType, ';');
-        if ($semicolonPosition !== false) {
-            $baseContentType = substr($contentType, 0, $semicolonPosition);
-        } else {
-            $baseContentType = $contentType;
-        }
+    //     // Extract base content type without charset or boundary
+    //     $semicolonPosition = strpos($contentType, ';');
+    //     if ($semicolonPosition !== false) {
+    //         $baseContentType = substr($contentType, 0, $semicolonPosition);
+    //     } else {
+    //         $baseContentType = $contentType;
+    //     }
 
-        switch (trim($baseContentType)) {
-            case 'application/json':
-                $parsedBody = json_decode($body, true) ?? [];
-                break;
-            case 'application/x-www-form-urlencoded':
-                parse_str($body, $parsedBody);
-                break;
-            case 'multipart/form-data':
-                // For multipart/form-data, parsing is complex
-                // You might need to use a library or skip parsing here
-                $parsedBody = []; // Skipping parsing for simplicity
-                break;
-            default:
-                // Other content types can be handled here
-                $parsedBody = [];
-                break;
-        }
+    //     switch (trim($baseContentType)) {
+    //         case 'application/json':
+    //             $parsedBody = json_decode($body, true) ?? [];
+    //             break;
+    //         case 'application/x-www-form-urlencoded':
+    //             parse_str($body, $parsedBody);
+    //             break;
+    //         case 'multipart/form-data':
+    //             // For multipart/form-data, parsing is complex
+    //             // You might need to use a library or skip parsing here
+    //             $parsedBody = []; // Skipping parsing for simplicity
+    //             break;
+    //         default:
+    //             // Other content types can be handled here
+    //             $parsedBody = [];
+    //             break;
+    //     }
 
-        return $parsedBody;
-    }
+    //     return $parsedBody;
+    // }
 
     private function flattenData($data): array
     {
