@@ -33,10 +33,11 @@
                 "-dxdebug.mode=debug",
                 "-dxdebug.start_with_request=yes",
                 "-S",
-                "localhost:0"
+                "localhost:0",
+                "${workspaceRoot}/router.php"
             ],
             "program": "",
-            "cwd": "${workspaceRoot}/public",
+            "cwd": "${workspaceRoot}",
             "port": 9003,
             "serverReadyAction": {
                 "pattern": "Development Server \\(http://localhost:([0-9]+)\\) started",
