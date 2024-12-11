@@ -1,6 +1,12 @@
 <?php
 // router.php
 
+// This file allows us to emulate Apache's "mod_rewrite" 
+// functionality from the built-in PHP web server. 
+
+// see the Server.config.md file for more information 
+// on how to configure your server.
+
 $uri = urldecode(
     parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)
 );
