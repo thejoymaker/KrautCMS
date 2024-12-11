@@ -8,6 +8,7 @@ namespace User\Plugin\PagesPlugin\Controller;
 use Kraut\Attribute\Controller;
 use Kraut\Attribute\Route;
 use Kraut\Service\AuthenticationServiceInterface;
+use Kraut\Service\ConfigurationService;
 use Kraut\Util\ResponseUtil;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -26,6 +27,15 @@ class PagesController
                                 private PageRepository $pageRepository)
     {
         $twig->addExtension(new PageRoutingExtension());
+    }
+
+    #[Route(path: '/', methods: ['GET'])]
+    public function home(ServerRequestInterface $request): ResponseInterface
+    {
+        $configService = $this->container->get(ConfigurationService::class);
+        $homeEndPointPath = $configService->get('pagesplugin.home', '/pages');
+        return ResponseUtil::redirectTemporary($homeEndPointPath);
+        // return new Response(200, [], 'Welcome to the Pages Plugin!');
     }
 
     #[Route(path: '/pages', methods: ['GET'])]

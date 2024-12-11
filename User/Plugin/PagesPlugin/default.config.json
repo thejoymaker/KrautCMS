@@ -1,6 +1,5 @@
 {
     "pagesplugin": {
-        "active": true,
         "home": "/pages/home"
     }
 }
