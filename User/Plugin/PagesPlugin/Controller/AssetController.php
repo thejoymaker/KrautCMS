@@ -35,6 +35,21 @@ class AssetController
         $fullPath = __DIR__ . '/../../../Theme/' . $theme . '/assets/' . $assetPath;
 
         if (!file_exists($fullPath) || !is_file($fullPath)) {
+            $pluginsDir = __DIR__ . '/../../';
+            $allPluginDirs = array_filter(glob($pluginsDir . '*'), 'is_dir');
+            foreach ($allPluginDirs as $pluginDir) {
+                $pluginName = basename($pluginDir);
+                $assetsDir = $pluginsDir . $pluginName . '/View/assets/';
+                $fullPath = $assetsDir . $assetPath;
+                if (file_exists($fullPath) && is_file($fullPath)) {
+                    break;
+                }
+            }
+            // $pluginName = '';
+            // $assetsDir = $pluginDir . $pluginName . '/View/assets/';
+        }
+
+        if (!file_exists($fullPath) || !is_file($fullPath)) {
             return new Response(404, [], 'Asset not found');
         }
 
