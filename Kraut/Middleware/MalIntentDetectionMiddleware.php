@@ -58,7 +58,7 @@ class MalIntentDetectionMiddleware implements MiddlewareInterface
         return $handler->handle($request);
     }
 
-    private function detectMaliciousIntent(ServerRequestInterface $request): bool
+    public function detectMaliciousIntent(ServerRequestInterface $request): bool
     {
         $dataToCheck = [];
 
