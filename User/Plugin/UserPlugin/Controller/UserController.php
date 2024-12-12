@@ -100,11 +100,11 @@ class UserController
         return ResponseUtil::redirectTemporary('/admin');
     }
 
-    #[Route(path: '/admin', methods: ['GET'], roles: ['user'])]
-    public function admin(ServerRequestInterface $request): ResponseInterface
-    {
-        return ResponseUtil::respondRelative($this->twig, 'UserPlugin', 'admin');
-    }
+    // #[Route(path: '/admin', methods: ['GET'], roles: ['user'])]
+    // public function admin(ServerRequestInterface $request): ResponseInterface
+    // {
+    //     return ResponseUtil::respondRelative($this->twig, 'UserPlugin', 'admin');
+    // }
     
     #[Route(path: '/change-password', methods: ['POST'])]
     public function changePassword(ServerRequestInterface $request): ResponseInterface

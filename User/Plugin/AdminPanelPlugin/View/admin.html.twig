@@ -1,0 +1,132 @@
+{% extends '@Theme/base.html.twig' %}
+
+{% block title %}Admin Panel - KrautCMS{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="/assets/css/adminpanelplugin.css">
+{% endblock %}
+
+{% block header %}
+    <nav>
+        <ul>
+            <li><a href="/admin/dashboard">Dashboard</a></li>
+            <li><a href="/admin/users">Users</a></li>
+            <li><a href="/admin/content">Content</a></li>
+            <li><a href="/admin/settings">Settings</a></li>
+            <li><a href="/admin/reports">Reports</a></li>
+            <li><a href="/admin/logout">Logout</a></li>
+        </ul>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <h2>Admin Dashboard</h2>
+    <section id="dashboard">
+        <h3>Overview</h3>
+        <div class="stats">
+            <div class="stat">
+                <h4>Total Users</h4>
+                <p>123</p>
+            </div>
+            <div class="stat">
+                <h4>Total Posts</h4>
+                <p>456</p>
+            </div>
+            <div class="stat">
+                <h4>Active Sessions</h4>
+                <p>78</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="users">
+        <h3>Manage Users</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>admin</td>
+                    <td>admin@example.com</td>
+                    <td>Administrator</td>
+                    <td>
+                        <a href="/admin/users/edit/1">Edit</a>
+                        <a href="/admin/users/delete/1">Delete</a>
+                    </td>
+                </tr>
+                <!-- More user rows -->
+            </tbody>
+        </table>
+    </section>
+
+    <section id="content">
+        <h3>Manage Content</h3>
+        <button onclick="window.location.href='/admin/content/create'">Create New Post</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Welcome to KrautCMS</td>
+                    <td>admin</td>
+                    <td>2023-10-01</td>
+                    <td>
+                        <a href="/admin/content/edit/1">Edit</a>
+                        <a href="/admin/content/delete/1">Delete</a>
+                    </td>
+                </tr>
+                <!-- More content rows -->
+            </tbody>
+        </table>
+    </section>
+
+    <section id="settings">
+        <h3>Settings</h3>
+        <form action="/admin/settings/save" method="post">
+            <div class="form-group">
+                <label for="site_name">Site Name</label>
+                <input type="text" id="site_name" name="site_name" value="KrautCMS">
+            </div>
+            <div class="form-group">
+                <label for="admin_email">Admin Email</label>
+                <input type="email" id="admin_email" name="admin_email" value="admin@example.com">
+            </div>
+            <div class="form-group">
+                <label for="timezone">Timezone</label>
+                <select id="timezone" name="timezone">
+                    <option value="UTC">UTC</option>
+                    <option value="America/New_York">America/New_York</option>
+                    <option value="Europe/Berlin">Europe/Berlin</option>
+                    <!-- More timezones -->
+                </select>
+            </div>
+            <button type="submit">Save Settings</button>
+        </form>
+    </section>
+
+    <section id="reports">
+        <h3>Reports</h3>
+        <p>Generate and view various reports about your site's activity.</p>
+        <button onclick="window.location.href='/admin/reports/generate'">Generate Report</button>
+    </section>
+{% endblock %}
+
+{% block footer %}
+    <p>&copy; {{ "now"|date("Y") }} KrautCMS. All rights reserved.</p>
+{% endblock %}
