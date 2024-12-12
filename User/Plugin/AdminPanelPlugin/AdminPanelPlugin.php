@@ -13,7 +13,6 @@ class AdminPanelPlugin implements PluginInterface
 {
     public function __construct()
     {
-        echo 'AdminPanelPlugin loaded';
     }
 
     public static function getSubscribedEvents(): array

@@ -28,9 +28,11 @@ nav ul li a:hover {
 }
 
 .stat {
-    background-color: lightgray;
     padding: 20px;
     border-radius: 5px;
+    border-color: yellow;
+    border-width: 1px;
+    border-style: solid;
     text-align: center;
 }
 
@@ -41,7 +43,7 @@ table {
 }
 
 table, th, td {
-    border: 1px solid black;
+    border: 1px solid yellow;
 }
 
 th, td {
@@ -62,4 +64,46 @@ th, td {
     width: 100%;
     padding: 8px;
     box-sizing: border-box;
+}
+
+/* Navigation styles */
+#admin-nav {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 10px;
+}
+
+#admin-nav li {
+    display: inline;
+}
+
+#admin-nav a {
+    text-decoration: none;
+    color: yellow;
+    background-color: #333;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+#admin-nav a.active {
+    background-color: #555;
+}
+
+#admin-nav a:hover {
+    background-color: #444;
+}
+
+/* Section styles */
+.admin-section {
+    display: none;
+}
+
+.admin-section h2 {
+    margin-top: 0;
+}
+
+/* Ensure the default section is visible */
+.admin-section:first-of-type {
+    display: block;
 }

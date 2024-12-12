@@ -4,24 +4,25 @@
 
 {% block styles %}
     <link rel="stylesheet" href="/assets/css/adminpanelplugin.css">
+    <script src="/assets/js/admin.js" defer></script>
 {% endblock %}
 
 {% block header %}
     <nav>
-        <ul>
-            <li><a href="/admin/dashboard">Dashboard</a></li>
-            <li><a href="/admin/users">Users</a></li>
-            <li><a href="/admin/content">Content</a></li>
-            <li><a href="/admin/settings">Settings</a></li>
-            <li><a href="/admin/reports">Reports</a></li>
-            <li><a href="/admin/logout">Logout</a></li>
+        <ul id="admin-nav">
+            <li><a href="#" data-section="dashboard" class="active">Dashboard</a></li>
+            <li><a href="#" data-section="users">Users</a></li>
+            <li><a href="#" data-section="content">Content</a></li>
+            <li><a href="#" data-section="settings">Settings</a></li>
+            <li><a href="#" data-section="reports">Reports</a></li>
+            <li><a href="/logout">Logout</a></li>
         </ul>
     </nav>
 {% endblock %}
 
 {% block content %}
-    <h2>Admin Dashboard</h2>
-    <section id="dashboard">
+    <section id="dashboard" class="admin-section">
+        <h2>Admin Dashboard</h2>
         <h3>Overview</h3>
         <div class="stats">
             <div class="stat">
@@ -39,8 +40,8 @@
         </div>
     </section>
 
-    <section id="users">
-        <h3>Manage Users</h3>
+    <section id="users" class="admin-section" style="display: none;">
+        <h2>Manage Users</h2>
         <table>
             <thead>
                 <tr>
@@ -67,8 +68,8 @@
         </table>
     </section>
 
-    <section id="content">
-        <h3>Manage Content</h3>
+    <section id="content" class="admin-section" style="display: none;">
+        <h2>Manage Content</h2>
         <button onclick="window.location.href='/admin/content/create'">Create New Post</button>
         <table>
             <thead>
@@ -96,8 +97,8 @@
         </table>
     </section>
 
-    <section id="settings">
-        <h3>Settings</h3>
+    <section id="settings" class="admin-section" style="display: none;">
+        <h2>Settings</h2>
         <form action="/admin/settings/save" method="post">
             <div class="form-group">
                 <label for="site_name">Site Name</label>
@@ -120,8 +121,8 @@
         </form>
     </section>
 
-    <section id="reports">
-        <h3>Reports</h3>
+    <section id="reports" class="admin-section" style="display: none;">
+        <h2>Reports</h2>
         <p>Generate and view various reports about your site's activity.</p>
         <button onclick="window.location.href='/admin/reports/generate'">Generate Report</button>
     </section>
