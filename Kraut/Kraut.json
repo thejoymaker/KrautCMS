@@ -5,8 +5,6 @@
     "license": "MIT",
     "required": {
         "php_version": "8.0.0",
-        "php_modules": {
-            "json": "*"
-        }
+        "php_modules": {}
     }
 }
