@@ -1,6 +1,7 @@
 
 {
     "name": "Welcome Plugin",
+    "version": "1.0.0",
     "cms_version": ">=1.0.0,<2.0.0",
     "type": "cms-plugin",
     "license": "MIT",
@@ -8,7 +9,7 @@
       "/*"
     ],
     "required": {
-        "php_version": "8.0.0",
+        "php_version": "8.2.0",
         "php_modules": {
             "json": "*"
         }
