@@ -72,7 +72,6 @@ class RequestBodyParserUtil
                 'Invalid JSON data: ' . json_last_error_msg()
             );
         }
-
         return $request->withParsedBody($data);
     }
 
