@@ -3,3 +3,4 @@ vendor/
 User/Content/
 Log/
 .env
+.phpunit.result.cache
