@@ -1,5 +1,5 @@
 /* Admin Panel Styles */
-nav ul {
+/* nav ul {
     list-style: none;
     padding: 0;
     display: flex;
@@ -20,7 +20,7 @@ nav ul li a {
 
 nav ul li a:hover {
     background-color: blue;
-}
+} */
 
 .stats {
     display: flex;
@@ -71,7 +71,7 @@ th, td {
     list-style: none;
     padding: 0;
     display: flex;
-    gap: 10px;
+    /* gap: 10px; */
 }
 
 #admin-nav li {

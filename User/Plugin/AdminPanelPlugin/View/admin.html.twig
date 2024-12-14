@@ -3,18 +3,23 @@
 {% block title %}Admin Panel - KrautCMS{% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="/assets/css/adminpanelplugin.css">
+    <link rel="stylesheet" href="/assets/css/admin.css">
     <script src="/assets/js/admin.js" defer></script>
 {% endblock %}
 
 {% block header %}
+    <div id="admin-header">
+        <a href="/" target="_blank">View Home Page</a>
+        <a href="#" id="clear_cache" data-action="clear-cache">Clear Cache</a>
     <nav>
         <ul id="admin-nav">
             <li><a href="#" data-section="dashboard" class="active">Dashboard</a></li>
             <li><a href="#" data-section="users">Users</a></li>
-            <li><a href="#" data-section="content">Content</a></li>
+            <li><a href="#" data-section="plugins">Plugins</a></li>
+            <li><a href="#" data-section="themes">Themes</a></li>
             <li><a href="#" data-section="settings">Settings</a></li>
             <li><a href="#" data-section="reports">Reports</a></li>
+            <li><a href="#" data-section="content">Content</a></li>
             <li><a href="/logout">Logout</a></li>
         </ul>
     </nav>
@@ -68,31 +73,54 @@
         </table>
     </section>
 
-    <section id="content" class="admin-section" style="display: none;">
-        <h2>Manage Content</h2>
-        <button onclick="window.location.href='/admin/content/create'">Create New Post</button>
+    <section id="plugins" class="admin-section" style="display: none;">
+        <h2>Manage Plugins</h2>
         <table>
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Title</th>
-                    <th>Author</th>
-                    <th>Date</th>
+                    <th>Name</th>
+                    <th>Version</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td>1</td>
-                    <td>Welcome to KrautCMS</td>
-                    <td>admin</td>
-                    <td>2023-10-01</td>
+                    <td>UserPlugin</td>
+                    <td>1.0.0</td>
                     <td>
-                        <a href="/admin/content/edit/1">Edit</a>
-                        <a href="/admin/content/delete/1">Delete</a>
+                        <a href="/admin/plugins/edit/1">Edit</a>
+                        <a href="/admin/plugins/delete/1">Delete</a>
                     </td>
                 </tr>
-                <!-- More content rows -->
+                <!-- More plugin rows -->
+            </tbody>
+        </table>
+    </section>
+
+    <section id="themes" class="admin-section" style="display: none;">
+        <h2>Manage Themes</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Version</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>DefaultTheme</td>
+                    <td>1.0.0</td>
+                    <td>
+                        <a href="/admin/themes/edit/1">Edit</a>
+                        <a href="/admin/themes/delete/1">Delete</a>
+                    </td>
+                </tr>
+                <!-- More theme rows -->
             </tbody>
         </table>
     </section>
@@ -125,6 +153,35 @@
         <h2>Reports</h2>
         <p>Generate and view various reports about your site's activity.</p>
         <button onclick="window.location.href='/admin/reports/generate'">Generate Report</button>
+    </section>
+
+    <section id="content" class="admin-section" style="display: none;">
+        <h2>Manage Content</h2>
+        <button onclick="window.location.href='/admin/content/create'">Create New Post</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Welcome to KrautCMS</td>
+                    <td>admin</td>
+                    <td>2023-10-01</td>
+                    <td>
+                        <a href="/admin/content/edit/1">Edit</a>
+                        <a href="/admin/content/delete/1">Delete</a>
+                    </td>
+                </tr>
+                <!-- More content rows -->
+            </tbody>
+        </table>
     </section>
 {% endblock %}
 
