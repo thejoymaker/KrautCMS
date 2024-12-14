@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace Kraut\Middleware;
 
+use Kraut\Util\CsrfTokenUtil;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -29,12 +30,8 @@ class CsrfMiddleware implements MiddlewareInterface
             throw new \RuntimeException('Session is required for CSRF protection.');
         }
 
-        if (!$session->has($this->csrfTokenKey)) {
-            $csrfToken = bin2hex(random_bytes(32));
-            $session->set($this->csrfTokenKey, $csrfToken);
-        } else {
-            $csrfToken = $session->get($this->csrfTokenKey);
-        }
+        // Generate or retrieve the CSRF token
+        $csrfToken = CsrfTokenUtil::generateToken();
 
         // Pass the CSRF token to the request attributes for use in controllers/templates
         $request = $request->withAttribute($this->csrfTokenKey, $csrfToken);
@@ -64,6 +61,15 @@ class CsrfMiddleware implements MiddlewareInterface
         $dom = new \DOMDocument();
         @$dom->loadHTML($body, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
+        // Inject CSRF token in head as meta tag
+        $head = $dom->getElementsByTagName('head')->item(0);
+        if ($head) {
+            $meta = $dom->createElement('meta');
+            $meta->setAttribute('name', 'csrf-token');
+            $meta->setAttribute('content', htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'));
+            $head->appendChild($meta);
+        }
+        
         // Find all <form> elements in the document
         $forms = $dom->getElementsByTagName('form');
 

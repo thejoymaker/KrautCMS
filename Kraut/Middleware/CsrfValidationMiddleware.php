@@ -32,7 +32,7 @@ class CsrfValidationMiddleware implements MiddlewareInterface
             // $tokenInSession = $session->get($this->csrfTokenKey);
             $parsedBody = $request->getParsedBody();
             $tokenInForm = $parsedBody[$this->csrfTokenKey] ?? null;
-
+            $contenttype = $_SERVER['CONTENT_TYPE'];
             if (!$tokenInForm || !CsrfTokenUtil::isValidToken($tokenInForm)) {
                 // Invalid CSRF token
                 $responseFactory = $this->container->get(\Psr\Http\Message\ResponseFactoryInterface::class);

@@ -20,7 +20,7 @@ class CsrfTokenUtil
         }
 
         $storedToken = $_SESSION['csrf_token'];
-        unset($_SESSION['csrf_token']);
+        // unset($_SESSION['csrf_token']);
 
         return hash_equals($storedToken, $token);
     }

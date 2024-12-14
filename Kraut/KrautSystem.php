@@ -230,6 +230,7 @@ class KrautSystem
             \Kraut\Middleware\MalIntentDetectionMiddleware::class,
             \Kraut\Middleware\SessionMiddleware::class,
             \Kraut\Middleware\LoggingMiddleware::class,
+            \Kraut\Middleware\RequestHeadersParserMiddleware::class,
             \Kraut\Middleware\RequestBodyParserMiddleware::class,
             \Kraut\Middleware\CsrfValidationMiddleware::class,
             \Kraut\Middleware\CsrfMiddleware::class,
