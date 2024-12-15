@@ -52,7 +52,7 @@ class CacheService
     public function nukeCache(): void
     {
         $cacheFiles = [
-            $this->cacheDir . 'services.php',
+            $this->cacheDir . 'System/services.php',
             $this->configCacheFile,
             // $this->themeCacheFile,
             $this->pluginCacheFile,
