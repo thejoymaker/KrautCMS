@@ -166,6 +166,19 @@ class PluginService
         $this->logger->info("Loaded plugins for $method $path: " . implode(', ', $loadedPlugins));
     }
 
+    public function listPlugins(): array
+    {
+        $plugins = [];
+        foreach ($this->pluginModel as $pluginName => $pluginInfo) {
+            $plugins[$pluginName] = [
+                'active' => $pluginInfo->isActive(),
+                'name' => $pluginInfo->getManifest()->getName(),
+                'version' => $pluginInfo->getManifest()->getVersion()
+            ];
+        }
+        return $plugins;
+    }
+
     /**
      * Collect routes from all active plugins.
      *

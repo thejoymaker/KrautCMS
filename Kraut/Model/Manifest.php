@@ -26,6 +26,10 @@ class Manifest {
         return $this->manifestData['name'];
     }
 
+    public function getVersion() : string {
+        return $this->manifestData['version'];
+    }
+
     public function getCmsVersion() : string {
         return $this->manifestData['cms_version'];
     }
