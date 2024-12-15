@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <title>{% block title %}UserPlugin{% endblock %}</title>
     <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="stylesheet" href="/assets/css/user.css">
 </head>
 <body>
     <header>
-        <h1>UserPlugin</h1>
         {% block header %}
         {% if current_user %}
             <p>Welcome, {{ current_user.username }}! <a href="/logout">Logout</a></p>
@@ -16,8 +16,10 @@
         {% endif %}
         {% endblock %}
     </header>
-    <main>
-        {% block content %}{% endblock %}
+    <main class="parent-container">
+        <div class="form-container">
+            {% block content %}{% endblock %}
+        </div>
     </main>
 </body>
 </html>

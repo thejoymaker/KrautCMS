@@ -46,7 +46,7 @@ class UserController
         $username = $data['username'] ?? '';
         $password = $data['password'] ?? '';
         if ($this->authService->login($username, $password)) {
-            $redirect = $request->getAttribute('session')->get('redirect', '/admin');
+            $redirect = $request->getAttribute('session')->get('redirect', '/user');
             $request->getAttribute('session')->unset('redirect');
             return ResponseUtil::redirectTemporary($redirect);
         }
