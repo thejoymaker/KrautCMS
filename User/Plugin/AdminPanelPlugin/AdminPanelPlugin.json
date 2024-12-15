@@ -1,5 +1,5 @@
 {
-    "name": "Pages Plugin",
+    "name": "Admin Panel Plugin",
     "version": "1.0.0",
     "cms_version": ">=1.0.0,<2.0.0",
     "type": "cms-plugin",
