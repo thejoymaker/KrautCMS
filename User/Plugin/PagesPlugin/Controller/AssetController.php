@@ -19,6 +19,12 @@ class AssetController
     {
     }
 
+    // #[Route(path: '/favicon.ico', methods: ['GET'])]
+    // public function favicon(ServerRequestInterface $request, array $args): ResponseInterface
+    // {
+    //     return $this->serve($request, ['path' => 'favicon.ico']);
+    // }
+
     #[Route(path: '/assets/{path:.+}', methods: ['GET'])]
     public function serve(ServerRequestInterface $request, array $args): ResponseInterface
     {
