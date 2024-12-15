@@ -9,27 +9,44 @@
 
 {% block header %}
     <div id="admin-header">
-        <a href="/" target="_blank">View Home Page</a>
-        <a href="#" id="clear_cache" data-action="clear-cache">Clear Cache</a>
-    <nav>
-        <ul id="admin-nav">
-            <li><a href="#" data-section="dashboard" class="active">Dashboard</a></li>
-            <li><a href="#" data-section="users">Users</a></li>
-            <li><a href="#" data-section="plugins">Plugins</a></li>
-            <li><a href="#" data-section="themes">Themes</a></li>
-            <li><a href="#" data-section="settings">Settings</a></li>
-            <li><a href="#" data-section="reports">Reports</a></li>
-            <li><a href="#" data-section="content">Content</a></li>
-            <li><a href="/logout">Logout</a></li>
-        </ul>
-    </nav>
+        <nav>
+            <button id="menu-toggle" aria-label="Toggle navigation">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 6H21V8H3V6ZM3 11H21V13H3V11ZM3 16H21V18H3V16Z" fill="currentColor"/>
+                </svg>
+            </button>
+            <ul id="admin-nav">
+                <li><a href="/" target="_blank" >Home</a></li>
+                <li><a href="#" data-section="dashboard" class="active">Dashboard</a></li>
+                <li><a href="#" data-section="plugins">Plugins</a></li>
+                <li><a href="#" data-section="themes">Themes</a></li>
+                <li><a href="#" data-section="settings">Settings</a></li>
+                <li><a href="#" data-section="users">*Users*</a></li>
+                <li><a href="#" data-section="content">*Content*</a></li>
+                <li><a href="#" data-section="reports">*Reports*</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </nav>
+    </div>
 {% endblock %}
 
 {% block content %}
+    <h2>Admin Panel</h2>
     <section id="dashboard" class="admin-section">
-        <h2>Admin Dashboard</h2>
         <h3>Overview</h3>
         <div class="stats">
+            <div class="stat">
+                <h4>Cache</h4>
+                <p><a href="#" id="clear_cache" data-action="clear-cache">Clear Cache</a></p>
+            </div>
+            <div class="stat">
+                <h4>Total Posts</h4>
+                <p>456</p>
+            </div>
+            <div class="stat">
+                <h4>Active Sessions</h4>
+                <p>78</p>
+            </div>
             <div class="stat">
                 <h4>Total Users</h4>
                 <p>123</p>
@@ -45,8 +62,84 @@
         </div>
     </section>
 
+    <section id="plugins" class="admin-section" style="display: none;">
+        <h3>Manage Plugins</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Version</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>UserPlugin</td>
+                    <td>1.0.0</td>
+                    <td>
+                        <a href="/admin/plugins/edit/1">Edit</a>
+                        <a href="/admin/plugins/delete/1">Delete</a>
+                    </td>
+                </tr>
+                <!-- More plugin rows -->
+            </tbody>
+        </table>
+    </section>
+
+    <section id="themes" class="admin-section" style="display: none;">
+        <h3>Manage Themes</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Version</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>DefaultTheme</td>
+                    <td>1.0.0</td>
+                    <td>
+                        <a href="/admin/themes/edit/1">Edit</a>
+                        <a href="/admin/themes/delete/1">Delete</a>
+                    </td>
+                </tr>
+                <!-- More theme rows -->
+            </tbody>
+        </table>
+    </section>
+
+    <section id="settings" class="admin-section" style="display: none;">
+        <h3>Settings</h3>
+        <form action="/admin/settings/save" method="post">
+            <div class="form-group">
+                <label for="site_name">Site Name</label>
+                <input type="text" id="site_name" name="site_name" value="KrautCMS">
+            </div>
+            <div class="form-group">
+                <label for="admin_email">Admin Email</label>
+                <input type="email" id="admin_email" name="admin_email" value="admin@example.com">
+            </div>
+            <div class="form-group">
+                <label for="timezone">Timezone</label>
+                <select id="timezone" name="timezone">
+                    <option value="UTC">UTC</option>
+                    <option value="America/New_York">America/New_York</option>
+                    <option value="Europe/Berlin">Europe/Berlin</option>
+                    <!-- More timezones -->
+                </select>
+            </div>
+            <button type="submit">Save Settings</button>
+        </form>
+    </section>
+
     <section id="users" class="admin-section" style="display: none;">
-        <h2>Manage Users</h2>
+        <h3>Manage Users</h3>
         <table>
             <thead>
                 <tr>
@@ -73,90 +166,8 @@
         </table>
     </section>
 
-    <section id="plugins" class="admin-section" style="display: none;">
-        <h2>Manage Plugins</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Version</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>UserPlugin</td>
-                    <td>1.0.0</td>
-                    <td>
-                        <a href="/admin/plugins/edit/1">Edit</a>
-                        <a href="/admin/plugins/delete/1">Delete</a>
-                    </td>
-                </tr>
-                <!-- More plugin rows -->
-            </tbody>
-        </table>
-    </section>
-
-    <section id="themes" class="admin-section" style="display: none;">
-        <h2>Manage Themes</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Version</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>DefaultTheme</td>
-                    <td>1.0.0</td>
-                    <td>
-                        <a href="/admin/themes/edit/1">Edit</a>
-                        <a href="/admin/themes/delete/1">Delete</a>
-                    </td>
-                </tr>
-                <!-- More theme rows -->
-            </tbody>
-        </table>
-    </section>
-
-    <section id="settings" class="admin-section" style="display: none;">
-        <h2>Settings</h2>
-        <form action="/admin/settings/save" method="post">
-            <div class="form-group">
-                <label for="site_name">Site Name</label>
-                <input type="text" id="site_name" name="site_name" value="KrautCMS">
-            </div>
-            <div class="form-group">
-                <label for="admin_email">Admin Email</label>
-                <input type="email" id="admin_email" name="admin_email" value="admin@example.com">
-            </div>
-            <div class="form-group">
-                <label for="timezone">Timezone</label>
-                <select id="timezone" name="timezone">
-                    <option value="UTC">UTC</option>
-                    <option value="America/New_York">America/New_York</option>
-                    <option value="Europe/Berlin">Europe/Berlin</option>
-                    <!-- More timezones -->
-                </select>
-            </div>
-            <button type="submit">Save Settings</button>
-        </form>
-    </section>
-
-    <section id="reports" class="admin-section" style="display: none;">
-        <h2>Reports</h2>
-        <p>Generate and view various reports about your site's activity.</p>
-        <button onclick="window.location.href='/admin/reports/generate'">Generate Report</button>
-    </section>
-
     <section id="content" class="admin-section" style="display: none;">
-        <h2>Manage Content</h2>
+        <h3>Manage Content</h3>
         <button onclick="window.location.href='/admin/content/create'">Create New Post</button>
         <table>
             <thead>
@@ -182,6 +193,12 @@
                 <!-- More content rows -->
             </tbody>
         </table>
+    </section>
+
+    <section id="reports" class="admin-section" style="display: none;">
+        <h3>Reports</h3>
+        <p>Generate and view various reports about your site's activity.</p>
+        <button onclick="window.location.href='/admin/reports/generate'">Generate Report</button>
     </section>
 {% endblock %}
 

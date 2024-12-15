@@ -84,4 +84,21 @@ document.addEventListener('DOMContentLoaded', function() {
     if (defaultLink) {
         defaultLink.click();
     }
+
+    // Menu toggle for mobile
+    const menuToggle = document.getElementById('menu-toggle');
+    const adminNav = document.getElementById('admin-nav');
+    
+    if (menuToggle && adminNav) {
+        menuToggle.addEventListener('click', function() {
+            adminNav.classList.toggle('open');
+        });
+
+        // Add event listeners to navigation links
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                adminNav.classList.remove('open');
+            });
+        });
+    }
 });

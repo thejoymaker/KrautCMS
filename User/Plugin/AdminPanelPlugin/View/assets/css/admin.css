@@ -25,9 +25,12 @@ nav ul li a:hover {
 .stats {
     display: flex;
     gap: 20px;
+    flex-wrap: wrap;
 }
 
 .stat {
+    flex: 1 1 200px; /* Flex-grow: 1, Flex-shrink: 1, Flex-basis: 200px */
+    box-shadow: 8px 4px 8px rgba(255, 0, 0, 0.5); /* Optional: Add a subtle shadow */
     padding: 20px;
     border-radius: 5px;
     border-color: yellow;
@@ -36,44 +39,7 @@ nav ul li a:hover {
     text-align: center;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-table, th, td {
-    border: 1px solid yellow;
-}
-
-th, td {
-    padding: 10px;
-    text-align: left;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-}
-
-.form-group input, .form-group select {
-    width: 100%;
-    padding: 8px;
-    box-sizing: border-box;
-}
-
 /* Navigation styles */
-#admin-nav {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    /* gap: 10px; */
-}
-
 #admin-nav li {
     display: inline;
 }
@@ -81,17 +47,24 @@ th, td {
 #admin-nav a {
     text-decoration: none;
     color: yellow;
-    background-color: #333;
+    background-color: darkgreen;
     padding: 10px 15px;
+    border-style: solid;
+    border-color: yellow;
     border-radius: 5px;
 }
 
 #admin-nav a.active {
-    background-color: #555;
+    background-color: yellow;
+    color: darkgreen;
 }
 
 #admin-nav a:hover {
-    background-color: #444;
+    background-color: yellow;
+    color: darkgreen;
+    /* border-color: yellow;
+    border-width: 5px;
+    border-style: solid; */
 }
 
 /* Section styles */
@@ -106,4 +79,41 @@ th, td {
 /* Ensure the default section is visible */
 .admin-section:first-of-type {
     display: block;
+}
+
+/* Admin section padding */
+.admin-section {
+    padding: 20px;
+}
+/* Mobile styles */
+@media (max-width: 600px) {
+    
+
+    /* Hide the navigation menu on mobile by default */
+    #admin-nav {
+        display: none;
+        flex-direction: row;
+        width: 100%;
+    }
+
+    /* Show the navigation menu when 'open' class is added */
+    #admin-nav.open {
+        display: flex;
+    }
+
+    /* Menu toggle button styles */
+    #menu-toggle {
+        display: block;
+        background-color: #555;
+        color: #fff;
+        padding: 10px;
+        border: none;
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Navigation links styling */
+    nav ul li {
+        margin: 10px 0;
+    }
 }
