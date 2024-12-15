@@ -67,6 +67,15 @@ nav ul li a:hover {
     border-style: solid; */
 }
 
+h3 a {
+    text-decoration: none;
+    color: yellow;
+}
+
+h3 a:visited {
+    color: yellow;
+}
+
 /* Section styles */
 .admin-section {
     display: none;

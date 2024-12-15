@@ -8,6 +8,7 @@ namespace User\Plugin\AdminPanelPlugin\Controller;
 use Kraut\Attribute\Controller;
 use Kraut\Attribute\Route;
 use Kraut\Service\CacheService;
+use Kraut\Service\PluginService;
 use Kraut\Util\ResponseUtil;
 use Nyholm\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
@@ -17,7 +18,8 @@ use Psr\Http\Message\ServerRequestInterface;
 class AdminController
 {
     public function __construct(private \Twig\Environment $twig,
-                                private CacheService $cacheService)
+                                private CacheService $cacheService,
+                                private PluginService $pluginService)
     {
     }
 
@@ -27,15 +29,31 @@ class AdminController
         return ResponseUtil::respondRelative($this->twig, 'AdminPanelPlugin', 'admin');
     }
 
-    #[Route('/admin/clearcache', ['POST'], ['admin'])]
-    public function clearCache(ServerRequestInterface $request): ResponseInterface
+    #[Route('/admin/action', ['POST'], ['admin'])]
+    public function action(ServerRequestInterface $request): ResponseInterface
     {
-        if($request->getParsedBody()['action'] !== 'clear_cache') {
-            return new Response(400, [], 'Invalid action');
+        $action = $request->getParsedBody()['action'] ?? '';
+        switch ($action) {
+        case 'clear_cache':
+            $this->cacheService->nukeCache();
+                return new Response(200, [], json_encode(['ok' => true]));
+            default:
+                return new Response(400, [], 'Invalid action');
         }
-        $this->cacheService->nukeCache();
-        return new Response(200, [], json_encode(['ok' => true]));
+    }
+
+    #[Route('/admin/query', ['POST'], ['admin'])]
+    public function query(ServerRequestInterface $request): ResponseInterface
+    {
+        $query = $request->getParsedBody()['query'] ?? '';
+        switch ($query) {
+        case 'list_plugins':
+            $result = $this->pluginService->listPlugins();
+            return new Response(200, ['Content-Type' => 'application/json'], json_encode($result));
+        default:
+            return new Response(400, [], 'Invalid query');
+        }
     }
 }
-
+        
 ?>

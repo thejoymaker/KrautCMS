@@ -63,29 +63,14 @@
     </section>
 
     <section id="plugins" class="admin-section" style="display: none;">
-        <h3>Manage Plugins</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Version</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>UserPlugin</td>
-                    <td>1.0.0</td>
-                    <td>
-                        <a href="/admin/plugins/edit/1">Edit</a>
-                        <a href="/admin/plugins/delete/1">Delete</a>
-                    </td>
-                </tr>
-                <!-- More plugin rows -->
-            </tbody>
-        </table>
+        <h3><a href="#" id="manage-plugins-link">Manage Plugins</a>
+         | <a href="#" id="plugin-store-link">Plugin Store</a></h3>
+        <div id="plugins-container">
+            <p>Loading plugins...</p>
+        </div>
+        <div id="store-container" style="display: none;">
+            <p>Loading store...</p>
+        </div>
     </section>
 
     <section id="themes" class="admin-section" style="display: none;">
