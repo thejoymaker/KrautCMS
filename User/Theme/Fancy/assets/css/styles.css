@@ -1,0 +1,233 @@
+/* Reset default margins and paddings */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+@font-face {
+    font-family: 'AlegreyaSans';
+    src: url('/assets/fonts/AlegreyaSans-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Body styles */
+body {
+    font-family: 'AlegreyaSans', sans-serif;
+    margin: 0;
+    background-color: darkmagenta; /* Dark green */
+    color: lightyellow; 
+    line-height: 1.6;
+}
+
+html, body {
+    height: 100%;
+}
+
+/* Wrapper for flex layout */
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+.container {
+    width: 80%;
+    margin: 0 auto;
+}
+/* Main content area */
+main {
+    flex: 1;
+}
+
+/* Header styling */
+header {
+    color: yellow;
+    padding: 10px;
+    text-align: center;
+}
+
+/* Page title styling */
+
+.page-title {
+    text-align: left;
+    margin: 20px 0;
+}
+
+.page-title a {
+    color: yellow;
+    text-decoration: none;
+}
+
+.page-title a:hover {
+    color: yellow;
+}
+
+.page-title a:visited {
+    color: yellow;
+}
+
+.page-title a:active {
+    color: yellow;
+}
+
+/* Navigation styling */
+nav {
+    background-color: yellow;
+    position: relative;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    /* margin: 5px;
+    border-radius: 5px; */
+    border-width: 1px;
+    border-color: lightgreen;
+    border-style: solid;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    padding: 8px 12px;
+    background-color: #555;
+    border-radius: 4px;
+}
+
+nav ul li a.active,
+nav ul li a:hover {
+    background-color: darkgreen;
+    color: darkred;
+}
+
+/* Mobile menu toggle button */
+#menu-toggle {
+    display: none;
+    background-color: #555;
+    color: lightgreen;
+    padding: 10px;
+    border: none;
+    width: 100%;
+    text-align: center;
+}
+
+/* Footer styling */
+footer {
+    text-align: center;
+    padding: 10px;
+}
+
+/* Link styling */
+a {
+    color: #ffa500; /* Orange */
+}
+
+a:visited {
+    color: #8c5007;
+}
+
+/* Button styling */ 
+button {
+    background-color: yellow;
+    color: darkgreen;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    border-width: 1px;
+    border-color: yellow;
+}
+
+button:hover {
+    border-width: 1px;
+    border-color: yellow;
+    color: yellow;
+    border-style: solid;
+    background-color: darkred;
+}
+
+button:active {
+    background-color: red;
+    color: darkgreen;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table, th, td {
+    border: 1px solid yellow;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+/* Responsive styles */
+@media (max-width: 600px) {
+    body {
+        font-size: 0.9rem;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    h2 {
+        font-size: 1.25rem;
+    }
+
+    .admin-section {
+        padding: 15px;
+    }
+
+    /* Navigation adjustments for mobile */
+    #admin-nav {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    #admin-nav.open {
+        display: flex;
+    }
+
+    #menu-toggle {
+        display: block;
+    }
+
+    nav ul li {
+        margin: 10px 0;
+    }
+
+    /* Footer adjustments */
+    footer {
+        padding: 15px;
+        font-size: 0.9rem;
+    }
+}
