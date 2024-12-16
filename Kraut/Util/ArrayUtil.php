@@ -64,6 +64,11 @@ class ArrayUtil {
     public static function parseKeys(array $array, string $prefix, array &$result): void
     {
         foreach ($array as $key => $value) {
+            if(is_null($prefix) || $prefix === '') {
+                $newKey = $key;
+            } else {
+                $newKey = $prefix . '.' . $key;
+            }
             $newKey = $prefix . '.' . $key;
             if (is_array($value)) {
                 self::parseKeys($value, $newKey, $result);
