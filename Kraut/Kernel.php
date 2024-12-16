@@ -16,6 +16,7 @@ use Kraut\Service\RouteService;
 use Kraut\Util\ServiceUtil;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
+use PSpell\Config;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
@@ -55,12 +56,16 @@ class Kernel
                 $logger->pushHandler(new \Monolog\Handler\StreamHandler(__DIR__ . '/../Log/app.log', \Monolog\Level::Debug));
                 return $logger;
             },
-            Environment::class => function () {
+            Environment::class => function (ConfigurationService $config) {
                 $loader = new FilesystemLoader(__DIR__ . '/View');
                 $twig = new Environment($loader, [
                     'cache' => __DIR__ . '/../Cache/twig',
                     'debug' => true,
                 ]);
+                $pageName = $config->get(ConfigurationService::PAGE_NAME);
+                $twig->addGlobal('pageName', $pageName);
+                $pageDescription = $config->get(ConfigurationService::PAGE_DESCRIPTION);
+                $twig->addGlobal('pageDescription', $pageDescription);
                 // Optionally add global variables or extensions here
                 return $twig;
             },
