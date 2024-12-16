@@ -52,6 +52,26 @@ class ArrayUtil {
         $tmp = $value;
         return $array;
     }
+
+    /**
+     * Recursively traverses an array and generates a list of dot notated keys.
+     * 
+     * @param array $array The array to parse.
+     * @param string $prefix The prefix to prepend to the keys.
+     * @param array $result The array to store the dot notated keys.
+     * @return void
+     */
+    public static function parseKeys(array $array, string $prefix, array &$result): void
+    {
+        foreach ($array as $key => $value) {
+            $newKey = $prefix . '.' . $key;
+            if (is_array($value)) {
+                self::parseKeys($value, $newKey, $result);
+            } else {
+                $result[] = $newKey;
+            }
+        }
+    }
 }
 
 ?>
