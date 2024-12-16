@@ -31,7 +31,7 @@ class CacheService
      * @var string The config cache file.
      */
     private string $configCacheFile;
-    // private string $themeCacheFile;
+    private string $themeCacheFile;
     /**
      * @var string The plugin cache file.
      */
@@ -43,7 +43,7 @@ class CacheService
     {
         $this->cacheDir = __DIR__ . '/../../Cache/';
         $this->configCacheFile = $this->cacheDir . 'System/config.cache.php';
-        // $this->themeCacheFile = $this->cacheDir . 'System/theme.cache.php';
+        $this->themeCacheFile = $this->cacheDir . 'System/theme.cache.php';
         $this->pluginCacheFile = $this->cacheDir . 'System/plugin.cache.php';
         $this->fastRouteCacheFile = $this->cacheDir . 'System/fastroute.cache.php';
         $this->cacheEnabled = isset($_ENV['CACHE_ENABLED']) ? $_ENV['CACHE_ENABLED'] === 'true' : false;
@@ -54,7 +54,7 @@ class CacheService
         $cacheFiles = [
             $this->cacheDir . 'System/services.php',
             $this->configCacheFile,
-            // $this->themeCacheFile,
+            $this->themeCacheFile,
             $this->pluginCacheFile,
             $this->fastRouteCacheFile
         ];
@@ -71,10 +71,10 @@ class CacheService
         return $this->loadCached($this->configCacheFile, $loader, $resource);
     }
 
-    // public function loadCachedThemes(callable $loader, String $resource): array
-    // {
-    //     return $this->loadCached($this->themeCacheFile, $loader, $resource);
-    // }
+    public function loadCachedThemes(callable $loader, String $resource): array
+    {
+        return $this->loadCached($this->themeCacheFile, $loader, $resource);
+    }
 
     public function loadCachedPluginModel(callable $loader, String $resource): array
     {
