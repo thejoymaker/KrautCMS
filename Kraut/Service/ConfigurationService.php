@@ -7,6 +7,8 @@ namespace Kraut\Service;
 
 use Kraut\Util\ArrayUtil;
 
+use function DI\get;
+
 /**
  * Class ConfigurationService
  *
@@ -152,6 +154,39 @@ class ConfigurationService
             $config = [];
         }
         return $config;
+    }
+
+    private function getDotNotatedKeySet(string $nameSpace): array
+    {
+        $dotNotatedKeys = [];
+        $this->parseKeys($this->config[$nameSpace] ?? [], $nameSpace, $dotNotatedKeys);
+        return $dotNotatedKeys;
+    }
+
+    private function parseKeys(array $array, string $prefix, array &$result): void
+    {
+        foreach ($array as $key => $value) {
+            $newKey = $prefix . '.' . $key;
+            if (is_array($value)) {
+                $this->parseKeys($value, $newKey, $result);
+            } else {
+                $result[] = $newKey;
+            }
+        }
+    }
+
+    public function getPluginConfig(string $pluginName): array
+    {
+        $nameSpace = strtolower($pluginName);
+        $rawArray =  $this->config[$nameSpace] ?? [];
+        $pluginConfigKeys = $this->getDotNotatedKeySet($nameSpace);
+        $data = [];
+        foreach ($pluginConfigKeys as $key){
+            $data[$key] = $this->get($key, '');
+        }
+        return $data;
+        // $pluginConfig = $this->loadConfig("{$this->SYSTEM_CONFIG_DIR}/{$pluginName}.json");
+        // return $pluginConfig;
     }
 
     public function installPluginConfig(string $pluginName, ?string $defaultFile): string

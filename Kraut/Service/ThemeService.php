@@ -1,4 +1,5 @@
 <?php
+// Kraut/Service/ThemeService.php
 declare(strict_types=1);
 
 namespace Kraut\Service;
@@ -12,26 +13,58 @@ use Twig\Environment;
  */
 class ThemeService 
 {
-    private string $loadedTheme;
+    // private string $loadedTheme;
 
-    public function __construct(Environment $environment)
+    private array $themeModel = [];
+
+    public function __construct(private Environment $environment,
+                                private CacheService $cacheService,
+                                private ConfigurationService $configurationService)
     {
-        $this->loadedTheme = 'default';
+        // $this->loadedTheme = 'default';
+        $this->themeModel = $cacheService->loadCachedThemes([$this, "discoverThemes"], __DIR__ . "/../../User/Theme");
     }
 
-    public function loadTheme(string $theme): void
+    // public function loadTheme(string $theme): void
+    // {
+    //     $this->loadedTheme = $theme;
+    // }
+
+    // public function getLoadedTheme(): string
+    // {
+    //     return $this->loadedTheme;
+    // }
+
+    public function discoverThemes(): array
     {
-        $this->loadedTheme = $theme;
+        $themes = [];
+        $themeDir = __DIR__ . '/../../User/Theme';
+
+        $themeDirs = glob($themeDir . '/*', GLOB_ONLYDIR);
+
+        foreach ($themeDirs as $theme) {
+            $themeName = basename($theme);
+            $themeConfig = "{$theme}/{$themeName}.json";
+            if (file_exists($themeConfig)) {
+                $themes[$themeName] = json_decode(file_get_contents($themeConfig), true);
+            }
+        }
+        return $themes;
     }
 
-    public function getLoadedTheme(): string
+    public function listThemes(): array
     {
-        return $this->loadedTheme;
-    }
-
-    public function discoverThemes(): void
-    {
-        // Discover themes
+        $themesList = [];
+        foreach ($this->themeModel as $theme => $config) {
+            $themesList[$theme] = [
+                'active' => $theme === $this->configurationService->get(ConfigurationService::THEME_NAME, "default"),
+                'name' => $theme,
+                'author' => $config['author'],
+                'description' => $config['description'],
+                'version' => $config['version']
+            ];
+        }
+        return $themesList;
     }
 }
 

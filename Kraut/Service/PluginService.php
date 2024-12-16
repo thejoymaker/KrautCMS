@@ -87,13 +87,16 @@ class PluginService
 
             $pluginNameLower = strtolower($pluginName);
             $active = $this->configService->get("{$pluginNameLower}.active", null);
+            $configPath = '';
             if ($active === null) {
                 $defaultConfig = "{$pluginPath}/default.config.json";
                 if(!file_exists($defaultConfig)) {
                     $defaultConfig = null;
                 }
-                $this->configService->installPluginConfig($pluginName, $defaultConfig);
+                $configPath = $this->configService->installPluginConfig($pluginName, $defaultConfig);
                 $active = $this->configService->get("{$pluginNameLower}.active", true);
+            } else {
+                $configPath = __DIR__ . "/../../User/Config/{$pluginName}.json";
             }
             $className = "User\\Plugin\\$pluginName\\$pluginName";
             $plugins[$pluginName] = new PluginInfo(
@@ -103,7 +106,8 @@ class PluginService
                 $manifest,
                 $viewsPath,
                 $controllersPath,
-                $pluginRoutes
+                $pluginRoutes,
+                $configPath
             );
         }
         return $plugins;
@@ -290,6 +294,22 @@ class PluginService
             }
         }
         return $extensions;
+    }
+
+    public function enablePlugin(string $pluginName): void
+    {
+        $pluginNameLower = strtolower($pluginName);
+        $this->configService->set("{$pluginNameLower}.active", true);
+        $pluginInfo = $this->pluginModel[$pluginName];
+        $this->configService->persistConfig($pluginInfo->getConfigPath(), $pluginNameLower);
+    }
+    
+    public function disablePlugin(string $pluginName): void
+    {
+        $pluginNameLower = strtolower($pluginName);
+        $this->configService->set("{$pluginNameLower}.active", false);
+        $pluginInfo = $this->pluginModel[$pluginName];
+        $this->configService->persistConfig($pluginInfo->getConfigPath(), $pluginNameLower);
     }
 }
 ?>

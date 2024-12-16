@@ -8,7 +8,9 @@ namespace User\Plugin\AdminPanelPlugin\Controller;
 use Kraut\Attribute\Controller;
 use Kraut\Attribute\Route;
 use Kraut\Service\CacheService;
+use Kraut\Service\ConfigurationService;
 use Kraut\Service\PluginService;
+use Kraut\Service\ThemeService;
 use Kraut\Util\ResponseUtil;
 use Nyholm\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
@@ -19,7 +21,9 @@ class AdminController
 {
     public function __construct(private \Twig\Environment $twig,
                                 private CacheService $cacheService,
-                                private PluginService $pluginService)
+                                private PluginService $pluginService,
+                                private ThemeService $themeService,
+                                private ConfigurationService $configurationService)
     {
     }
 
@@ -34,8 +38,12 @@ class AdminController
     {
         $action = $request->getParsedBody()['action'] ?? '';
         switch ($action) {
-        case 'clear_cache':
-            $this->cacheService->nukeCache();
+            case 'clear_cache':
+                $this->cacheService->nukeCache();
+                return new Response(200, [], json_encode(['ok' => true]));
+            case 'save_settings':
+                $settings = $request->getParsedBody()['settings'] ?? [];
+                $this->configurationService->saveSettings($settings);
                 return new Response(200, [], json_encode(['ok' => true]));
             default:
                 return new Response(400, [], 'Invalid action');
@@ -50,8 +58,76 @@ class AdminController
         case 'list_plugins':
             $result = $this->pluginService->listPlugins();
             return new Response(200, ['Content-Type' => 'application/json'], json_encode($result));
+        case 'list_themes':
+            $result = $this->themeService->listThemes(); // Implement this method
+            return new Response(200, ['Content-Type' => 'application/json'], json_encode($result));
+        case 'list_settings':
+            $result = $this->configurationService->listSettings();
+            return new Response(200, ['Content-Type' => 'application/json'], json_encode($result));
         default:
             return new Response(400, [], 'Invalid query');
+        }
+    }
+
+    #[Route('/admin/plugins/{action_command}/{plugin}', ['POST'], ['admin'])]
+    public function pluginsPost(ServerRequestInterface $request, array $args): ResponseInterface
+    {
+        $plugin = $args['plugin'];
+        $action = $args['action_command'];
+        switch ($action) {
+            case 'settings':
+                return new Response(200, [], json_encode($this->configurationService->getPluginConfig($plugin)));
+            default:
+                return new Response(400, [], 'Invalid action');
+        }
+    }
+
+    #[Route('/admin/plugins/{action_command}/{plugin}', ['GET'], ['admin'])]
+    public function plugins(ServerRequestInterface $request, array $args): ResponseInterface
+    {
+        $plugin = $args['plugin'];
+        $action = $args['action_command'];
+        switch ($action) {
+            case 'activate':
+                $this->pluginService->enablePlugin($plugin);
+                // return new Response(200, [], json_encode(['ok' => true]));
+                return ResponseUtil::respondRelative($this->twig, 'AdminPanelPlugin', 'activated', 
+                    ['component_type' => 'Plugin', 'component_name' => $plugin]);
+            case 'deactivate':
+                $this->pluginService->disablePlugin($plugin);
+                // return new Response(200, [], json_encode(['ok' => true]));
+                return ResponseUtil::respondRelative($this->twig, 'AdminPanelPlugin', 'deactivated', 
+                    ['component_type' => 'Plugin', 'component_name' => $plugin]);
+            case 'edit':
+                return ResponseUtil::respondRelative($this->twig, 'AdminPanelPlugin', 'edit-plugin-config', 
+                    ['component_type' => 'Plugin', 'component_name' => $plugin]);
+            case 'settings':
+                return ResponseUtil::respondRelative($this->twig, 'AdminPanelPlugin', 'edit-plugin-config', 
+                    ['component_type' => 'Plugin', 'component_name' => $plugin]);
+            default:
+                return new Response(400, [], 'Invalid action');
+        }
+    }
+
+    #[Route('/admin/themes/{action_command}/{theme}', ['GET'], ['admin'])]
+    public function themes(ServerRequestInterface $request, array $args): ResponseInterface
+    {
+        $theme = $args['theme'];
+        $action = $args['action_command'];
+        switch ($action) {
+            case 'activate':
+                $this->configurationService->set(ConfigurationService::THEME_NAME, $theme);
+                $this->configurationService->persistConfig(__DIR__ . '/../../../Config/Kraut.json', 'kraut');
+                // return new Response(200, [], json_encode(['ok' => true]));
+                return ResponseUtil::respondRelative($this->twig, 'AdminPanelPlugin', 'activated', 
+                    ['component_type' => 'Theme', 'component_name' => $theme]);
+            // case 'disable':
+            //     $this->pluginService->disablePlugin($plugin);
+            //     // return new Response(200, [], json_encode(['ok' => true]));
+            //     ResponseUtil::respondRelative($this->twig, 'AdminPanelPlugin', 'deactivated', 
+            //         ['component_type' => 'Plugin', 'component_name' => $plugin]);
+            default:
+                return new Response(400, [], 'Invalid action');
         }
     }
 }

@@ -29,6 +29,29 @@ class ArrayUtil {
         }
         return $value;
     }
+
+    /**
+     * Packs a value into a nested array using a dot-notated key.
+     * 
+     * For example using the key 'foo.bar' would pack the value into $array['foo']['bar'].
+     *
+     * @param string $key The dot-notated key to pack the value into the array.
+     * @param mixed $value The value to pack into the array.
+     * @param array $array The array to pack the value into.
+     * @return array The array with the packed value.
+     */
+    public static function pack(string $key, mixed $value, array &$array): array {
+        $keys = explode('.', $key);
+        $tmp = &$array;
+        foreach ($keys as $k) {
+            if (!isset($tmp[$k])) {
+                $tmp[$k] = [];
+            }
+            $tmp = &$tmp[$k];
+        }
+        $tmp = $value;
+        return $array;
+    }
 }
 
 ?>

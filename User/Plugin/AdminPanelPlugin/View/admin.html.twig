@@ -75,52 +75,16 @@
 
     <section id="themes" class="admin-section" style="display: none;">
         <h3>Manage Themes</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Version</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>DefaultTheme</td>
-                    <td>1.0.0</td>
-                    <td>
-                        <a href="/admin/themes/edit/1">Edit</a>
-                        <a href="/admin/themes/delete/1">Delete</a>
-                    </td>
-                </tr>
-                <!-- More theme rows -->
-            </tbody>
-        </table>
+        <div id="themes-container">
+            <p>Loading themes...</p>
+        </div>
     </section>
 
     <section id="settings" class="admin-section" style="display: none;">
         <h3>Settings</h3>
-        <form action="/admin/settings/save" method="post">
-            <div class="form-group">
-                <label for="site_name">Site Name</label>
-                <input type="text" id="site_name" name="site_name" value="KrautCMS">
-            </div>
-            <div class="form-group">
-                <label for="admin_email">Admin Email</label>
-                <input type="email" id="admin_email" name="admin_email" value="admin@example.com">
-            </div>
-            <div class="form-group">
-                <label for="timezone">Timezone</label>
-                <select id="timezone" name="timezone">
-                    <option value="UTC">UTC</option>
-                    <option value="America/New_York">America/New_York</option>
-                    <option value="Europe/Berlin">Europe/Berlin</option>
-                    <!-- More timezones -->
-                </select>
-            </div>
-            <button type="submit">Save Settings</button>
-        </form>
+        <div id="settings-container">
+            <p>Loading settings...</p>
+        </div>
     </section>
 
     <section id="users" class="admin-section" style="display: none;">
