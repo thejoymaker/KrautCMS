@@ -1,21 +1,21 @@
 {
     "kraut": {
         "theme": {
-            "name": "default"
+            "name": "Ruben"
         },
         "cache": {
             "enabled": false,
             "maxAge": 3600
         },
         "log": {
-            "enabled": true,
+            "enabled": "true",
             "level": "info"
         },
         "page": {
             "name": "KrautCMS",
             "description": "KrautCMS is a simple and lightweight CMS",
-            "author": "KrautCMS",
-            "timezone": "Europe/Berlin",
+            "author": "Ruben Kraut",
+            "timezone": "Europe\/Berlin",
             "language": "en",
             "admin-mail": "admin@example.com"
         }

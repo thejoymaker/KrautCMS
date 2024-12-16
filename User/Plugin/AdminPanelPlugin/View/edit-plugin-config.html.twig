@@ -1,0 +1,22 @@
+{% extends '@Theme/base.html.twig' %}
+
+{% block title %}Admin Panel - KrautCMS{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="/assets/css/admin.css">
+{% endblock %}
+
+{% block scripts %}
+    <script src="/assets/js/plugin-settings.js" defer></script>           
+{% endblock %}
+
+
+{% block header %}
+    <h2>{{component_type}}: {{component_name}}</h2>
+{% endblock %}
+
+{% block content %}
+    <div id="settings-container">
+        <p>Loading...</p>
+    </div>
+{% endblock %} 
