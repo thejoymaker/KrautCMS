@@ -16,12 +16,28 @@ use Kraut\Util\ArrayUtil;
  */
 class ConfigurationService
 {
-    public const DEBUG = 'kraut.debug';
+    // public const DEBUG = 'kraut.debug';
     public const THEME_NAME = 'kraut.theme.name';
-    public const CACHE_ENABLED = 'kraut.cache.enabled';
-    public const CACHE_MAX_AGE = 'kraut.cache.maxAge';
-    public const LOGGING_ENABLED = 'log.enabled';
-    public const LOGGING_LEVEL = 'log.level';
+    // public const CACHE_ENABLED = 'kraut.cache.enabled';
+    // public const CACHE_MAX_AGE = 'kraut.cache.maxAge';
+    public const LOGGING_ENABLED = 'kraut.log.enabled';
+    public const LOGGING_LEVEL = 'kraut.log.level';
+    public const PAGE_NAME = 'kraut.page.name';
+    public const PAGE_DESCRIPTION = 'kraut.page.description';
+    public const PAGE_AUTHOR = 'kraut.page.author';
+    public const PAGE_TIMEZONE = 'kraut.page.timezone';
+    public const PAGE_LANGUAGE = 'kraut.page.language';
+    public const PAGE_ADMIN_MAIL = 'kraut.page.admin-mail';
+    private array $keySetCore = [
+        self::PAGE_NAME,
+        self::PAGE_DESCRIPTION,
+        self::PAGE_AUTHOR,
+        self::PAGE_TIMEZONE,
+        self::PAGE_LANGUAGE,
+        self::PAGE_ADMIN_MAIL,
+        self::LOGGING_ENABLED,
+        self::LOGGING_LEVEL
+    ];
     private string $SYSTEM_CONFIG_DIR;
     /**
      * @var CacheService The cache service instance.
@@ -76,6 +92,46 @@ class ConfigurationService
         return $totalConfig;
     }
 
+    public function listSettings(): array
+    {
+        $settings = [];
+        foreach ($this->keySetCore as $key) {
+            $settings[$key] = $this->get($key, '');
+        }
+        return $settings;
+    }
+
+    public function saveSettings(array $settings): void
+    {
+        $mutated = false;
+        foreach ($this->keySetCore as $key) {
+            $current = $this->get($key, '');
+            $new = $settings[$key] ?? '';
+            if ($current !== $new) {
+                $this->set($key, $new);
+                if (!$mutated) {
+                    $mutated = true;
+                }
+            }
+        }
+
+        if ($mutated) {
+            $this->persistConfig("{$this->SYSTEM_CONFIG_DIR}/Kraut.json", 'kraut');
+        }
+    }
+
+    public function persistConfig(string $file, string $topLevel): void
+    {
+        $config = [];
+        foreach ($this->config as $key => $value) {
+            if (strpos($key, $topLevel) === 0) {
+                $config[$key] = $value;
+                break;
+            }
+        }
+        file_put_contents($file, json_encode($config, JSON_PRETTY_PRINT));
+    }
+
     /**
      * Loads the configuration values.
      *
@@ -98,7 +154,7 @@ class ConfigurationService
         return $config;
     }
 
-    public function installPluginConfig(string $pluginName, ?string $defaultFile): void
+    public function installPluginConfig(string $pluginName, ?string $defaultFile): string
     {
         if (null === $defaultFile || !file_exists($defaultFile)) {
             $defaults = [];
@@ -112,6 +168,7 @@ class ConfigurationService
         // $pluginConfig = $this->loadConfig($pluginConfigFile);
         $this->config = array_merge($this->config, $defaults);
         file_put_contents($pluginConfigFile, json_encode($defaults, JSON_PRETTY_PRINT));
+        return $pluginConfigFile;
     }
 
     /**
@@ -132,6 +189,11 @@ class ConfigurationService
         } catch (\Exception $e) {
             return $default;
         }
+    }
+
+    public function set(string $key, $value): void
+    {
+        ArrayUtil::pack($key, $value, $this->config);
     }
 }
 ?>
