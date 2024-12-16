@@ -156,37 +156,31 @@ class ConfigurationService
         return $config;
     }
 
+    /**
+     * Retrieves a list of dot notated keys for a given namespace.
+     *
+     * This method retrieves a list of dot notated keys for a given namespace.
+     * The namespace is used to filter the configuration values.
+     *
+     * @param string $nameSpace The namespace to filter the configuration values.
+     * @return array A list of dot notated keys.
+     */
     private function getDotNotatedKeySet(string $nameSpace): array
     {
         $dotNotatedKeys = [];
-        $this->parseKeys($this->config[$nameSpace] ?? [], $nameSpace, $dotNotatedKeys);
+        ArrayUtil::parseKeys($this->config[$nameSpace] ?? [], $nameSpace, $dotNotatedKeys);
         return $dotNotatedKeys;
-    }
-
-    private function parseKeys(array $array, string $prefix, array &$result): void
-    {
-        foreach ($array as $key => $value) {
-            $newKey = $prefix . '.' . $key;
-            if (is_array($value)) {
-                $this->parseKeys($value, $newKey, $result);
-            } else {
-                $result[] = $newKey;
-            }
-        }
     }
 
     public function getPluginConfig(string $pluginName): array
     {
         $nameSpace = strtolower($pluginName);
-        $rawArray =  $this->config[$nameSpace] ?? [];
         $pluginConfigKeys = $this->getDotNotatedKeySet($nameSpace);
         $data = [];
         foreach ($pluginConfigKeys as $key){
             $data[$key] = $this->get($key, '');
         }
         return $data;
-        // $pluginConfig = $this->loadConfig("{$this->SYSTEM_CONFIG_DIR}/{$pluginName}.json");
-        // return $pluginConfig;
     }
 
     public function installPluginConfig(string $pluginName, ?string $defaultFile): string
@@ -226,6 +220,16 @@ class ConfigurationService
         }
     }
 
+    /**
+     * Sets a configuration value by key IN MEMORY!
+     * 
+     * This method does not persist the configuration value to disk.
+     *
+     * This method sets the configuration value associated with the specified key.
+     *
+     * @param string $key The configuration key.
+     * @param mixed $value The configuration value.
+     */
     public function set(string $key, $value): void
     {
         ArrayUtil::pack($key, $value, $this->config);
