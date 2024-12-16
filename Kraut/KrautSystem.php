@@ -6,7 +6,7 @@ namespace Kraut;
 use Kraut\Model\Manifest;
 use Kraut\Service\ConfigurationService;
 use Kraut\Service\PluginService;
-use Kraut\Service\ThemeService;
+// use Kraut\Service\ThemeService;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -42,7 +42,7 @@ class KrautSystem
     /**
      * The theme service.
      */
-    private ThemeService $themeService;
+    // private ThemeService $themeService;
     /**
      * The plugin service.
      */
@@ -63,7 +63,7 @@ class KrautSystem
     {
         $this->configService = $container->get(ConfigurationService::class);
         $this->pluginService = $this->container->get(PluginService::class);
-        $this->themeService = $this->container->get(ThemeService::class);
+        // $this->themeService = $this->container->get(ThemeService::class);
         if(!extension_loaded('json')) {
             throw new \RuntimeException('The JSON extension is required.');
         }
@@ -77,7 +77,7 @@ class KrautSystem
      */
     private function setupTheme(): void
     {
-        $theme = $this->configService->get('theme', 'default');
+        $theme = $this->configService->get('kraut.theme.name', 'Ruben');
         $loader = $this->container->get(Environment::class)->getLoader();
         if ($loader instanceof FilesystemLoader) {
             $loader->addPath(__DIR__ . "/../User/Theme/{$theme}", 'Theme');
@@ -92,7 +92,7 @@ class KrautSystem
         if($this->sequence !== 1) {
             throw new \RuntimeException('Wrong sequence');
         }
-        $this->themeService->discoverThemes();
+        // $this->themeService->discoverThemes();
         $this->pluginService->discoverPlugins();
         $this->sequence++;
     }
