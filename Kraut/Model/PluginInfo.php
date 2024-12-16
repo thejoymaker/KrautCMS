@@ -43,6 +43,10 @@ class PluginInfo
      * Controller directory
      */
     private ?string $controllers;
+    /**
+     * Config file path
+     */
+    private string $configPath;
 
 
     public static function __set_state($array) : PluginInfo {
@@ -53,7 +57,8 @@ class PluginInfo
             $array['manifest'],
             $array['views'],
             $array['controllers'],
-            $array['routeModel']
+            $array['routeModel'],
+            $array['configPath']
         );
     }
 
@@ -64,7 +69,8 @@ class PluginInfo
         Manifest $manifest,
         ?string $views = null,
         ?string $controllers = null,
-        ?RouteModel $routeModel
+        ?RouteModel $routeModel,
+        string $configPath
     ) {
         $this->className = $className;
         $this->active = $active;
@@ -73,6 +79,7 @@ class PluginInfo
         $this->views = $views;
         $this->controllers = $controllers;
         $this->routeModel = $routeModel;
+        $this->configPath = $configPath;
     }
 
     public function getClassName(): string
@@ -108,6 +115,11 @@ class PluginInfo
     public function getRouteModel(): ?RouteModel
     {
         return $this->routeModel;
+    }
+
+    public function getConfigPath(): string
+    {
+        return $this->configPath;
     }
 
     public function getPluginName(){
