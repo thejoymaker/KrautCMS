@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}KrautCMS{% endblock %}</title>
+    <title>{% block title %}{{pageName}}{% endblock %}</title>
     <link rel="stylesheet" href="/assets/css/styles.css">
     {% block styles %}{% endblock %}
     {% block scripts %}{% endblock %}
@@ -10,7 +10,7 @@
 <body>
     <div class="wrapper">
         <header>
-            <div class="container"><h1 class="page-title"><a href="/">KrautCMS</a></h1></div>
+            <div class="container"><h1 class="page-title"><a href="/" title="{{pageDescription}}">{{pageName}}</a></h1></div>
             {% block header %}{% endblock %}
         </header>
         <main>
@@ -20,7 +20,7 @@
         </main>
         <footer>
             {% block footer %}
-            <p>&copy; {{ "now"|date("Y") }} KrautCMS</p>
+            <p>&copy; {{ "now"|date("Y") }} {{pageName}}</p>
             {% endblock %}
         </footer>
     </div>
