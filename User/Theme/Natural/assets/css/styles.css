@@ -1,0 +1,256 @@
+:root {
+    --primary-color: darkgreen;
+    --secondary-color: lightgreen;
+    --border-color: darkgreen;
+    --link-color: darkmagenta;
+    --link-color-hover: darkmagenta;
+    --background-color: lightgreen;
+    /* --text-color: #333;
+    --header-color: #333;
+    --nav-color: #333;
+    --footer-color: #333;
+    --button-color: #333;
+    --button-hover-color: #555;
+    --button-background: #f4f4f4;
+    --button-hover-background: #ccc;
+    --form-input-background: #f4f4f4;
+    --form-input-color: #333;
+    --form-input-border: #ccc;
+    --form-input-focus: #555; */
+}
+/* Reset default margins and paddings */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+@font-face {
+    font-family: 'CabinSketch';
+    src: url('/assets/fonts/CabinSketch-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Body styles */
+body {
+    font-family: 'CabinSketch';
+    margin: 0;
+    background-color: var(--background-color); /* Dark green */
+    color: var(--primary-color); 
+    line-height: 1.6;
+}
+
+html, body {
+    height: 100%;
+}
+
+/* Wrapper for flex layout */
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+.container {
+    width: 80%;
+    margin: 0 auto;
+}
+/* Main content area */
+main {
+    flex: 1;
+}
+
+/* Header styling */
+header {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    padding: 10px;
+    text-align: center;
+}
+
+/* Page title styling */
+
+.page-title {
+    text-align: left;
+    margin: 20px 0;
+}
+
+.page-title a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.page-title a:hover {
+    color: var(--primary-color);
+}
+
+.page-title a:visited {
+    color: var(--primary-color);
+}
+
+.page-title a:active {
+    color: var(--primary-color);
+}
+
+/* Navigation styling */
+nav {
+    background-color: var(--primary-color);
+    position: relative;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    /* margin: 5px;
+    border-radius: 5px; */
+    border-width: 1px;
+    border-color: var(--primary-color);
+    border-style: solid;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    padding: 8px 12px;
+    background-color: #555;
+    border-radius: 4px;
+}
+
+nav ul li a.active,
+nav ul li a:hover {
+    background-color: var(--secondary-color);
+    color: darkred;
+}
+
+/* Mobile menu toggle button */
+#menu-toggle {
+    display: none;
+    background-color: #555;
+    color: lightgreen;
+    padding: 10px;
+    border: none;
+    width: 100%;
+    text-align: center;
+}
+
+/* Footer styling */
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+}
+
+/* Link styling */
+a {
+    color: var(--link-color); /* Orange */
+}
+
+a:visited {
+    color: var(--link-color);
+}
+
+/* Button styling */ 
+button {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    border-width: 1px;
+    border-color: var(--primary-color);
+}
+
+button:hover {
+    border-width: 1px;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    border-style: solid;
+    background-color: darkred;
+}
+
+button:active {
+    background-color: red;
+    color: var(--secondary-color);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table, th, td {
+    border: 1px solid var(--primary-color);
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+/* Responsive styles */
+@media (max-width: 600px) {
+    body {
+        font-size: 0.9rem;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    h2 {
+        font-size: 1.25rem;
+    }
+
+    .admin-section {
+        padding: 15px;
+    }
+
+    /* Navigation adjustments for mobile */
+    #admin-nav {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    #admin-nav.open {
+        display: flex;
+    }
+
+    #menu-toggle {
+        display: block;
+    }
+
+    nav ul li {
+        margin: 10px 0;
+    }
+
+    /* Footer adjustments */
+    footer {
+        padding: 15px;
+        font-size: 0.9rem;
+    }
+}
