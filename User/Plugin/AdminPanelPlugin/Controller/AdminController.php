@@ -115,13 +115,13 @@ class AdminController
             case 'activate':
                 $this->pluginService->enablePlugin($plugin);
                 // return new Response(200, [], json_encode(['ok' => true]));
-                return ResponseUtil::respondRelative($this->twig, 'AdminPanelPlugin', 'activated', 
-                    ['component_type' => 'Plugin', 'component_name' => $plugin]);
+                return ResponseUtil::respondRelative($this->twig, 'AdminPanelPlugin', 'component-update', 
+                    ['component_type' => 'Plugin', 'component_name' => $plugin, 'component_action' => 'activated']);
             case 'deactivate':
                 $this->pluginService->disablePlugin($plugin);
                 // return new Response(200, [], json_encode(['ok' => true]));
-                return ResponseUtil::respondRelative($this->twig, 'AdminPanelPlugin', 'deactivated', 
-                    ['component_type' => 'Plugin', 'component_name' => $plugin]);
+                return ResponseUtil::respondRelative($this->twig, 'AdminPanelPlugin', 'component-update', 
+                    ['component_type' => 'Plugin', 'component_name' => $plugin, 'component_action' => 'deactivated']);
             // case 'edit':
             //     return ResponseUtil::respondRelative($this->twig, 'AdminPanelPlugin', 'edit-plugin-config', 
             //         ['component_type' => 'Plugin', 'component_name' => $plugin]);
@@ -143,8 +143,8 @@ class AdminController
                 $this->configurationService->set(ConfigurationService::THEME_NAME, $theme);
                 $this->configurationService->persistConfig(__DIR__ . '/../../../Config/Kraut.json', 'kraut');
                 // return new Response(200, [], json_encode(['ok' => true]));
-                return ResponseUtil::respondRelative($this->twig, 'AdminPanelPlugin', 'activated', 
-                    ['component_type' => 'Theme', 'component_name' => $theme]);
+                return ResponseUtil::respondRelative($this->twig, 'AdminPanelPlugin', 'component-update', 
+                    ['component_type' => 'Theme', 'component_name' => $theme, 'component_action' => 'activated']);
             // case 'disable':
             //     $this->pluginService->disablePlugin($plugin);
             //     // return new Response(200, [], json_encode(['ok' => true]));
