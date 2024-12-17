@@ -11,7 +11,7 @@ namespace Kraut\Model;
  * information related to plugins. It provides methods to retrieve and manage
  * plugin metadata, such as name, manifest, and other relevant details.
  *
- * @package KrautCMS\System\Model
+ * @package Kraut\Model
  */
 class PluginInfo
 {
@@ -67,8 +67,8 @@ class PluginInfo
         bool $active,
         string $path,
         Manifest $manifest,
-        ?string $views = null,
-        ?string $controllers = null,
+        ?string $views,
+        ?string $controllers,
         ?RouteModel $routeModel,
         string $configPath
     ) {
