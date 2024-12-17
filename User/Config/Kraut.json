@@ -14,7 +14,7 @@
         "page": {
             "name": "KrautCMS",
             "description": "KrautCMS is a simple and lightweight CMS",
-            "author": "Ruben Kraut",
+            "author": "KrautCMS",
             "timezone": "Europe\/Berlin",
             "language": "en",
             "admin-mail": "admin@example.com"
