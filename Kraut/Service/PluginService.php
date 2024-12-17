@@ -98,6 +98,9 @@ class PluginService
             } else {
                 $configPath = __DIR__ . "/../../User/Config/{$pluginName}.json";
             }
+            if(is_string($active)) {
+                $active = $active === 'true';
+            }
             $className = "User\\Plugin\\$pluginName\\$pluginName";
             $plugins[$pluginName] = new PluginInfo(
                 $className, 
