@@ -39,6 +39,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     case 'settings':
                         loadSettings();
                         break;
+                    case 'logs':
+                        loadLogs();
+                        break;
                     // Add cases for other sections if needed
                 }
                 loadedSections[sectionId] = true;
@@ -106,8 +109,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 const actionsTd = document.createElement('td');
                 const editLink = document.createElement('a');
-                editLink.href = `/admin/plugins/edit/${pluginKey}`;
-                editLink.textContent = 'Edit';
+                editLink.href = `/admin/plugins/settings/${pluginKey}`;
+                editLink.textContent = 'Settings';
                 actionsTd.appendChild(editLink);
 
                 const toggleLink = document.createElement('a');
@@ -358,6 +361,42 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
             console.error('Error saving settings:', error);
             settingsContainer.innerHTML = '<p>Error saving settings.</p>';
+        });
+    }
+
+    function loadLogs() {
+        const logsContainer = document.getElementById('logs-container');
+        if (!logsContainer) return;
+    
+        // Optional: Include CSRF token if required
+        const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+        const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute('content') : '';
+    
+        const requestData = {
+            query: 'list_logs',
+            csrf_token: csrfToken
+        };
+    
+        fetch('/admin/query', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => response.json())
+        .then(logs => {
+            // Clear loading message
+            logsContainer.innerHTML = '';
+    
+            // Create a preformatted text block to display logs
+            const pre = document.createElement('pre');
+            pre.textContent = logs.join('\n');
+            logsContainer.appendChild(pre);
+        })
+        .catch(error => {
+            console.error('Error fetching logs:', error);
+            logsContainer.innerHTML = '<p>Error loading logs.</p>';
         });
     }
 

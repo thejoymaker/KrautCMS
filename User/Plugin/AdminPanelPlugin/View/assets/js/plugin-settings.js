@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: JSON.stringify({
               csrf_token: csrfToken,
-              action: 'load_plugin_settings',
+              action: 'load_settings',
             }),
           })
             .then(response => response.json())
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const csrfToken = formData.get('csrf_token') || '';
 
         const requestData = {
-            action: 'save_plugin_settings',
+            action: 'save_settings',
             plugin_name: pluginName,
             settings: settings,
             csrf_token: csrfToken

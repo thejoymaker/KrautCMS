@@ -21,9 +21,9 @@
                 <li><a href="#" data-section="plugins">Plugins</a></li>
                 <li><a href="#" data-section="themes">Themes</a></li>
                 <li><a href="#" data-section="settings">Settings</a></li>
+                <li><a href="#" data-section="logs">Logs</a></li>
                 <li><a href="#" data-section="users">*Users*</a></li>
                 <li><a href="#" data-section="content">*Content*</a></li>
-                <li><a href="#" data-section="reports">*Reports*</a></li>
                 <li><a href="/logout">Logout</a></li>
             </ul>
         </nav>
@@ -87,6 +87,13 @@
         </div>
     </section>
 
+    <section id="logs" class="admin-section" style="display: none;">
+        <h3>Logs</h3>
+        <div id="logs-container">
+            <p>Loading logs...</p>
+        </div>
+    </section>
+
     <section id="users" class="admin-section" style="display: none;">
         <h3>Manage Users</h3>
         <table>
@@ -143,14 +150,8 @@
             </tbody>
         </table>
     </section>
-
-    <section id="reports" class="admin-section" style="display: none;">
-        <h3>Reports</h3>
-        <p>Generate and view various reports about your site's activity.</p>
-        <button onclick="window.location.href='/admin/reports/generate'">Generate Report</button>
-    </section>
 {% endblock %}
 
 {% block footer %}
-    <p>&copy; {{ "now"|date("Y") }} KrautCMS. All rights reserved.</p>
+    <p>&copy; {{ "now"|date("Y") }} KrautCMS Admin Panel</p>
 {% endblock %}

@@ -64,19 +64,43 @@ class AdminController
         case 'list_settings':
             $result = $this->configurationService->listSettings();
             return new Response(200, ['Content-Type' => 'application/json'], json_encode($result));
-        default:
+        case 'list_logs':
+            $result = $this->getLogs();
+            return new Response(200, ['Content-Type' => 'application/json'], json_encode($result));
+            default:
             return new Response(400, [], 'Invalid query');
         }
     }
-
+    // Add a method to fetch logs
+    private function getLogs(): array
+    {
+        $logs = [];
+        $logFile = realpath(__DIR__ . '/../../../../Log/app.log'); // Adjust the path as needed
+    
+        if (file_exists($logFile)) {
+            $lines = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            $logs = array_reverse($lines); // Optional: reverse to show most recent logs first
+        }
+    
+        return $logs;
+    }
+    
     #[Route('/admin/plugins/{action_command}/{plugin}', ['POST'], ['admin'])]
     public function pluginsPost(ServerRequestInterface $request, array $args): ResponseInterface
     {
         $plugin = $args['plugin'];
         $action = $args['action_command'];
+        $actionMessage = $request->getParsedBody()['action'] ?? '';
         switch ($action) {
             case 'settings':
-                return new Response(200, [], json_encode($this->configurationService->getPluginConfig($plugin)));
+                if($actionMessage === 'save_settings') {
+                    $config = $request->getParsedBody()['settings'] ?? [];
+                    $this->configurationService->savePluginConfig($plugin, $config);
+                    return new Response(200, [], json_encode(['ok' => true]));
+                }
+                if($actionMessage === 'load_settings') {
+                    return new Response(200, [], json_encode($this->configurationService->getPluginConfig($plugin)));
+                }
             default:
                 return new Response(400, [], 'Invalid action');
         }
@@ -98,9 +122,9 @@ class AdminController
                 // return new Response(200, [], json_encode(['ok' => true]));
                 return ResponseUtil::respondRelative($this->twig, 'AdminPanelPlugin', 'deactivated', 
                     ['component_type' => 'Plugin', 'component_name' => $plugin]);
-            case 'edit':
-                return ResponseUtil::respondRelative($this->twig, 'AdminPanelPlugin', 'edit-plugin-config', 
-                    ['component_type' => 'Plugin', 'component_name' => $plugin]);
+            // case 'edit':
+            //     return ResponseUtil::respondRelative($this->twig, 'AdminPanelPlugin', 'edit-plugin-config', 
+            //         ['component_type' => 'Plugin', 'component_name' => $plugin]);
             case 'settings':
                 return ResponseUtil::respondRelative($this->twig, 'AdminPanelPlugin', 'edit-plugin-config', 
                     ['component_type' => 'Plugin', 'component_name' => $plugin]);

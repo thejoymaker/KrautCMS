@@ -9,7 +9,8 @@
         "php_version": "8.2.0",
         "php_modules": {},
         "plugins": {
-            "UserPlugin": ">=1.0.0,<2.0.0"
+            "UserPlugin": ">=1.0.0,<2.0.0",
+            "PagesPlugin": ">=1.0.0,<2.0.0"
         }
     }
 }
