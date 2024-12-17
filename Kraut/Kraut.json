@@ -1,7 +1,7 @@
 {
     "name": "Kraut CMS",
     "cms_version": "1.0.0",
-    "type": "cms",
+    "type": "core",
     "license": "MIT",
     "required": {
         "php_version": "8.2.0",
