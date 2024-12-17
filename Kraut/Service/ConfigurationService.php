@@ -172,6 +172,15 @@ class ConfigurationService
         return $dotNotatedKeys;
     }
 
+    /**
+     * Retrieves the configuration values for a given plugin.
+     *
+     * This method retrieves the configuration values for a given plugin.
+     * The plugin name is used to filter the configuration values.
+     *
+     * @param string $pluginName The name of the plugin to retrieve the configuration values for.
+     * @return array The configuration values for the plugin.
+     */
     public function getPluginConfig(string $pluginName): array
     {
         $nameSpace = strtolower($pluginName);
@@ -183,12 +192,24 @@ class ConfigurationService
         return $data;
     }
     
+    /**
+     * Saves the configuration values for a given plugin.
+     *
+     * This method saves the configuration values for a given plugin.
+     * The plugin name is used to filter the configuration values.
+     *
+     * @param string $plugin The name of the plugin to save the configuration values for.
+     * @param array $config The configuration values to save.
+     */
     public function savePluginConfig(string $plugin, array $config): void
     {
         $nameSpace = strtolower($plugin);
         $pluginConfigKeys = $this->getDotNotatedKeySet($nameSpace);
         $mutated = false;
         foreach ($pluginConfigKeys as $key) {
+            if(!isset($config[$key])) {
+                continue;
+            }
             $current = $this->get($key, '');
             $new = $config[$key] ?? '';
             if ($current !== $new) {
@@ -204,6 +225,16 @@ class ConfigurationService
         }
     }
 
+    /**
+     * Installs the configuration file for a given plugin.
+     *
+     * This method installs the configuration file for a given plugin upon discovery.
+     * The plugin name is used to create the configuration file.
+     *
+     * @param string $pluginName The name of the plugin to install the configuration file for.
+     * @param string|null $defaultFile The default configuration file to use.
+     * @return string The path to the installed configuration file.
+     */
     public function installPluginConfig(string $pluginName, ?string $defaultFile): string
     {
         if (null === $defaultFile || !file_exists($defaultFile)) {
