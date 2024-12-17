@@ -66,6 +66,10 @@ class Kernel
                 $twig->addGlobal('pageName', $pageName);
                 $pageDescription = $config->get(ConfigurationService::PAGE_DESCRIPTION);
                 $twig->addGlobal('pageDescription', $pageDescription);
+                $pageAuthor = $config->get(ConfigurationService::PAGE_AUTHOR);
+                $twig->addGlobal('pageAuthor', $pageAuthor);
+                $pageLanguage = $config->get(ConfigurationService::PAGE_LANGUAGE);
+                $twig->addGlobal('pageLanguage', $pageLanguage);
                 // Optionally add global variables or extensions here
                 return $twig;
             },
