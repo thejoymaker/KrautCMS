@@ -182,6 +182,27 @@ class ConfigurationService
         }
         return $data;
     }
+    
+    public function savePluginConfig(string $plugin, array $config): void
+    {
+        $nameSpace = strtolower($plugin);
+        $pluginConfigKeys = $this->getDotNotatedKeySet($nameSpace);
+        $mutated = false;
+        foreach ($pluginConfigKeys as $key) {
+            $current = $this->get($key, '');
+            $new = $config[$key] ?? '';
+            if ($current !== $new) {
+                $this->set($key, $new);
+                if (!$mutated) {
+                    $mutated = true;
+                }
+            }
+        }
+
+        if ($mutated) {
+            $this->persistConfig("{$this->SYSTEM_CONFIG_DIR}/{$plugin}.json", $nameSpace);
+        }
+    }
 
     public function installPluginConfig(string $pluginName, ?string $defaultFile): string
     {
