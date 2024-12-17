@@ -33,7 +33,7 @@ nav ul li a:hover {
     box-shadow: 8px 4px 8px rgba(255, 0, 0, 0.5); /* Optional: Add a subtle shadow */
     padding: 20px;
     border-radius: 5px;
-    border-color: yellow;
+    border-color: var(--primary-color);
     border-width: 1px;
     border-style: solid;
     text-align: center;
@@ -46,34 +46,34 @@ nav ul li a:hover {
 
 #admin-nav a {
     text-decoration: none;
-    color: yellow;
-    background-color: darkgreen;
+    color: var(--primary-color);
+    background-color: var(--secondary-color);
     padding: 10px 15px;
     border-style: solid;
-    border-color: yellow;
+    border-color: var(--primary-color);
     border-radius: 5px;
 }
 
 #admin-nav a.active {
-    background-color: yellow;
-    color: darkgreen;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
 }
 
 #admin-nav a:hover {
-    background-color: yellow;
-    color: darkgreen;
-    /* border-color: yellow;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    /* border-color: var(--primary-color);
     border-width: 5px;
     border-style: solid; */
 }
 
 h3 a {
     text-decoration: none;
-    color: yellow;
+    color: var(--primary-color);
 }
 
 h3 a:visited {
-    color: yellow;
+    color: var(--primary-color);
 }
 
 /* Section styles */

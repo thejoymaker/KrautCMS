@@ -1,42 +1,23 @@
-/* * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+:root {
+    --primary-color: yellow;
+    --secondary-color: darkgreen;
+    --border-color: lightgreen;
+    --link-color: orange;
+    --link-color-hover: yellow;
+    --background-color: darkgreen;
+    /* --text-color: #333;
+    --header-color: #333;
+    --nav-color: #333;
+    --footer-color: #333;
+    --button-color: #333;
+    --button-hover-color: #555;
+    --button-background: #f4f4f4;
+    --button-hover-background: #ccc;
+    --form-input-background: #f4f4f4;
+    --form-input-color: #333;
+    --form-input-border: #ccc;
+    --form-input-focus: #555; */
 }
-
-body { 
-    background-color: darkgreen; 
-    color: yellow;
-    margin: 0 ;
-    line-height: 1.6;
-}
-
-a {
-    color: orange;
-}
-
-a:visited {
-    color: rgb(140, 80, 7);
-}
-
-html, body {
-    height: 100%;
-}
-
-.wrapper {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-main {
-    flex: flex-grow;
-}
-
-footer {
-    text-align: center;
-} */
-
 /* Reset default margins and paddings */
 * {
     margin: 0;
@@ -55,8 +36,8 @@ footer {
 body {
     font-family: 'ShantellSans', sans-serif;
     margin: 0;
-    background-color: darkgreen; /* Dark green */
-    color: yellow; 
+    background-color: var(--background-color); /* Dark green */
+    color: var(--primary-color); 
     line-height: 1.6;
 }
 
@@ -81,8 +62,8 @@ main {
 
 /* Header styling */
 header {
-    background-color: darkgreen;
-    color: yellow;
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
     padding: 10px;
     text-align: center;
 }
@@ -95,25 +76,25 @@ header {
 }
 
 .page-title a {
-    color: yellow;
+    color: var(--primary-color);
     text-decoration: none;
 }
 
 .page-title a:hover {
-    color: yellow;
+    color: var(--primary-color);
 }
 
 .page-title a:visited {
-    color: yellow;
+    color: var(--primary-color);
 }
 
 .page-title a:active {
-    color: yellow;
+    color: var(--primary-color);
 }
 
 /* Navigation styling */
 nav {
-    background-color: yellow;
+    background-color: var(--primary-color);
     position: relative;
 }
 
@@ -130,7 +111,7 @@ nav ul li {
     /* margin: 5px;
     border-radius: 5px; */
     border-width: 1px;
-    border-color: yellow;
+    border-color: var(--primary-color);
     border-style: solid;
 }
 
@@ -144,7 +125,7 @@ nav ul li a {
 
 nav ul li a.active,
 nav ul li a:hover {
-    background-color: darkgreen;
+    background-color: var(--secondary-color);
     color: darkred;
 }
 
@@ -163,41 +144,41 @@ nav ul li a:hover {
 footer {
     text-align: center;
     padding: 10px;
-    background-color: darkgreen;
-    color: yellow;
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
 }
 
 /* Link styling */
 a {
-    color: #ffa500; /* Orange */
+    color: var(--link-color); /* Orange */
 }
 
 a:visited {
-    color: #8c5007;
+    color: var(--link-color);
 }
 
 /* Button styling */ 
 button {
-    background-color: yellow;
-    color: darkgreen;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
     padding: 10px;
     border-radius: 5px;
     cursor: pointer;
     border-width: 1px;
-    border-color: yellow;
+    border-color: var(--primary-color);
 }
 
 button:hover {
     border-width: 1px;
-    border-color: yellow;
-    color: yellow;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
     border-style: solid;
     background-color: darkred;
 }
 
 button:active {
     background-color: red;
-    color: darkgreen;
+    color: var(--secondary-color);
 }
 
 table {
@@ -207,7 +188,7 @@ table {
 }
 
 table, th, td {
-    border: 1px solid yellow;
+    border: 1px solid var(--primary-color);
 }
 
 th, td {
