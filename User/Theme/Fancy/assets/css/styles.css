@@ -6,15 +6,15 @@
 }
 
 @font-face {
-    font-family: 'AlegreyaSans';
-    src: url('/assets/fonts/AlegreyaSans-Regular.ttf') format('truetype');
+    font-family: 'EmilysCandy';
+    src: url('/assets/fonts/EmilysCandy-Regular.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
 
 /* Body styles */
 body {
-    font-family: 'AlegreyaSans', sans-serif;
+    font-family: 'EmilysCandy';
     margin: 0;
     background-color: darkmagenta; /* Dark green */
     color: lightyellow; 
