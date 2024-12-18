@@ -87,6 +87,21 @@ class ResponseUtil
         );
     }
 
+    /**
+     * Generates a 404 Not Found response with a custom error message.
+     *
+     * @param Environment $twig    The Twig environment instance.
+     * @param string      $plugin  The name of the plugin or module generating the error.
+     * @param string      $message The error message to display.
+     * @return ResponseInterface A response object with a 404 status code and error message.
+     */
+    public static function respondNegative(Environment $twig, string $plugin = null, string $message = null): ResponseInterface {
+        $content = $twig->render('negative.html.twig', ['plugin' => $plugin, 'message' => $message]);
+        $response = new Response(404, ['Content-Type' => 'text/html; charset=UTF-8']);
+        $response->getBody()->write($content);
+        return $response;
+    }
+
     public static function respondError(\Throwable $e, ContainerInterface $container): ResponseInterface
     {
         $twig = $container->get(Environment::class);
