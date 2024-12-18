@@ -1,0 +1,6 @@
+{
+    "userplugin.registration.active": "Registration Active",
+    "userplugin.registration.public": "Public Registration",
+    "userplugin.login.obfuscated": "Obfuscated Login",
+    "userplugin.login.obfuscation": "Obfuscation Endpoint"
+}

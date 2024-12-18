@@ -1,12 +1,11 @@
 {
     "userplugin": {
-        "active": true,
         "registration":{ 
             "active" : true,
             "public": true
         },
         "login": {
-            "obfuscated": true,
+            "obfuscated": false,
             "obfuscation": "sesame-open"
         }
     }

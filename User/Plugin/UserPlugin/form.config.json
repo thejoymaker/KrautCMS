@@ -1,0 +1,18 @@
+{
+    "userplugin.registration.active": {
+        "type": "boolean",
+        "default": true
+    },
+    "userplugin.registration.public": {
+        "type": "boolean",
+        "default": true
+    },
+    "userplugin.login.obfuscated": {
+        "type": "boolean",
+        "default": false
+    },
+    "userplugin.login.obfuscation": {
+        "type": "string",
+        "default": "sesame-open"
+    }
+}
