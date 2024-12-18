@@ -17,6 +17,11 @@
                 <h1 class="page-title"><a href="/" title="{{pageDescription}}">{{pageName}}</a></h1>
             </div>
             {% block header %}{% endblock %}
+            {% if current_user is defined and current_user is not null %}
+                <p>Welcome, {{ current_user.getName() }}!</p>
+            {% else %}
+                <p>Welcome, Guest!</p>
+            {% endif %}
         </header>
         <main>
             <div class="container">

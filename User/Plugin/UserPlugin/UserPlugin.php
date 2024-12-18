@@ -32,11 +32,11 @@ class UserPlugin implements PluginInterface, EventSubscriberInterface
     {
         // Retrieve the Twig environment
         /** @var \Twig\Environment $twig */
-        $twig = $this->container->get(\Twig\Environment::class);
+        // $twig = $this->container->get(\Twig\Environment::class);
     
         // Add current_user as a global variable in Twig
-        $twig->addGlobal('current_user', $this->container->
-            get(AuthenticationService::class)->getCurrentUser());
+        // $twig->addGlobal('current_user', $this->container->
+        //     get(AuthenticationService::class)->getCurrentUser());
 
     }
 
