@@ -314,5 +314,18 @@ class PluginService
         $pluginInfo = $this->pluginModel[$pluginName];
         $this->configService->persistConfig($pluginInfo->getConfigPath(), $pluginNameLower);
     }
+
+    /**
+     * Check if a plugin is active.
+     *
+     * @param string $plugin The name of the plugin.
+     *
+     * @return bool True if the plugin is active, false otherwise.
+     */
+    public function pluginActive(string $plugin): bool
+    {
+        $pluginNameLower = strtolower($plugin);
+        return $this->configService->get("{$pluginNameLower}.active", false);
+    }
 }
 ?>
