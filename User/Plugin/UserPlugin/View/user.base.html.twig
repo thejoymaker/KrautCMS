@@ -1,0 +1,15 @@
+{% extends '@Theme/base.html.twig' %}
+
+{% block title %}User{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="/assets/css/user.css">
+{% endblock %}
+
+{% block content %}
+    <main class="parent-container">
+        <div class="form-container">
+            {% block userContent %}{% endblock %}
+        </div>
+    </main>
+{% endblock %}

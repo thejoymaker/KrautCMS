@@ -7,6 +7,7 @@ namespace Kraut\Middleware;
 
 use Kraut\Http\Session;
 use Kraut\Service\AuthenticationServiceInterface;
+use Kraut\Service\ConfigurationService;
 use Kraut\Service\PluginService;
 use Kraut\Util\ResponseUtil;
 use Psr\Http\Message\ServerRequestInterface;
@@ -19,6 +20,8 @@ class AuthenticationMiddleware implements MiddlewareInterface
     public function __construct(
         private AuthenticationServiceInterface $authService,
         private PluginService $pluginService,
+        private ConfigurationService $configurationService,
+        private \Twig\Environment $twig
         )
     {}
 
@@ -28,15 +31,32 @@ class AuthenticationMiddleware implements MiddlewareInterface
         $httpMethod = $request->getMethod();
         $user = $this->authService->getCurrentUser();
 
+        if ($user) {
+            // Add current_user as a global variable in Twig
+            $this->twig->addGlobal('current_user', $user);
+
+            if (in_array('superuser', $user->getRoles())) {
+                // SUPERUSER
+                return $handler->handle($request);
+            }
+        }
         // Get route roles
         $roles = $this->pluginService->getRolesForRoute($httpMethod, $uri);
         if (!empty($roles)) {
             // Check if user has any of the required roles
             if (!$user || empty(array_intersect($user->getRoles(), $roles))) {
-                /** @var Session $session */
-                $session = $request->getAttribute('session');
-                $session?->set('redirect', $uri);
-                return ResponseUtil::redirectTemporary('/login');
+                // DISALLOWED ROUTE
+                if ($this->pluginService->pluginActive('UserPlugin')) {
+                    // LOGIN AVAILABLE
+                    $loginObfuscated = $this->configurationService->get('userplugin.login.obfuscated', true);
+                    if(!$loginObfuscated){
+                        /** @var Session $session */
+                        $session = $request->getAttribute('session');
+                        $session?->set('redirect', $uri);
+                        return ResponseUtil::redirectTemporary('/user/login');
+                    }
+                }
+                return ResponseUtil::respondNegative($this->twig);
             }
         }
 
