@@ -4,6 +4,8 @@ namespace Kraut\Model;
 
 interface UserInterface
 {
+    public function getName(): string;
+    
     /**
      * Get the roles of the user.
      *

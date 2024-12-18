@@ -62,7 +62,7 @@ class UserRepository
 
     public function addUser(User $user): void
     {
-        $safeUsername = $this->sanitizeUsername($user->getUsername());
+        $safeUsername = $this->sanitizeUsername($user->getName());
         $userDir = $this->usersDir . '/' . $safeUsername;
     
         if (!is_dir($userDir)) {
@@ -77,7 +77,7 @@ class UserRepository
     
     public function updateUser(User $user): void
     {
-        $safeUsername = $this->sanitizeUsername($user->getUsername());
+        $safeUsername = $this->sanitizeUsername($user->getName());
         $userDir = $this->usersDir . '/' . $safeUsername;
 
         if (!is_dir($userDir)) {
