@@ -211,6 +211,23 @@ th, td {
     box-sizing: border-box;
 }
 
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.gallery a {
+    display: block;
+    width: 150px;
+}
+
+.gallery img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
 /* Responsive styles */
 @media (max-width: 600px) {
     body {
