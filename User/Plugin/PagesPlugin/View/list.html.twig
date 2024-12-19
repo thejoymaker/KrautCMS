@@ -5,7 +5,7 @@
 {% block content %}
     <h1>Page List</h1>
 
-    {% if 'editor' in userRoles %}
+    {% if 'editor' in userRoles or 'superuser' in userRoles %}
         <a href="{{ path('page_create') }}">Add New Page</a>
     {% endif %}
 
@@ -24,7 +24,7 @@
                     <td>{{ page.metadata.title }}</td>
                     <td>
                         <a href="{{ path('page_show', {'slug': page.slug}) }}">view</a>
-                        {% if 'editor' in userRoles %}
+                        {% if 'editor' in userRoles or 'superuser' in userRoles %}
                             <a href="{{ path('page_edit', {'slug': page.slug}) }}">edit</a>
                         {% endif %}
                     </td>
