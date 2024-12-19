@@ -21,7 +21,7 @@
             {% for page in pages %}
                 <tr>
                     <td>{{ page.getAbsolutePath() }}</td>
-                    <td>{{ page.title }}</td>
+                    <td>{{ page.metadata.title }}</td>
                     <td>
                         <a href="{{ path('page_show', {'slug': page.slug}) }}">view</a>
                         {% if 'editor' in userRoles %}

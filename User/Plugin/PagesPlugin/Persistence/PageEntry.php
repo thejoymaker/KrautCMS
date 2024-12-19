@@ -10,11 +10,8 @@ class PageEntry implements ContentEntryInterface
         private string $slug,
         private string $filename,
         private string $content,
-        private string $title = ''
+        private array $metadata = [] 
     ) {
-        if (empty($this->title)) {
-            $this->title = ucwords(str_replace('-', ' ', $this->slug));
-        }
     }
 
     public function getSlug(): string
@@ -24,7 +21,7 @@ class PageEntry implements ContentEntryInterface
 
     public function getTitle(): string
     {
-        return $this->title;
+        return $this->metadata['title'] ?? 'Untitled';
     }
 
     public function getAbsolutePath(): string
@@ -35,6 +32,11 @@ class PageEntry implements ContentEntryInterface
     public function getContent(): string
     {
         return $this->content;
+    }
+
+    public function getMetadata(): array
+    {
+        return $this->metadata;
     }
 }
 

@@ -3,11 +3,11 @@
 {% block title %}Edit Page{% endblock %}
 
 {% block content %}
-    <h1>Edit Page: {{ page.title }}</h1>
+    <h1>Edit Page: {{ page.metadata.title }}</h1>
     <form method="post" action="{{ path('page_edit', {'slug': page.slug}) }}">
         <div>
             <label for="content">Content:</label><br>
-            <textarea id="content" name="content" rows="20" cols="80">{{ page.content }}</textarea>
+            <textarea id="content" name="content" rows="20" cols="80" required>{{ page.content }}</textarea>
         </div>
         <div>
             <button type="submit">Save</button>
