@@ -1,7 +1,7 @@
 {
     "kraut": {
         "theme": {
-            "name": "Natural"
+            "name": "Ruben"
         },
         "cache": {
             "enabled": false,
@@ -13,7 +13,7 @@
         },
         "page": {
             "name": "KrautCMS",
-            "description": "KrautCMS is a simple and lightweight CMS",
+            "description": "All you need is Kraut!",
             "author": "KrautCMS",
             "timezone": "Europe\/Berlin",
             "language": "en",
