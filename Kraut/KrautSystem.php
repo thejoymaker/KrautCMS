@@ -227,7 +227,7 @@ class KrautSystem
     private function executeMiddleware(ServerRequestInterface $request): ResponseInterface
     {
         $middlewareQueue = [
-            \Kraut\Middleware\MalIntentDetectionMiddleware::class,
+            // \Kraut\Middleware\MalIntentDetectionMiddleware::class,
             \Kraut\Middleware\SessionMiddleware::class,
             \Kraut\Middleware\LoggingMiddleware::class,
             \Kraut\Middleware\RequestHeadersParserMiddleware::class,
