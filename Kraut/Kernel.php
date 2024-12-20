@@ -6,6 +6,7 @@ declare(strict_types=1);
 namespace Kraut;
 
 use DI\ContainerBuilder;
+use Kraut\Exception\KrautException;
 use Kraut\Service\AuthenticationServiceInterface;
 use Kraut\Service\CacheService;
 use Kraut\Util\ResponseUtil;
@@ -25,6 +26,15 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
+/**
+ * Kernel class for the KrautCMS framework.
+ * 
+ * This class is responsible for handling the core functionality of the KrautCMS.
+ * It initializes and manages the various components and services required by the application.
+ * 
+ * @package KrautCMS
+ * @subpackage Kernel
+ */
 class Kernel
 {
     private KrautSystem $system;
@@ -122,6 +132,10 @@ class Kernel
                     $response = ResponseUtil::respondRequirementsError($this->container, [], "Unknown requirements error. [{$method}] {$uri}");
                 }
             }
+        } catch (KrautException $e) {
+            $logger->error($e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
+            $twig = $this->container->get(Environment::class);
+            $response = ResponseUtil::respondNegative($twig);
         } catch (\Throwable $e) {
             $logger->error($e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
             if(isset($_ENV['APP_DEBUG']) && $_ENV['APP_DEBUG'] === 'true') {
