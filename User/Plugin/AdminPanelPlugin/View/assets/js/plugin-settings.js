@@ -35,7 +35,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Loop through settings and create form fields
                 Object.keys(settings).forEach(key => {
                     const value = settings[key];
-
                     const formGroup = document.createElement('div');
                     formGroup.classList.add('form-group');
 
@@ -43,11 +42,34 @@ document.addEventListener('DOMContentLoaded', function() {
                     label.htmlFor = key;
                     label.textContent = key.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
 
-                    const input = document.createElement('input');
-                    input.type = 'text';
-                    input.id = key;
-                    input.name = key;
-                    input.value = value;
+                    let input;
+
+                    // Determine the type of the value and create appropriate input control
+                    if (typeof value === 'boolean') {
+                        input = document.createElement('input');
+                        input.type = 'checkbox';
+                        input.id = key;
+                        input.name = key;
+                        input.checked = value;
+                    } else if (typeof value === 'number') {
+                        input = document.createElement('input');
+                        input.type = 'number';
+                        input.id = key;
+                        input.name = key;
+                        input.value = value;
+                        // Determine if the number is an integer or float
+                        if (Number.isInteger(value)) {
+                            input.step = '1';
+                        } else {
+                            input.step = 'any';
+                        }
+                    } else {
+                        input = document.createElement('input');
+                        input.type = 'text';
+                        input.id = key;
+                        input.name = key;
+                        input.value = value;
+                    }
 
                     formGroup.appendChild(label);
                     formGroup.appendChild(input);
@@ -88,7 +110,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const settings = {};
         formData.forEach((value, key) => {
             if (key !== 'csrf_token') {
-                settings[key] = value;
+                // Preserve the data type when saving settings
+                if (value === 'true' || value === 'false') {
+                    settings[key] = (value === 'true');
+                } else if (!isNaN(value) && value.trim() !== '') {
+                    settings[key] = parseFloat(value);
+                } else {
+                    settings[key] = value;
+                }
             }
         });
 
