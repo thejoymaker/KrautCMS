@@ -1,12 +1,19 @@
 {% extends '@Theme/base.html.twig' %}
 
 {% block title %}Edit Page{% endblock %}
-
+{% block styles %}
+    <link rel="stylesheet" href="/assets/css/tiny-mde.min.css"> 
+{% endblock %}
+{% block scripts %} 
+    <script src="/assets/js/tiny-mde.min.js" defer></script> 
+    <script src="/assets/js/page-editor.js" defer></script> 
+{% endblock %}
 {% block content %}
     <h1>Edit Page: {{ page.metadata.title }}</h1>
     <form method="post" action="{{ path('page_edit', {'slug': page.slug}) }}">
         <div>
             <label for="content">Content:</label><br>
+            <div id="toolbar"></div>
             <textarea id="content" name="content" rows="20" cols="80" required>{{ page.content }}</textarea>
         </div>
         <div>
