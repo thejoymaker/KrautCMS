@@ -5,6 +5,9 @@
 {% block title %}{{ page.metadata.title }}{% endblock %}
 
 {% block content %}
+    {% if current_user is defined and current_user is not null and 'editor' in current_user.getRoles() or 'superuser' in current_user.getRoles() %}
+        <p><a href="{{ path('page_edit', {'slug': page.slug}) }}">Edit Page</a></p>
+    {% endif %}
     <h1>{{ page.metadata.title }}</h1>
     <div>
         {{ contentHtml|raw }}
