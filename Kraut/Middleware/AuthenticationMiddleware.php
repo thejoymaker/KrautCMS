@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace Kraut\Middleware;
 
+use Kraut\Exception\KrautException;
 use Kraut\Http\Session;
 use Kraut\Service\AuthenticationServiceInterface;
 use Kraut\Service\ConfigurationService;
@@ -34,7 +35,7 @@ class AuthenticationMiddleware implements MiddlewareInterface
         if ($user) {
             // Add current_user as a global variable in Twig
             $this->twig->addGlobal('current_user', $user);
-
+            $request = $request->withAttribute('current_user', $user);
             if (in_array('superuser', $user->getRoles())) {
                 // SUPERUSER
                 return $handler->handle($request);
@@ -56,10 +57,9 @@ class AuthenticationMiddleware implements MiddlewareInterface
                         return ResponseUtil::redirectTemporary('/user/login');
                     }
                 }
-                return ResponseUtil::respondNegative($this->twig);
+                throw KrautException::accessDenied($request);
             }
         }
-
         return $handler->handle($request);
     }
 }
