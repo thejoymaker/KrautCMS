@@ -8,7 +8,7 @@
     <title>{% block title %}{{pageName}}{% endblock %}</title>
     <link rel="stylesheet" href="/assets/css/styles.css">
     <link rel="stylesheet" href="/assets/css/lightbox.min.css">
-    <link rel="script" href="/assets/js/lightbox.min.js">
+    {# <link rel="script" href="/assets/js/lightbox-plus-jquery.js"> #}
     {% block styles %}{% endblock %}
     {% block scripts %}{% endblock %}
 </head>
@@ -38,6 +38,6 @@
             {% endblock %}
         </footer>
     </div>
-    <script src="/assets/js/lightbox.min.js"></script>
+    <script src="/assets/js/lightbox-plus-jquery.js"></script>
 </body>
 </html>
