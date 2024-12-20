@@ -64,6 +64,21 @@ class CacheService
                 unlink($cacheFile);
             }
         }
+
+        $twigCacheDir = $this->cacheDir . 'twig';
+        if (file_exists($twigCacheDir)) {
+            $this->deleteDir($twigCacheDir);
+        }
+    }
+
+    private function deleteDir($dir):void
+    {
+        $files = array_diff(scandir($dir), ['.', '..']);
+        foreach ($files as $file) {
+            $path = "$dir/$file";
+            is_dir($path) ? $this->deleteDir($path) : unlink($path);
+        }
+        rmdir($dir);
     }
 
     public function loadCachedConfig(callable $loader, String $resource): array
