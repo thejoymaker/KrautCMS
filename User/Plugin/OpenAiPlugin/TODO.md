@@ -17,4 +17,4 @@ may be a collection of plugins
 ### editor
 
 - summarize article (teaser text)
-- 
+- generate metadata/Image
