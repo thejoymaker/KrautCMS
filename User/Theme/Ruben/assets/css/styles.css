@@ -105,6 +105,7 @@ nav ul {
     justify-content: center;
     margin: 0;
     padding: 0;
+    row-gap: 20px;
 }
 
 nav ul li {
