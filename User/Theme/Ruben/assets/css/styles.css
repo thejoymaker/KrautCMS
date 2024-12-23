@@ -66,6 +66,7 @@ header {
     color: var(--primary-color);
     padding: 10px;
     text-align: center;
+    position: relative; /* Ensure header does not interfere with sticky nav */
 }
 
 /* Page title styling */
@@ -95,7 +96,10 @@ header {
 /* Navigation styling */
 nav {
     background-color: var(--primary-color);
-    position: relative;
+    position: -webkit-sticky; /* For Safari */
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* Ensure it stays on top */
 }
 
 nav ul {
@@ -109,8 +113,49 @@ nav ul {
 }
 
 nav ul li {
+    position: relative; /* Needed for positioning the child ul */
+    border-width: 1px;
+    border-color: var(--primary-color);
+    border-style: solid;
+}
+
+nav ul li ul {
+    display: none; /* Hide children by default */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: var(--primary-color);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    min-width: 200px; /* Adjust the width as needed */
+}
+
+nav ul li:hover ul {
+    display: block; /* Show children on hover */
+}
+
+nav ul li ul li {
+    width: 100%;
+    border: none;
+}
+
+nav ul li ul li a {
+    padding: 8px 12px;
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    white-space: nowrap; /* Prevent text from wrapping */
+}
+
+nav ul li ul li a:hover {
+    background-color: var(--primary-color);
+    color: darkred;
+}
+
+nav ul li {
     /* margin: 5px;
     border-radius: 5px; */
+    position: relative; /* Needed for positioning the child ul */
     border-width: 1px;
     border-color: var(--primary-color);
     border-style: solid;

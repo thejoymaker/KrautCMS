@@ -1,0 +1,15 @@
+# Navigation.yml
+main_navigation:
+  - title: Home
+    url: /
+  - title: About
+    url: /about
+  - title: Services
+    url: /services
+    children:
+      - title: Web Development
+        url: /services/web-development
+      - title: SEO
+        url: /services/seo
+  - title: Contact
+    url: /contact

@@ -236,6 +236,7 @@ class KrautSystem
             \Kraut\Middleware\CsrfMiddleware::class,
             \Kraut\Middleware\AuthenticationMiddleware::class,
             \Kraut\Middleware\RoutingMiddleware::class,
+            \Kraut\Middleware\MainNavigationMiddleware::class,
             \Kraut\Middleware\DispatchMiddleware::class,
         ];
 
