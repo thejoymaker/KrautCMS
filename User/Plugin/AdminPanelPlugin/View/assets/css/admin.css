@@ -40,6 +40,10 @@ nav ul li a:hover {
 }
 
 /* Navigation styles */
+#admin-nav {
+    margin: 30px;
+}
+
 #admin-nav li {
     display: inline;
 }
