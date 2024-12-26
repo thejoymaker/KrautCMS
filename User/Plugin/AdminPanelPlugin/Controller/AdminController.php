@@ -41,6 +41,12 @@ class AdminController
             case 'clear_cache':
                 $this->cacheService->nukeCache();
                 return new Response(200, [], json_encode(['ok' => true]));
+            case 'clear_session':
+                // $this->cacheService->nukeCache();
+                foreach ($_SESSION as $key => $value) {
+                    unset($_SESSION[$key]);
+                }
+                return new Response(200, [], json_encode(['ok' => true]));
             case 'save_settings':
                 $settings = $request->getParsedBody()['settings'] ?? [];
                 $this->configurationService->saveSettings($settings);

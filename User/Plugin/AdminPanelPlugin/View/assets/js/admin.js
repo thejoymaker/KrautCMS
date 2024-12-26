@@ -451,6 +451,59 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    const clearSessionLink = document.getElementById('clear_session');
+
+    if (clearSessionLink) {
+        const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+        const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute('content') : '';
+
+        clearSessionLink.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent default link action
+
+            // Optional: Disable the link to prevent multiple clicks
+            clearSessionLink.classList.add('disabled');
+            clearSessionLink.textContent = 'Clearing Session...';
+
+            // Send the CSRF token in the request body
+            const requestData = {
+                action: 'clear_session',
+                csrf_token: csrfToken // Include CSRF token here
+            };
+
+            fetch('/admin/action', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json(); // Assuming the server returns JSON
+                } else {
+                    throw new Error('Network response was not ok');
+                }
+            })
+            .then(data => {
+                // Handle success response
+                alert('Session cleared successfully!');
+            })
+            .catch(error => {
+                // Handle error
+                console.error('There was a problem with the fetch operation:', error);
+                alert('Failed to clear session.');
+            })
+            .finally(() => {
+                // Re-enable the link
+                clearSessionLink.classList.remove('disabled');
+                clearSessionLink.textContent = 'Clear Session';
+            });
+        });
+    }
+
+
+
     // Trigger click on the first nav link to display the default section
     const defaultLink = document.querySelector('#admin-nav a[data-section]');
     if (defaultLink) {
