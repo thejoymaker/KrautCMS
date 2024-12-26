@@ -1,6 +1,6 @@
 {
     "sitelockplugin": {
-        "active": true,
+        "active": false,
         "message": "Locked Site"
     }
 }
