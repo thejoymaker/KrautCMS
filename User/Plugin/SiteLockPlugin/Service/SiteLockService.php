@@ -18,14 +18,14 @@ class SiteLockService
         $this->hashedPasswords = $config['passwords'];
     }
 
-    public function isValidPassword(string $password): bool
+    public function isValidPassword(string $password): ?string
     {
-        foreach ($this->hashedPasswords as $hashedPassword) {
-            if (password_verify($password, $hashedPassword)) {
-                return true;
+        foreach ($this->hashedPasswords as $entry) {
+            if (password_verify($password, $entry['hash'])) {
+                return $entry['identity'];
             }
         }
-        return false;
+        return null;
     }
 
     public function getMessage(): string|null

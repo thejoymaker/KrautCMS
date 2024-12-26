@@ -34,9 +34,10 @@ class SiteLockMiddleware implements MiddlewareInterface
 
         if ($request->getMethod() === 'POST' && $request->getParsedBody()['password']) {
             $password = $request->getParsedBody()['password'];
-            if ($this->siteLockService->isValidPassword($password)) {
+            $identity = $this->siteLockService->isValidPassword($password);
+            if ($identity) {
                 $session->set('site_lock_open', true);
-                // return $handler->handle($request);
+                $session->set('site_lock_identity', $identity);
                 $requestPath = $request->getUri()->getPath();
                 return ResponseUtil::redirectTemporary($requestPath);
             }
