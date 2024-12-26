@@ -117,8 +117,15 @@ class AdminController
     {
         $plugin = $args['plugin'];
         $action = $args['action_command'];
+        $session = $request->getAttribute('session');
         switch ($action) {
             case 'activate':
+                if($plugin === 'SiteLockPlugin') {
+                    $session->set('site_lock_open', true);
+                }
+                if($plugin === 'DeepSitePlugin') {
+                    $session->set('deepsiteaccess', true);
+                }
                 $this->pluginService->enablePlugin($plugin);
                 // return new Response(200, [], json_encode(['ok' => true]));
                 return ResponseUtil::respondRelative($this->twig, 'AdminPanelPlugin', 'component-update', 
