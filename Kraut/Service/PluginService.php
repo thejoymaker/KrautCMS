@@ -131,28 +131,28 @@ class PluginService
             if (!$pluginInfo->isActive()) {
                 continue; // Skip loading this plugin
             }
-            if($pluginInfo->getRouteModel() !== null) {
-                /** @var RouteModel $routeModel */
-                $routeModel = $pluginInfo->getRouteModel();
-                if(!$routeModel->hasRoute($method, $path)){
-                    $enablerRoutes = $pluginInfo->getManifest()->getPaths();
-                    if($enablerRoutes !== null) {
-                        $proceedLoadingPlugin = false;
-                        foreach($enablerRoutes as $enablerRoute) {
-                            if("/*" === $enablerRoute 
-                            || $enablerRoute === $path
-                            || (substr($enablerRoute, -1) === '*' 
-                                && strpos($path, substr($enablerRoute, 0, -1)) === 0)) {
-                                $proceedLoadingPlugin = true;
-                                break;
-                            }
-                        }
-                        if(!$proceedLoadingPlugin) {
-                            continue;
-                        }
-                    }
-                }
-            }
+            // if($pluginInfo->getRouteModel() !== null) {
+            //     /** @var RouteModel $routeModel */
+            //     $routeModel = $pluginInfo->getRouteModel();
+            //     if(!$routeModel->hasRoute($method, $path)){
+            //         $enablerRoutes = $pluginInfo->getManifest()->getPaths();
+            //         if($enablerRoutes !== null) {
+            //             $proceedLoadingPlugin = false;
+            //             foreach($enablerRoutes as $enablerRoute) {
+            //                 if("/*" === $enablerRoute 
+            //                 || $enablerRoute === $path
+            //                 || (substr($enablerRoute, -1) === '*' 
+            //                     && strpos($path, substr($enablerRoute, 0, -1)) === 0)) {
+            //                     $proceedLoadingPlugin = true;
+            //                     break;
+            //                 }
+            //             }
+            //             if(!$proceedLoadingPlugin) {
+            //                 continue;
+            //             }
+            //         }
+            //     }
+            // }
             $className = "User\\Plugin\\$pluginName\\$pluginName";
             if (class_exists($className)) {
                 $plugin = $this->container->get($className);
