@@ -1,0 +1,16 @@
+{
+    "name": "Deep Site Plugin",
+    "version": "1.0.0",
+    "cms_version": ">=1.0.0,<2.0.0",
+    "type": "plugin",
+    "license": "MIT",
+    "paths": [],
+    "required": {
+        "php_version": "8.2.0",
+        "php_modules": {},
+        "plugins": {
+            "UserPlugin": ">=1.0.0,<2.0.0",
+            "PagesPlugin": ">=1.0.0,<2.0.0"
+        }
+    }
+}

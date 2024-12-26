@@ -1,0 +1,9 @@
+{
+    "deepsiteplugin": {
+        "redirect-url": "https:\/\/duckduckgo.com",
+        "deny-behavior": "message",
+        "message": "This site is hidden, go away please",
+        "secret-path": "secret",
+        "active": true
+    }
+}
