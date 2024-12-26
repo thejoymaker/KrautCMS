@@ -246,6 +246,8 @@ class KrautSystem
         $middlewareEvent = new \Kraut\Event\MiddlewareEvent($middlewareQueue);
         $eventDispatcher->dispatch($middlewareEvent, 'kernel.middleware');
 
+        $middlewareEvent->postProcess();
+
         // Get the possibly modified middleware queue
         $middlewareQueue = $middlewareEvent->getMiddlewareQueue();
 
