@@ -25,29 +25,32 @@ class DeepSiteMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (isset($_SESSION['deepsiteaccess']) && $_SESSION['deepsiteaccess'] === true) {
-            return $handler->handle($request);
-        }
         $path = $request->getUri()->getPath();
         $pathComponents = explode('/', trim($path, '/'));
-
-        if (empty($pathComponents) || $pathComponents[0] !== $this->deepSiteService->getSecretPath()) {
-            if ($this->deepSiteService->getRootRouteBehavior() === 'redirect') {
-                return ResponseUtil::redirectTemporary($this->deepSiteService->getRedirectUrl());
+        
+        if (!isset($_SESSION['deepsiteaccess']) || $_SESSION['deepsiteaccess'] !== true) {
+            // return $handler->handle($request);
+            if (empty($pathComponents) || $pathComponents[0] !== $this->deepSiteService->getSecretPath()) {
+                if ($this->deepSiteService->getRootRouteBehavior() === 'redirect') {
+                    return ResponseUtil::redirectTemporary($this->deepSiteService->getRedirectUrl());
+                } else {
+                    echo $this->deepSiteService->getMessage();
+                    die();
+                }
             } else {
-                echo $this->deepSiteService->getMessage();
-                die();
-                // return ResponseUtil::respondNegative($this->twig);
+                $_SESSION['deepsiteaccess'] = true;
             }
         }
-
-        $_SESSION['deepsiteaccess'] = true;
+            
         // Remove the secret path component
-        array_shift($pathComponents);
-        $newPath = '/' . implode('/', $pathComponents);
-        $newUri = $request->getUri()->withPath($newPath);
-        $newRequest = $request->withUri($newUri);
-
-        return $handler->handle($newRequest);
+        if(!empty($pathComponents) && $pathComponents[0] === $this->deepSiteService->getSecretPath()) {
+            array_shift($pathComponents);
+            $newPath = '/' . implode('/', $pathComponents);
+            $newUri = $request->getUri()->withPath($newPath);
+            $newRequest = $request->withUri($newUri);
+            return $handler->handle($newRequest);
+        } else {
+            return $handler->handle($request);
+        }
     }
 }
