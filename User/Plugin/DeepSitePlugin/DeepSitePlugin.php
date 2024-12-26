@@ -9,15 +9,20 @@ use Kraut\Event\MiddlewareEvent;
 use Kraut\Plugin\Content\ContentProviderInterface;
 use Kraut\Plugin\FileSystem;
 use Kraut\Plugin\PluginInterface;
+use Kraut\Service\PluginService;
 use Psr\Container\ContainerInterface;
 
 class DeepSitePlugin implements PluginInterface
 {
+    private String $middlewareAfter = "Kraut\Middleware\AuthenticationMiddleware"; 
 
-    public function __construct(private ContainerInterface $container)
+    public function __construct(private ContainerInterface $container,
+                                private PluginService $pluginService)
     {
-        // $config = Yaml::parseFile(__DIR__ . '/../../Config/DeepSiteConfig.yml');
-        // $this->deepSiteService = new DeepSiteService($config);
+        $siteLockEnabled = $pluginService->pluginActive("SiteLockPlugin");
+        if($siteLockEnabled) {
+            $this->middlewareAfter = "User\Plugin\SiteLockPlugin\Middleware\SiteLockMiddleware";
+        }
     }
 
     public static function getSubscribedEvents(): array
@@ -44,6 +49,6 @@ class DeepSitePlugin implements PluginInterface
 
     public function onKernelMiddleware(MiddlewareEvent &$e): void
     {
-        $e->insertBefore("Kraut\Middleware\AuthenticationMiddleware", "User\Plugin\DeepSitePlugin\Middleware\DeepSiteMiddleware");
+        $e->insertBefore($this->middlewareAfter, "User\Plugin\DeepSitePlugin\Middleware\DeepSiteMiddleware");
     }
 }
