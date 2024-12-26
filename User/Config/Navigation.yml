@@ -1,15 +1,17 @@
 # Navigation.yml
 main_navigation:
   - title: Home
-    url: /
+    url: /pages/home
   - title: About
-    url: /about
+    url: /pages/about-us
   - title: Services
-    url: /services
-    children:
-      - title: Web Development
-        url: /services/web-development
-      - title: SEO
-        url: /services/seo
+    url: /pages/services
+  - title: Portfolio
+    url: /pages/portfolio
+    # children:
+    #   - title: Web Development
+    #     url: /services/web-development
+    #   - title: SEO
+    #     url: /services/seo
   - title: Contact
-    url: /contact
+    url: /pages/contact
