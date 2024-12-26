@@ -187,6 +187,9 @@ class ConfigurationService
         $pluginConfigKeys = $this->getDotNotatedKeySet($nameSpace);
         $data = [];
         foreach ($pluginConfigKeys as $key){
+            if("{$nameSpace}.active" === $key) {
+                continue;
+            }
             $data[$key] = $this->get($key, '');
         }
         return $data;
