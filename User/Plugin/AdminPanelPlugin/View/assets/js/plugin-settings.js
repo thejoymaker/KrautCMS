@@ -1,5 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
     const settingsContainer = document.getElementById('settings-container');
+    const backButton = document.getElementById('back');
+
+    if (backButton) {
+        backButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            window.history.back();
+        });
+    }
+
     if (!settingsContainer) return;
 
     // Extract plugin name from the URL
@@ -27,6 +36,11 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(settings => {
                 settingsContainer.innerHTML = '';
+
+                if (Object.keys(settings).length === 0) {
+                    settingsContainer.innerHTML = '<p>No settings found.</p>';
+                    return;
+                }
 
                 // Create form element
                 const form = document.createElement('form');
