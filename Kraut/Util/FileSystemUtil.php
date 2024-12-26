@@ -10,6 +10,17 @@ namespace Kraut\Util;
 
 class FileSystemUtil
 {
+
+    public static function unlinkDir($dir):void
+    {
+        $files = array_diff(scandir($dir), ['.', '..']);
+        foreach ($files as $file) {
+            $path = "$dir/$file";
+            is_dir($path) ? self::unlinkDir($path) : unlink($path);
+        }
+        rmdir($dir);
+    }
+
     public static function safeLog(string $message, string $logFile = '/path/to/your/logfile.log'): void
     {
         // Open the file in append mode
