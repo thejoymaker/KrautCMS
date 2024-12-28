@@ -14,6 +14,7 @@ use Kraut\Service\ConfigurationService;
 use Kraut\Service\NoopAuthenticationService;
 use Kraut\Service\PluginService;
 use Kraut\Service\RouteService;
+use Kraut\Twig\HasPermissionTwigExtension;
 use Kraut\Util\ServiceUtil;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7\Response;
@@ -80,6 +81,7 @@ class Kernel
                 $twig->addGlobal('pageAuthor', $pageAuthor);
                 $pageLanguage = $config->get(ConfigurationService::PAGE_LANGUAGE);
                 $twig->addGlobal('pageLanguage', $pageLanguage);
+                $twig->addExtension(new HasPermissionTwigExtension());
                 // Optionally add global variables or extensions here
                 return $twig;
             },

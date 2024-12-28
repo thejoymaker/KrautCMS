@@ -1,0 +1,26 @@
+# Navigation.yml
+main_navigation:
+  - title: Home
+    url: /en/pages/home
+  - title: About
+    url: /en/pages/about-us
+  - title: Services
+    url: /en/pages/services
+  - title: Portfolio
+    url: /en/pages/portfolio
+    # children:
+    #   - title: Web Development
+    #     url: /services/web-development
+    #   - title: SEO
+    #     url: /services/seo
+  - title: Contact
+    url: /en/pages/contact
+  - title: Admin
+    url: /en/admin
+    roles: [admin]
+  - title: Login
+    url: /en/user/login
+    roles: [guest]
+  - title: Logout
+    url: /en/user/logout
+    roles: [user]
