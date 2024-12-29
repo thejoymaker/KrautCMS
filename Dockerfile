@@ -17,9 +17,26 @@ RUN apt-get update && apt-get install -y \
 
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
+# Set the working directory
+WORKDIR /var/www/html
 
 # Copy the application code
 COPY . /var/www/html
+
+# Update the Apache configuration to use /var/www/html/public as the DocumentRoot
+RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
+
+# Enable .htaccess support for mod_rewrite
+RUN sed -i 's|AllowOverride None|AllowOverride All|g' /etc/apache2/apache2.conf
+
+# Enable Apache mod_rewrite
+RUN a2enmod rewrite
+
+# Restart Apache to apply configuration changes (handled by CMD)
+RUN service apache2 restart
+
+# Copy the application code
+#COPY . /var/www/html
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
