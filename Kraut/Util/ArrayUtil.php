@@ -77,6 +77,28 @@ class ArrayUtil {
             }
         }
     }
+
+    /**
+     * Checks if a key exists in a nested array using a dot-notated key.
+     * 
+     * For example using the key 'foo.bar' would check if $array['foo']['bar'] exists.
+     *
+     * @param string $key The dot-notated key to check in the array.
+     * @param array $array The array to check the key in.
+     * @return bool True if the key exists, false otherwise.
+     */
+    public static function isset(string $key, array $array): bool {
+        $keys = explode('.', $key);
+        $value = $array;
+        foreach ($keys as $k) {
+            if (isset($value[$k])) {
+                $value = $value[$k];
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
 }
 
 ?>
