@@ -221,6 +221,20 @@ class PluginService
     }
 
     /**
+     * Gets all active plugin paths
+     */
+    public function getActivePluginPaths(): array
+    {
+        $activePlugins = [];
+        foreach ($this->pluginModel as $pluginName => $pluginInfo) {
+            if ($pluginInfo->isActive()) {
+                $activePlugins[] = $pluginInfo->getPath();
+            }
+        }
+        return $activePlugins;
+    }
+
+    /**
      * Get the roles required for a route.
      *
      * @param string $method The HTTP method.
