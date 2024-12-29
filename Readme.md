@@ -35,7 +35,7 @@ The namespace `Kraut` contains the CMS system core. It should not be modified by
 
 `public/index.php` is the application entry point for every request. it contains the `main` method which instantiates the `Kernel` class for processing the request and returning the response. then the response is sent to the client accordingly.
 
-`System/Kernel.php` is as it is named the core processor of the system. 
+`Kraut/Kernel.php` is as it is named the core processor of the system. 
 
 During the `Kernel` construction the **DI/IOC** container is configured and built. The method `handle(method, uri):Response` is the `Kernel`s only method.
 
@@ -235,3 +235,112 @@ KrautCMS
 
 
 ```
+
+## Twig Global Variables
+
+### Core
+
+* `pageName` - The page title (Configuration)
+* `pageDescription` - The page description (Configuration)
+* `pageAuthor` - The page author (Configuration)
+
+### Routing Middleware
+
+* `absolute_path` - the route without any prepending relativizers like language code or secret path component
+* `request` - the `ServerRequest` instance
+
+### Authentication Middleware
+
+* `current_user` - the `User` instance or `null` if not authenticated
+
+### Language Middleware (LocalizationPlugin)
+
+* `current_language` - the current language code
+* `supported_languages` - an array of supported language codes
+* `default_language` - the default language code
+
+## Twig Functions
+
+### Core
+
+* `hasPermission(?UserInterface $user, ?array $permissions): bool` - check if the user has any of the required permissions
+
+### LocalizationPlugin
+
+* `label(string $key, array $params = []): string` - get a localized label
+* `localize(string $route, ?string $langCode = null): string` - get a localized path
+
+### PagesPlugin
+
+* `path(string $path_name, array $params = []): PageInterface` - get a page by its name and optional parameters
+
+## User Management
+
+### User Roles
+
+* `guest` - the default role for unauthenticated users (core)
+* `user` - the default role for all authenticated users (core)
+* `superuser` - the role for super users (core). super users have all permissions without being explicitly assigned
+* `editor` - the role for editors (PagesPlugin)
+* `admin` - the role for administrators (AdminPanelPlugin)
+
+#### where are these roles checked?
+
+*Core* - for views by the `hasPermission` function (`Kraut\Twig\HasPermissionTwigExtension`)
+*Core* - for routes by the `AuthenticationMiddleware` (`Kraut\Middleware\AuthenticationMiddleware`)
+*Core* - in case user plugin is not present the `NoopAuthenticationService` will provide basic restrictions to deny access to privileged routes (`Kraut\Service\NoopAuthenticationService`)
+* `AuthenticationService` (UserPlugin) - enables the user to login and logout and with this access to privileged routes
+
+
+
+### User Plugin
+
+The `UserPlugin` is a core plugin that provides a basic implementation of a user management functionality.
+
+The UserPlugin provides the following key features:
+
+Implementation of the `AuthenticationServiceInterface` for user login and logout functionality (is being picked up by the ServiceInterface scan / before building the DI/IOC conainer in the Kernel)
+
+Implementation of the `UserInterface` for user management
+
+## Content Management
+
+### Pages Plugin
+
+The `PagesPlugin` is a core plugin that provides a basic implementation of a content management functionality.
+
+## Localization
+
+### Localization Plugin
+
+The `LocalizationPlugin` is a core plugin that may even be considered a core feature.
+
+The LocalizationPlugin provides the following key features:
+
+* Language Middleware
+* Twig Functions for localization
+
+## System Configuration
+
+### Admin Panel Plugin
+
+The `AdminPanelPlugin` is a core plugin that provides a basic implementation of a system configuration functionality.
+
+### Site Lock Plugin
+
+The `SiteLockPlugin` is a core plugin that provides a basic implementation of a site lock functionality either for general use for private sites or for sites in development.
+
+The SiteLockPlugin provides the following key features:
+
+* Site Lock Middleware - prevents all access to the site
+* Site Lock View - provides a view for entering a password to unlock the site
+* Multiple identity support - allows multiple passwords to unlock the site
+
+### Deep Site Plugin
+
+The `DeepSitePlugin` is a core plugin that provides a basic implementation of a deep site functionality by requiring users to enter the site through a secret path either during development, maintenance or to make a site private through obfuscation.
+
+### Maintenance Mode Plugin (NIY)
+
+The `MaintenanceModePlugin` is a core plugin that provides a basic implementation of a maintenance mode functionality.
+
