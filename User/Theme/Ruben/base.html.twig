@@ -22,6 +22,10 @@
             <nav>
                 <ul>
                     {% for item in main_navigation %}
+                        {# {% if hasPermission() %} #}
+                        {% if item.roles is not defined 
+                            or item.roles is defined 
+                            and hasPermission(current_user, item.roles)  %}
                         <li>
                             <a href="{{ item.url }}">{{ item.title }}</a>
                             {% if item.children is defined %}
@@ -32,6 +36,7 @@
                                 </ul>
                             {% endif %}
                         </li>
+                        {% endif %}
                     {% endfor %}
                 </ul>
             </nav>
