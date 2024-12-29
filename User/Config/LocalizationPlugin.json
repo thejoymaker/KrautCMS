@@ -1,0 +1,10 @@
+{
+    "localizationplugin": {
+        "default": "en",
+        "supported": [
+            "en",
+            "fr"
+        ],
+        "active": true
+    }
+}

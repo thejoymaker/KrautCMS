@@ -16,16 +16,14 @@
     <div class="wrapper">
         <header>
             <div class="container">
-                <h1 class="page-title"><a href="/" title="{{pageDescription}}">{{pageName}}</a></h1>
+                <h1 class="page-title"><a href="{{localize('/')}}" title="{{pageDescription}}">{{pageName}}</a></h1>
             </div>
             {% block header %}
             <nav>
                 <ul>
                     {% for item in main_navigation %}
                         {# {% if hasPermission() %} #}
-                        {% if item.roles is not defined 
-                            or item.roles is defined 
-                            and hasPermission(current_user, item.roles)  %}
+                        {% if hasPermission(current_user, item.roles)  %}
                         <li>
                             <a href="{{ item.url }}">{{ item.title }}</a>
                             {% if item.children is defined %}
@@ -58,6 +56,21 @@
             {% block footer %}
             <p>&copy; {{ "now"|date("Y") }} {{pageName}}</p>
             {% endblock %}
+            {% if supported_languages is defined and supported_languages|length > 1 %}
+            <ul class="language-switcher">
+                {% for langCode in supported_languages %}
+                    {% if langCode is not same as(current_language) %}
+                    <li>
+                        <a href="{{ localize(absolute_path, langCode) }}">{{ langCode }}</a>
+                    </li>
+                    {% else %}
+                    <li>
+                        <span class="current-language">{{ langCode }}</span>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+            {% endif %}
         </footer>
     </div>
     <script src="/assets/js/lightbox-plus-jquery.js"></script>

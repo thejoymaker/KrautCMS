@@ -2,5 +2,8 @@
     "name": "Ruben",
     "author": "KrautCMS",
     "description": "The default theme for KrautCMS",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "required": {
+        "LocalizationPlugin": "1.0.0"
+    }
 }

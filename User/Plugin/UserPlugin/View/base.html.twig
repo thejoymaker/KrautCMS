@@ -10,9 +10,9 @@
     <header>
         {% block header %}
         {% if current_user %}
-            <p>Welcome, {{ current_user.username }}! <a href="/logout">Logout</a></p>
+            <p>Welcome, {{ current_user.username }}! <a href="{{localize('/user/logout')}}">Logout</a></p>
         {% else %}
-            <p><a href="/login">Login</a> | <a href="/register">Register</a></p>
+            <p><a href="{{localize('/user/login')}}">Login</a> | <a href="{{localize('/user/register')}}">Register</a></p>
         {% endif %}
         {% endblock %}
     </header>

@@ -5,8 +5,8 @@ declare(strict_types=1);
 
 namespace User\Plugin\DeepSitePlugin\Middleware;
 
-use GuzzleHttp\Psr7\Response;
 use Kraut\Util\ResponseUtil;
+use Nyholm\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -34,8 +34,7 @@ class DeepSiteMiddleware implements MiddlewareInterface
                 if ($this->deepSiteService->getRootRouteBehavior() === 'redirect') {
                     return ResponseUtil::redirectTemporary($this->deepSiteService->getRedirectUrl());
                 } else {
-                    echo $this->deepSiteService->getMessage();
-                    die();
+                    return ResponseUtil::respondPlainText($this->deepSiteService->getMessage(), 418);
                 }
             } else {
                 $_SESSION['deepsiteaccess'] = true;

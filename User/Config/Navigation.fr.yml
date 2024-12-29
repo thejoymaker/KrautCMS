@@ -1,0 +1,26 @@
+# Navigation.fr.yml
+main_navigation:
+  - title: Accueil
+    url: /fr/pages/home
+  - title: À propos
+    url: /fr/pages/about-us
+  - title: Services
+    url: /fr/pages/services
+  - title: Portfolio
+    url: /fr/pages/portfolio
+    # children:
+    #   - title: Développement Web
+    #     url: /services/web-development
+    #   - title: SEO
+    #     url: /services/seo
+  - title: Contact
+    url: /fr/pages/contact
+  - title: Admin
+    url: /fr/admin
+    roles: [admin]
+  - title: Connexion
+    url: /fr/user/login
+    roles: [guest]
+  - title: Déconnexion
+    url: /fr/user/logout
+    roles: [user]

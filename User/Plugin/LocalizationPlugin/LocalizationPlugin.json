@@ -1,0 +1,15 @@
+
+{
+    "name": "Localization Plugin",
+    "version": "1.0.0",
+    "cms_version": ">=1.0.0,<2.0.0",
+    "type": "core-plugin",
+    "license": "MIT",
+    "paths": [
+    ],
+    "required": {
+        "php_version": "8.2.0",
+        "php_modules": {}
+    }
+
+}

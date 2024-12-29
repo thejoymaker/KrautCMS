@@ -274,6 +274,40 @@ th, td {
     display: block;
 }
 
+.language-switcher {
+    list-style: none; /* Remove bullets */
+    padding: 0; /* Remove default padding */
+    margin: 0; /* Remove default margin */
+    display: flex; /* Display items in a row */
+    gap: 10px; /* Add some space between items */
+    justify-content: center; /* Center items */
+
+}
+
+.language-switcher li {
+    display: inline; /* Ensure list items are inline */
+}
+
+.language-switcher a {
+    text-decoration: none; /* Remove underline from links */
+    color: var(--primary-color); /* Set link color */
+    padding: 5px 10px; /* Add some padding */
+    border-radius: 5px; /* Add rounded corners */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+}
+
+.language-switcher a:hover {
+    background-color: #333; /* Change background color on hover */
+    color: #fff; /* Change text color on hover */
+}
+
+.current-language {
+    background-color: #333; /* Set background color for current language */
+    color: #fff; /* Set text color for current language */
+    padding: 5px 10px; /* Add some padding */
+    border-radius: 5px; /* Add rounded corners */
+}
+
 /* Responsive styles */
 @media (max-width: 600px) {
     body {

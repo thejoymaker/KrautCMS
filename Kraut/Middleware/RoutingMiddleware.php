@@ -15,6 +15,8 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Twig\Environment;
+
 use function FastRoute\cachedDispatcher;
 
 class RoutingMiddleware implements MiddlewareInterface
@@ -22,7 +24,10 @@ class RoutingMiddleware implements MiddlewareInterface
     private Dispatcher $dispatcher;
     // private ContainerInterface $container;
 
-    public function __construct(private ContainerInterface $container, private PluginService $pluginService)
+    public function __construct(
+        private ContainerInterface $container, 
+        private PluginService $pluginService,
+        private Environment $twig)
     {
         $this->dispatcher = cachedDispatcher(function (RouteCollector $routeCollector) {
             // $routeLoader = new RouteLoader($this->container);
@@ -40,6 +45,8 @@ class RoutingMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $uri = $request->getUri()->getPath();
+        $this->twig->addGlobal('absolute_path', $uri);
+        $this->twig->addGlobal('request', $request);
         $method = $request->getMethod();
 
         $routeInfo = $this->dispatcher->dispatch($method, $uri);
