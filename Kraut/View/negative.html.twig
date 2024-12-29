@@ -4,8 +4,91 @@
 {% block title %}Computer Says No{% endblock %}
 
 {% block content %}
+    {% if current_language is same as('fr') %}
+    <h1>L'ordinateur dit non</h1>
+    <p>Désolé, mais l'ordinateur dit non.</p>
+    <p>Il semble que la page que vous recherchez n'existe pas.</p>
+    <p>Peut-être pouvez-vous trouver ce que vous cherchez en retournant à la <a href="/">page d'accueil</a>.</p>
+    {% elseif current_language is same as('it') %}
+    <h1>Il computer dice no</h1>
+    <p>Spiacente, ma il computer dice no.</p>
+    <p>Sembra che la pagina che stai cercando non esista.</p>
+    <p>Forse puoi trovare ciò che cerchi tornando alla <a href="/">pagina iniziale</a>.</p>
+    {% elseif current_language is same as('nl') %}
+    <h1>De computer zegt nee</h1>
+    <p>Sorry, maar de computer zegt nee.</p>
+    <p>Het lijkt erop dat de pagina die u zoekt niet bestaat.</p>
+    <p>Misschien kunt u vinden wat u zoekt door terug te gaan naar de <a href="/">startpagina</a>.</p>
+    {% elseif current_language is same as('de') %}
+    <h1>Der Computer sagt Nein</h1>
+    <p>Entschuldigung, aber der Computer sagt nein.</p>
+    <p>Es scheint, dass die Seite, die Sie suchen, nicht existiert.</p>
+    <p>Vielleicht finden Sie, was Sie suchen, indem Sie zur <a href="/">Startseite</a> zurückkehren.</p>
+    {% elseif current_language is same as('es') %}
+    <h1>La computadora dice que no</h1>
+    <p>Lo siento, pero la computadora dice que no.</p>
+    <p>Parece que la página que buscas no existe.</p>
+    <p>Tal vez puedas encontrar lo que buscas volviendo a la <a href="/">página de inicio</a>.</p>
+    {% elseif current_language is same as('pt') %}
+    <h1>O computador diz não</h1>
+    <p>Desculpe, mas o computador diz não.</p>
+    <p>Parece que a página que você está procurando não existe.</p>
+    <p>Talvez você possa encontrar o que procura voltando à <a href="/">página inicial</a>.</p>
+    {% elseif current_language is same as('se') %}
+    <h1>Datorn säger nej</h1>
+    {% elseif current_language is same as('no') %}
+    <h1>Computeren sier nei</h1>
+    {% elseif current_language is same as('ru') %}
+    <h1>Компьютер говорит нет</h1>
+    <p>Извините, но компьютер говорит нет.</p>
+    <p>Похоже, что страницы, которую вы ищете, не существует.</p>
+    <p>Возможно, вы найдете то, что ищете, вернувшись на <a href="/">домашнюю страницу</a>.</p>
+    {% elseif current_language is same as('uk') %}
+    <h1>Комп'ютер каже ні</h1>
+    <p>Вибачте, але комп'ютер каже ні.</p>
+    <p>Схоже, що сторінки, яку ви шукаєте, не існує.</p>
+    <p>Можливо, ви знайдете те, що шукаєте, повернувшись на <a href="/">домашню сторінку</a>.</p>
+    {% elseif current_language is same as('pl') %}
+    <h1>Komputer mówi nie</h1>
+    <p>Przepraszam, ale komputer mówi nie.</p>
+    <p>Wygląda na to, że strona, której szukasz, nie istnieje.</p>
+    <p>Może uda ci się znaleźć to, czego szukasz, wracając do <a href="/">strony głównej</a>.</p>
+    {% elseif current_language is same as('cs') %}
+    <h1>Počítač říká ne</h1>
+    <p>Omlouváme se, ale počítač říká ne.</p>
+    <p>Zdá se, že stránka, kterou hledáte, neexistuje.</p>
+    <p>Možná najdete to, co hledáte, vrácením se na <a href="/">domovskou stránku</a>.</p>
+    {% elseif current_language is same as('sk') %}
+    <h1>Počítač hovorí nie</h1>
+    <p>Ospravedlňujeme sa, ale počítač hovorí nie.</p>
+    <p>Zdá sa, že stránka, ktorú hľadáte, neexistuje.</p>
+    <p>Možno nájdete to, čo hľadáte, vrátením sa na <a href="/">domovskú stránku</a>.</p>
+    {% elseif current_language is same as('hu') %}
+    <h1>A számítógép nemet mond</h1>
+    <p>Sajnáljuk, de a számítógép nemet mond.</p>
+    <p>Úgy tűnik, hogy az általad keresett oldal nem létezik.</p>
+    <p>Talán megtalálod, amit keresel, ha visszamész a <a href="/">főoldalra</a>.</p>
+    {% elseif current_language is same as('fi') %}
+    <h1>Tietokone sanoo ei</h1>
+    <p>Pahoittelumme, mutta tietokone sanoo ei.</p>
+    <p>Näyttää siltä, että etsimääsi sivua ei ole olemassa.</p>
+    <p>Voit ehkä löytää etsimäsi palaamalla <a href="/">etusivulle</a>.</p>
+    {% elseif current_language is same as('da') %}
+    <h1>Computeren siger nej</h1>
+    {% elseif current_language is same as('zh') %}
+    <h1>计算机说不</h1>
+    <p>抱歉，但计算机说不。</p>
+    <p>看来您要查找的页面不存在。</p>
+    <p>也许您可以通过返回<a href="/">主页</a>找到您要找的内容。</p>
+    {% elseif current_language is same as('ja') %}
+    <h1>コンピュータがノーと言っています</h1>
+    <p>申し訳ありませんが、コンピュータがノーと言っています。</p>
+    <p>お探しのページは存在しないようです。</p>
+    <p><a href="/">ホームページ</a>に戻って探してみてください。</p>
+    {% else %}
     <h1>Computer Says No</h1>
     <p>Sorry, but the computer says no.</p>
     <p>It seems that the page you are looking for does not exist.</p>
     <p>Maybe you can find what you are looking for by going back to the <a href="/">homepage</a>.</p>
+    {% endif %}
 {% endblock %}
