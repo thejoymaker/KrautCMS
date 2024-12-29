@@ -10,7 +10,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 class MiddlewareEvent extends Event
 {
     private array $middlewareQueue;
-    private array $middlewareAdded = [];
+    private array $middlewareToBeAdded = [];
 
     public function __construct(array $middlewareQueue)
     {
@@ -29,11 +29,11 @@ class MiddlewareEvent extends Event
      */
     public function postProcess(): void
     {
-        $maxRepeat = count($this->middlewareAdded);
+        $maxRepeat = count($this->middlewareToBeAdded);
         $numberAdded = 0;
         // loop through the postprocessing queue as long as there are new middleware to add
         for ($i = 0; $i < $maxRepeat; $i++) {
-            foreach ($this->middlewareAdded as $newMiddleware => $targetMiddleware) {
+            foreach ($this->middlewareToBeAdded as $newMiddleware => $targetMiddleware) {
                 foreach ($targetMiddleware as $middleware => $relation) {
                     // check if the new middleware is not already present in 
                     // the queue and the target middleware is present
@@ -77,7 +77,7 @@ class MiddlewareEvent extends Event
             array_splice($this->middlewareQueue, $index, 0, [$newMiddleware]);
         } else {
             // If the target middleware is not found, append to the postprocessing queue
-            $this->middlewareAdded[$newMiddleware][$targetMiddleware] ='before';
+            $this->middlewareToBeAdded[$newMiddleware][$targetMiddleware] ='before';
         }
     }
     
@@ -91,7 +91,7 @@ class MiddlewareEvent extends Event
             array_splice($this->middlewareQueue, $index + 1, 0, [$newMiddleware]);
         } else {
             // If the target middleware is not found, append to the postprocessing queue
-            $this->middlewareAdded[$newMiddleware][$targetMiddleware] = 'after';
+            $this->middlewareToBeAdded[$newMiddleware][$targetMiddleware] = 'after';
         }
     }
 
