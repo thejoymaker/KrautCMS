@@ -18,8 +18,11 @@ class HasPermissionTwigExtension extends AbstractExtension
         ];
     }
 
-    public function hasPermission(?UserInterface $user, array $requiredRoles): bool
+    public function hasPermission(?UserInterface $user, ?array $requiredRoles): bool
     {
+        if ($requiredRoles === null || empty($requiredRoles)) {
+            return true;
+        }
         if($user === null) {
             return in_array('guest', $requiredRoles);
         }
