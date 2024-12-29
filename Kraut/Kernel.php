@@ -64,7 +64,7 @@ class Kernel
             \Psr\Http\Message\UriFactoryInterface::class => \DI\get(Psr17Factory::class),
             \Psr\Log\LoggerInterface::class => function () {
                 $logger = new \Monolog\Logger('krautcms');
-                $logger->pushHandler(new \Monolog\Handler\StreamHandler(__DIR__ . '/../Log/app.log', \Monolog\Level::Debug));
+                $logger->pushHandler(new \Monolog\Handler\RotatingFileHandler(__DIR__ . '/../Log/app.log', 90, \Monolog\Level::Debug));
                 return $logger;
             },
             Environment::class => function (ConfigurationService $config) {
@@ -79,8 +79,8 @@ class Kernel
                 $twig->addGlobal('pageDescription', $pageDescription);
                 $pageAuthor = $config->get(ConfigurationService::PAGE_AUTHOR);
                 $twig->addGlobal('pageAuthor', $pageAuthor);
-                $pageLanguage = $config->get(ConfigurationService::PAGE_LANGUAGE);
-                $twig->addGlobal('pageLanguage', $pageLanguage);
+                // $pageLanguage = $config->get(ConfigurationService::PAGE_LANGUAGE);
+                // $twig->addGlobal('pageLanguage', $pageLanguage);
                 $twig->addExtension(new HasPermissionTwigExtension());
                 // Optionally add global variables or extensions here
                 return $twig;
