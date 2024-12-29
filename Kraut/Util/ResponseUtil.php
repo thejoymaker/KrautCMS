@@ -132,5 +132,12 @@ class ResponseUtil
         $response = new Response(500, ['Content-Type' => 'text/html; charset=UTF-8'], $content);
         return $response;
     }
+
+    public static function respondPlainText(string $content, int $status = 200): ResponseInterface
+    {
+        $response = new Response($status, ['Content-Type' => 'text/plain']);
+        $response->getBody()->write($content);
+        return $response;
+    }
 }
 ?>
