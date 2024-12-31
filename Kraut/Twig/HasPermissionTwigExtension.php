@@ -7,6 +7,7 @@ declare(strict_types=1);
 namespace Kraut\Twig;
 
 use Kraut\Model\UserInterface;
+use Kraut\Util\PermissionUtil;
 use Twig\Extension\AbstractExtension;
 
 class HasPermissionTwigExtension extends AbstractExtension
@@ -14,27 +15,7 @@ class HasPermissionTwigExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new \Twig\TwigFunction('hasPermission', [$this, 'hasPermission']),
+            new \Twig\TwigFunction('hasPermission', [PermissionUtil::class, 'hasPermission']),
         ];
-    }
-
-    public function hasPermission(?UserInterface $user, ?array $requiredRoles): bool
-    {
-        if ($requiredRoles === null || empty($requiredRoles)) {
-            return true;
-        }
-        if($user === null) {
-            return in_array('guest', $requiredRoles);
-        }
-        $userRoles = $user->getRoles();
-        if(in_array('superuser', $userRoles)) {
-            return true;
-        }
-        foreach($requiredRoles as $requiredRole) {
-            if(in_array($requiredRole, $userRoles)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

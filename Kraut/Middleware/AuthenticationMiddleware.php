@@ -10,6 +10,7 @@ use Kraut\Http\Session;
 use Kraut\Service\AuthenticationServiceInterface;
 use Kraut\Service\ConfigurationService;
 use Kraut\Service\PluginService;
+use Kraut\Util\PermissionUtil;
 use Kraut\Util\ResponseUtil;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -43,22 +44,22 @@ class AuthenticationMiddleware implements MiddlewareInterface
         }
         // Get route roles
         $roles = $this->pluginService->getRolesForRoute($httpMethod, $uri);
-        if (!empty($roles)) {
-            // Check if user has any of the required roles
-            if (!$user || empty(array_intersect($user->getRoles(), $roles))) {
-                // DISALLOWED ROUTE
-                if ($this->pluginService->pluginActive('UserPlugin')) {
-                    // LOGIN AVAILABLE
-                    $loginObfuscated = $this->configurationService->get('userplugin.login.obfuscated', true);
-                    if(!$loginObfuscated){
-                        /** @var Session $session */
-                        $session = $request->getAttribute('session');
-                        $session?->set('redirect', $uri);
-                        return ResponseUtil::redirectTemporary('/user/login');
-                    }
+
+        $hasPermission = PermissionUtil::hasPermission($user, $roles);
+
+        if (!$hasPermission) {
+            // DISALLOWED ROUTE
+            if ($this->pluginService->pluginActive('UserPlugin')) {
+                // LOGIN AVAILABLE
+                $loginObfuscated = $this->configurationService->get('userplugin.login.obfuscated', true);
+                if(!$loginObfuscated){
+                    /** @var Session $session */
+                    $session = $request->getAttribute('session');
+                    $session?->set('redirect', $uri);
+                    return ResponseUtil::redirectTemporary('/user/login');
                 }
-                throw KrautException::accessDenied($request);
             }
+            throw KrautException::accessDenied($request);
         }
         return $handler->handle($request);
     }
