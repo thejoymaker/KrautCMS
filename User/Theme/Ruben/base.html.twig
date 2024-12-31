@@ -56,7 +56,7 @@
             {% block footer %}
             <p>&copy; {{ "now"|date("Y") }} {{pageName}}</p>
             {% endblock %}
-            {% if supported_languages is defined and supported_languages|length > 1 %}
+            {% if absolute_path is defined and supported_languages is defined and supported_languages|length > 1 %}
             <ul class="language-switcher">
                 {% for langCode in supported_languages %}
                     {% if langCode is not same as(current_language) %}
