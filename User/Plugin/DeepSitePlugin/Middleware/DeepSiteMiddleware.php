@@ -34,7 +34,7 @@ class DeepSiteMiddleware implements MiddlewareInterface
                 if ($this->deepSiteService->getRootRouteBehavior() === 'redirect') {
                     return ResponseUtil::redirectTemporary($this->deepSiteService->getRedirectUrl());
                 } else {
-                    return ResponseUtil::respondPlainText($this->deepSiteService->getMessage(), 418);
+                    return ResponseUtil::respondPlainText($this->deepSiteService->getMessage(), 400);
                 }
             } else {
                 $_SESSION['deepsiteaccess'] = true;

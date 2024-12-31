@@ -44,6 +44,6 @@ class SiteLockMiddleware implements MiddlewareInterface
         }
 
         return ResponseUtil::respondRelative($this->twig, 'SiteLockPlugin', 'site-lock', 
-            ["message"=>$this->siteLockService->getMessage()]);
+            ["message"=>$this->siteLockService->getMessage()], 401);
     }
 }
