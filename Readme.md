@@ -286,12 +286,11 @@ KrautCMS
 
 #### where are these roles checked?
 
-*Core* - for views by the `hasPermission` function (`Kraut\Twig\HasPermissionTwigExtension`)
-*Core* - for routes by the `AuthenticationMiddleware` (`Kraut\Middleware\AuthenticationMiddleware`)
-*Core* - in case user plugin is not present the `NoopAuthenticationService` will provide basic restrictions to deny access to privileged routes (`Kraut\Service\NoopAuthenticationService`)
+* *Core* - the `Kraut\Util\PermissionUtil` class provides the `hasPermission` function to check if a user has any of the required permissions
+* *Core* - for views by the `hasPermission` function (`Kraut\Twig\HasPermissionTwigExtension`)
+* *Core* - for routes by the `AuthenticationMiddleware` (`Kraut\Middleware\AuthenticationMiddleware`)
+* *Core* - in case user plugin is not present the `NoopAuthenticationService` will provide basic restrictions to deny access to privileged routes (`Kraut\Service\NoopAuthenticationService`)
 * `AuthenticationService` (UserPlugin) - enables the user to login and logout and with this access to privileged routes
-
-
 
 ### User Plugin
 
@@ -343,4 +342,3 @@ The `DeepSitePlugin` is a core plugin that provides a basic implementation of a 
 ### Maintenance Mode Plugin (NIY)
 
 The `MaintenanceModePlugin` is a core plugin that provides a basic implementation of a maintenance mode functionality.
-
