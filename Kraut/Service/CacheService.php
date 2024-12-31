@@ -5,6 +5,7 @@ declare(strict_types=1);
 
 namespace Kraut\Service;
 
+use Kraut\Util\AssetsUtil;
 use Kraut\Util\CacheUtil;
 use Kraut\Util\FileSystemUtil;
 use Kraut\Util\TimeUtil;
@@ -70,6 +71,8 @@ class CacheService
         if (file_exists($twigCacheDir)) {
             FileSystemUtil::unlinkDir($twigCacheDir);
         }
+
+        AssetsUtil::deleteAssetCache();
     }
 
     public function loadCachedConfig(callable $loader, String $resource): array

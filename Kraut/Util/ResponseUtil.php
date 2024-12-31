@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace Kraut\Util;
 
+use Kraut\Service\CacheService;
+use Kraut\Service\ConfigurationService;
+use Kraut\Service\PluginService;
 use Nyholm\Psr7\Response;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Twig\Environment;
+use Nyholm\Psr7\Stream;
 
 /**
  * Class ResponseUtil
@@ -64,14 +68,7 @@ class ResponseUtil
      * @param array       $parameters Optional associative array of parameters to pass to the template.
      * @return ResponseInterface A response object containing the rendered HTML content.
      */
-    // public static function respondRelative(Environment $twig, string $namespace, string $template, array $parameters = []): ResponseInterface
-    // {
-    //     $content = $twig->render("@{$namespace}/{$template}.html.twig", $parameters);
-    //     $response = new Response();
-    //     $response->getBody()->write($content);
-    //     return $response;
-    // }
-    public static function respondRelative(Environment $twig, string $pluginName, string $templateName, array $data = []): ResponseInterface
+    public static function respondRelative(Environment $twig, string $pluginName, string $templateName, array $data = [], int $code = 200): ResponseInterface
     {
         $templatePath = "@{$pluginName}/{$templateName}.html.twig";
         try {
@@ -81,23 +78,23 @@ class ResponseUtil
         }
         // $html = $twig->render($templatePath, $data);
         return new Response(
-            200,
+            $code,
             ['Content-Type' => 'text/html; charset=UTF-8'],
             $html
         );
     }
 
     /**
-     * Generates a 404 Not Found response with a custom error message.
+     * Generates a (404 Not Found) error response.
      *
      * @param Environment $twig    The Twig environment instance.
      * @param string      $plugin  The name of the plugin or module generating the error.
      * @param string      $message The error message to display.
      * @return ResponseInterface A response object with a 404 status code and error message.
      */
-    public static function respondNegative(Environment $twig, string $plugin = null, string $message = null): ResponseInterface {
-        $content = $twig->render('negative.html.twig', ['plugin' => $plugin, 'message' => $message]);
-        $response = new Response(404, ['Content-Type' => 'text/html; charset=UTF-8']);
+    public static function respondNegative(Environment $twig, $code = 404): ResponseInterface {
+        $content = $twig->render('negative.html.twig');
+        $response = new Response($code, ['Content-Type' => 'text/html; charset=UTF-8']);
         $response->getBody()->write($content);
         return $response;
     }
@@ -138,6 +135,47 @@ class ResponseUtil
         $response = new Response($status, ['Content-Type' => 'text/plain']);
         $response->getBody()->write($content);
         return $response;
+    }
+
+    public static function openAssetStream(ContainerInterface $container, string $path): ResponseInterface
+    {
+        $configurationService = $container->get(ConfigurationService::class);
+        $pluginService = $container->get(PluginService::class);
+        $fullPath = AssetsUtil::locateAsset(
+            $path, $configurationService, $pluginService);
+        if ($fullPath === null) {
+            return new Response(404, ['Content-Type' => 'text/plain'], 'Asset not found');
+        }
+        // Read the file contents
+        $stream = Stream::create(fopen($fullPath, 'rb'));
+        // Get the mime type of the asset
+        $mimeType = self::getMimeType($fullPath);
+        // Return the response with the appropriate headers
+        return new Response(200, [
+            'Content-Type' => $mimeType,
+            'Content-Length' => filesize($fullPath),
+            'Cache-Control' => 'public, max-age=1' // Adjust caching as needed
+        ], $stream);
+    }
+
+    private static function getMimeType(string $filePath): string
+    {
+        $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+
+        $mimeTypes = [
+            'css' => 'text/css',
+            'js' => 'application/javascript',
+            'png' => 'image/png',
+            'jpg' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'gif' => 'image/gif',
+            'svg' => 'image/svg+xml',
+            'woff' => 'font/woff',
+            'woff2' => 'font/woff2',
+            // Add more extensions and mime types as needed
+        ];
+
+        return $mimeTypes[$extension] ?? 'application/octet-stream';
     }
 }
 ?>
