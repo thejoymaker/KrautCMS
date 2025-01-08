@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Kraut;
 
 use Kraut\Model\Manifest;
+use Kraut\Model\ServerRequestContainer;
 use Kraut\Service\ConfigurationService;
 use Kraut\Service\PluginService;
 // use Kraut\Service\ThemeService;
@@ -190,25 +191,13 @@ class KrautSystem
      * 
      * @return ResponseInterface The response of the application.
      */
-    public function run(string $method, string $uri): ResponseInterface
+    public function run(): ResponseInterface
     {
         if($this->sequence !== 4) {
             throw new \RuntimeException('Wrong sequence');
         }
-        // Normalize the URI
-        $uri = parse_url($uri, PHP_URL_PATH);
-        $uri = rawurldecode($uri);
-
-        if ($uri !== '/' && substr($uri, -1) === '/') {
-            $uri = rtrim($uri, '/');
-        }
-
-        // Get the PSR-17 factory from the container
-        /** @var Psr17Factory $psr17Factory */
-        $psr17Factory = $this->container->get(Psr17Factory::class);
-
-        // Create the ServerRequest
-        $request = $psr17Factory->createServerRequest($method, $uri);
+        $requestContainer = $this->container->get(ServerRequestContainer::class);
+        $request = $requestContainer->getServerRequest();
         // Create the default middleware queue
         $_POST['csrf_token'] = $_POST['csrf_token'] ?? '';
         $response = $this->executeMiddleware($request);
@@ -234,6 +223,7 @@ class KrautSystem
             \Kraut\Middleware\RequestBodyParserMiddleware::class,
             \Kraut\Middleware\CsrfValidationMiddleware::class,
             \Kraut\Middleware\CsrfMiddleware::class,
+            \Kraut\Middleware\LanguageMiddleware::class,
             \Kraut\Middleware\AuthenticationMiddleware::class,
             \Kraut\Middleware\RoutingMiddleware::class,
             \Kraut\Middleware\MainNavigationMiddleware::class,

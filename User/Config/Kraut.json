@@ -18,6 +18,13 @@
             "timezone": "Europe\/Berlin",
             "language": "en",
             "admin-mail": "admin@example.com"
+        },
+        "language": {
+            "default": "en",
+            "supported": [
+                "en",
+                "fr"
+            ]
         }
     }
 }

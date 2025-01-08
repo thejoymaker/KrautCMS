@@ -1,23 +1,24 @@
 <?php
-// User/Plugin/LocalizationPlugin/Middleware/LanguageMiddleware.php
+// Kraut/Middleware/LanguageMiddleware.php
+
 declare(strict_types=1);
 
-namespace User\Plugin\LocalizationPlugin\Middleware;
+namespace Kraut\Middleware;
 
 use Kraut\Service\ConfigurationService;
-use Kraut\Util\ResponseUtil;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Twig\Environment;
-use User\Plugin\LocalizationPlugin\Service\LanguageService;
+use Kraut\Service\LanguageService;
+use Kraut\Util\AssetsUtil;
 
 class LanguageMiddleware implements MiddlewareInterface
 {
     private array $supportedLanguages;
     private string $defaultLanguage;
-    private const ASSETS_PATH = '/assets/';
+    // private const ASSETS_PATH = '/assets/';
 
     public function __construct(
         ConfigurationService $configurationService, 
@@ -33,7 +34,7 @@ class LanguageMiddleware implements MiddlewareInterface
         $path = $request->getUri()->getPath();
 
         // Ignore /assets/.. paths
-        if (strpos($path, self::ASSETS_PATH) === 0) {
+        if (strpos($path, AssetsUtil::ASSETS_PATH) === 0) {
             return $handler->handle($request);
         }
 
@@ -55,6 +56,7 @@ class LanguageMiddleware implements MiddlewareInterface
             return $handler->handle($newRequest);
         } else {
             $language = $this->languageService->getLanguage();
+            $this->languageService->setLanguage($language);
             $this->twig->addGlobal('current_language', $language);
             $this->twig->addGlobal('supported_languages', $this->languageService->getSupportedLanguages());
             $this->twig->addGlobal('default_language', $this->defaultLanguage);

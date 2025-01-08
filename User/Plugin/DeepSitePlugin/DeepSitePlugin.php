@@ -14,7 +14,7 @@ use Psr\Container\ContainerInterface;
 
 class DeepSitePlugin implements PluginInterface
 {
-    private String $middlewareAfter = "Kraut\Middleware\AuthenticationMiddleware"; 
+    private String $middlewareAfter = "Kraut\Middleware\LanguageMiddleware"; 
 
     public function __construct(private ContainerInterface $container,
                                 private PluginService $pluginService)

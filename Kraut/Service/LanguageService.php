@@ -1,9 +1,9 @@
 <?php
-// User/Plugin/LocalizationPlugin/Service/LanguageService.php
+// Kraut/Service/LanguageService.php
 
 declare(strict_types=1);
 
-namespace User\Plugin\LocalizationPlugin\Service;
+namespace Kraut\Service;
 
 use Kraut\Service\ConfigurationService;
 use Kraut\Service\PluginService;
@@ -12,8 +12,8 @@ use Kraut\Util\ArrayUtil;
 class LanguageService
 {
     private string $currentLang = 'en';
-    private array $labelResourceMap = [];
-    private array $currentLangLabels = [];
+    private array $langResourceIndex = [];
+    private array $currentLangPack = [];
 
     public function __construct(
         private PluginService $pluginService, 
@@ -26,23 +26,21 @@ class LanguageService
         $this->currentLang = $language;
         $activePluginPaths = $this->pluginService->getActivePluginPaths();
         foreach ($activePluginPaths as $pluginPath) {
-            $labelResourcePath = $pluginPath . '/labels';
+            $labelResourcePath = $pluginPath . '/lang';
             if (is_dir($labelResourcePath)) {
                 $nameSpace = strtolower(basename($pluginPath));
                 $jsonFiles = glob($labelResourcePath . "/*.{$this->currentLang}.json");
                 foreach ($jsonFiles as $jsonFile) {
                     $fileName = basename($jsonFile, ".{$this->currentLang}.json");
-                    // $labels = array_merge($labels, json_decode(file_get_contents($jsonFile), true));
-                    $this->labelResourceMap[$nameSpace][$fileName] = $jsonFile;
+                    $this->langResourceIndex[$nameSpace][$fileName] = $jsonFile;
                 }
-                // $this->labelResourceMap[$pluginPath] = $labelResourcePath;
             }
         }
     }
 
     public function getDefaultLanguage(): string
     {
-        return $this->configurationService->get('localizationplugin.default', 'en');
+        return $this->configurationService->get('kraut.language.default', 'en');
     }
 
     public function getLanguage(): string
@@ -52,28 +50,24 @@ class LanguageService
 
     public function getSupportedLanguages(): array
     {
-        return $this->configurationService->get('localizationplugin.supported', ['en']);
+        return $this->configurationService->get('kraut.language.supported', ['en']);
     }
 
-    public function getLabel(string $key): string
+    public function lang(string $key, ?string $lang = null): string
     {
         try {
-            if(!ArrayUtil::isset($key, $this->currentLangLabels)) {
+            if(!ArrayUtil::isset($key, $this->currentLangPack)) {
                 $keyPath = explode('.', $key);
                 if(count($keyPath) < 2) {
                     return $key;
                 }
                 $nameSpace = $keyPath[0];
                 $fileName = $keyPath[1];
-                $fileToLoad = $this->labelResourceMap[$nameSpace][$fileName];
-                // $fileExists = file_exists($fileToLoad);
-                // if(!$fileExists) {
-                //     return $key;
-                // }
+                $fileToLoad = $this->langResourceIndex[$nameSpace][$fileName];
                 $newArray = json_decode(file_get_contents($fileToLoad), true);
-                $this->currentLangLabels = array_merge($this->currentLangLabels, $newArray);
+                $this->currentLangPack = array_merge($this->currentLangPack, $newArray);
             }
-            return ArrayUtil::unpack($key,  $this->currentLangLabels);
+            return ArrayUtil::unpack($key,  $this->currentLangPack);
         } catch (\Exception $e) {
             return $key;
         }

@@ -1,15 +1,15 @@
 <?php
-// User/Plugin/LocalizationPlugin/Twig/LocalizationTwigExtension.php
+// Kraut/Twig/LinkLocalizationTwigExtension.php
 
 declare(strict_types=1);
 
-namespace User\Plugin\LocalizationPlugin\Twig;
+namespace Kraut\Twig;
 
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
-use User\Plugin\LocalizationPlugin\Service\LanguageService;
+use Kraut\Service\LanguageService;
 
-class LocalizationTwigExtension extends AbstractExtension
+class LinkLocalizationTwigExtension extends AbstractExtension
 {
 
     public function __construct(private LanguageService $languageService)

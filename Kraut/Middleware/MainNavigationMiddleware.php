@@ -11,7 +11,8 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Symfony\Component\Yaml\Yaml;
 use Twig\Environment;
-use User\Plugin\LocalizationPlugin\Service\LanguageService;
+use Kraut\Service\LanguageService;
+use Kraut\Util\AssetsUtil;
 
 class MainNavigationMiddleware implements MiddlewareInterface
 {
@@ -22,7 +23,7 @@ class MainNavigationMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $path = $request->getUri()->getPath();
-        if(strpos($path, '/assets/') === 0) {
+        if(strpos($path, AssetsUtil::ASSETS_PATH) === 0) {
             return $handler->handle($request);
         }
         $language = $request->getAttribute('language');

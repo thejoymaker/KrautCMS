@@ -39,11 +39,19 @@ try {
      */
     function main()
     {
-        $kernel = new Kernel();
-        $response = $kernel->handle(
-            $_SERVER['REQUEST_METHOD'],
-            $_SERVER['REQUEST_URI']
-        );
+        $method = $_SERVER['REQUEST_METHOD'];
+        $uri = $_SERVER['REQUEST_URI'];
+        // Normalize the URI
+        $uri = parse_url($uri, PHP_URL_PATH);
+        $uri = rawurldecode($uri);
+
+        if ($uri !== '/' && substr($uri, -1) === '/') {
+            $uri = rtrim($uri, '/');
+        }
+        // Create the application kernel
+        $kernel = new Kernel($method, $uri);
+        // Handle the request
+        $response = $kernel->handle();
         // Send HTTP headers and response
         http_response_code($response->getStatusCode());
         foreach ($response->getHeaders() as $name => $values) {
@@ -56,6 +64,7 @@ try {
     main();
 } catch (Throwable $e) {
     echo "No sir, I don't like it.";
+    echo $e->getMessage();  
     // TODO log...
     die();
 }

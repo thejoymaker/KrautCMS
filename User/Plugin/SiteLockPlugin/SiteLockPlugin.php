@@ -45,6 +45,6 @@ class SiteLockPlugin implements PluginInterface
 
     public function onKernelMiddleware(MiddlewareEvent &$e): void
     {
-        $e->insertBefore("Kraut\Middleware\AuthenticationMiddleware", "User\Plugin\SiteLockPlugin\Middleware\SiteLockMiddleware");
+        $e->insertBefore("Kraut\Middleware\LanguageMiddleware", "User\Plugin\SiteLockPlugin\Middleware\SiteLockMiddleware");
     }
 }

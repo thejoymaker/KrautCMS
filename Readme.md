@@ -1,5 +1,62 @@
 # Welcome to KrautCMS
 
+KrautCMS is a lightweight, modular and extendable Content Management System written in PHP.
+
+## Opinions!
+
+Please read the [Opinion sheet](Opinions.md) before contributing.
+
+## Attributions
+
+Open access to the exchange rate api must be attributed (Planned)
+
+```html
+
+Attribution
+
+We require attribution on the pages you're using these rates with the link below:
+
+<a href="https://www.exchangerate-api.com">Rates By Exchange Rate API</a>
+
+Why bother? Well, the more popular our service gets the better we can make this free & open access version and the longer we'll maintain it! We've been empowering developers with free data since 2010 and each year the positive feedback and developers doing fair attribution outweigh the people trying to abuse & DDoS the endpoint. Let's keep this convenient service going for another 10 years!
+
+You're also welcome to make the attribution link discreet and in keeping with how the rest of your application looks - we leave this up to you.
+
+```
+
+[from the Exchange rate API Docs, 2025-01-08](https://www.exchangerate-api.com/docs/free)
+
+### System requirements
+
+* PHP 8.2
+* Composer
+
+### Dependencies
+
+```json
+
+        "nikic/fast-route": "^1.3",
+        "php-di/php-di": "^7.0",
+        "nyholm/psr7": "^1.8",
+        "relay/relay": "^3.0",
+        "twig/twig": "^3.15",
+        "monolog/monolog": "^3.8",
+        "symfony/event-dispatcher": "^7.1",
+        "ezyang/htmlpurifier": "^4.18",
+        "vlucas/phpdotenv": "^5.6",
+        "firebase/php-jwt": "^6.10",
+        "symfony/yaml": "^7.1",
+        "erusev/parsedown": "^1.7",
+        "guzzlehttp/guzzle": "^7.9",
+        "openai-php/client": "^0.10.3"
+```
+
+### Dev Dependencies
+
+```json
+        "phpunit/phpunit": "^11.5"
+```
+
 ## Quickstart
 
 first open the terminal, navigate to your project workspace and obtain the source:
